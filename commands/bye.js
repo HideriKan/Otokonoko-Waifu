@@ -5,6 +5,7 @@ module.exports = {
 	usage: "",
 	cooldown: 1,
 	args: false,
+	beta: true,
 	execute(message) {
 		message.channel.send("Good bye.")
 			.then(() => process.exit(0));

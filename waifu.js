@@ -1,14 +1,10 @@
 const fs = require("fs");
 const Discord = require("discord.js");
-const {
-	prefix,
-	token
-} = require("./config.json");
+const { prefix, token, ch_botID, beta_serverID } = require("./config.json");
 
-const cooldowns = new Discord.Collection();
 const client = new Discord.Client();
+const cooldowns = new Discord.Collection();
 client.commands = new Discord.Collection();
-let ch_bot_dev;
 
 // getting all commads from the command dir
 const commandFiles = fs.readdirSync("./commands").filter(fileEnding => fileEnding.endsWith(".js"));
@@ -18,16 +14,15 @@ for (const fileEnding of commandFiles) {
 }
 
 client.on("ready", () => {
-	ch_bot_dev = client.channels.get("452983445380005888");
-	ch_bot_dev.send("What can I do for you Master?");
-	client.user.setActivity("Traps", {
+	if (client.guilds) { //only on my server
+		// console.log(client.user.guildID);
+		let ch_bot_dev = client.channels.get(ch_botID);
+		ch_bot_dev.send("What can I do for you Master?");
+	}
+	client.user.setActivity("Traps (-help)", {
 		type: "WATCHING"
 	});
 });
-
-// client.on("message", msg => {
-// 	if(msg.content === "no") msg.channel.send("You Didnt");
-// });
 
 client.on("message", msg => {
 	if (!msg.content.startsWith(prefix) || msg.author.bot) return;
@@ -39,15 +34,14 @@ client.on("message", msg => {
 
 	if (!command) return;
 
-	//checks if the command is only usable in a Server
-	if (command.guildOnly && msg.channel.type !== "text") {
-		return msg.reply("I can't execute that command inside DMs!");
-	}
+	// for server only commands
+	if (msg.channel.type !== "text" && command.guildOnly) return msg.reply("I can't execute that command inside DMs!");
+
+	// for beta commands
+	if (msg.channel.type === "text" && command.beta && !(msg.guild.id === beta_serverID)) return msg.reply("Sorry, this is a Beta command and not usable on this Server");
 
 	//checks if the user provided the correct arguments
-	if (command.args && !args.length) {
-		return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
-	}
+	if (command.args && !args.length) return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
 
 	//cheks the cooldown
 	if (!cooldowns.has(command.name)) {
@@ -57,27 +51,34 @@ client.on("message", msg => {
 	const now = Date.now();
 	const timestamps = cooldowns.get(command.name);
 	const cooldownAmount = (command.cooldown || 1) * 1000;
+	let cdType;
 
-	if (!timestamps.has(msg.author.id)) {
-		timestamps.set(msg.author.id, now);
-		setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
+	if (command.name === "trap") {
+		cdType = msg.guild.id;
 	} else {
-		const expirationTime = timestamps.get(msg.author.id) + cooldownAmount;
+		cdType = msg.author.id;
+	}
+
+	if (!timestamps.has(cdType)) {
+		timestamps.set(cdType, now);
+		setTimeout(() => timestamps.delete(cdType), cooldownAmount);
+	} else {
+		const expirationTime = timestamps.get(cdType) + cooldownAmount;
 
 		if (now < expirationTime) {
 			const timeLeft = (expirationTime - now) / 1000;
 			return msg.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command`);
 		}
 
-		timestamps.set(msg.author.id, now);
-		setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
+		timestamps.set(cdType, now);
+		setTimeout(() => timestamps.delete(cdType), cooldownAmount);
 	}
 
 	try {
 		command.execute(msg, args);
 	} catch (error) {
 		console.error(error);
-		msg.reply("there was an error trying to execute that command!");
+		msg.reply("there was an error trying to execute that command! <@146493901803487233> fix it!");
 	}
 
 });

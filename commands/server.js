@@ -1,6 +1,6 @@
 module.exports = {
 	name: "server",
-	aliases: [""],
+	aliases: ["s"],
 	description: "Display info about this server.",
 	usage: "",
 	args: false,
