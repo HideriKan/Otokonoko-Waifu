@@ -1,6 +1,6 @@
 const fs = require("fs");
 const {
-	workpath
+	lewdworkpath
 } = require("./../config.json"); // change
 
 function getRandomInt(max) {
@@ -8,15 +8,16 @@ function getRandomInt(max) {
 }
 
 module.exports = {
-	name: "trap",
-	aliases: ["t", "traps"],
-	description: "posts traps / the cooldown is 12hours",
-	usage: "<nubmer of files(1-5)>",
-	cooldown: 43200, //TODO: add server cd 43200
+	name: "lewdtrap",
+	aliases: ["lt", "ltraps"],
+	description: "posts lewd traps",
+	usage: "<nubmer of files(1-10)>",
+	cooldown: 5, //TODO: add server cd 43200
 	execute(message, args) { // TODO: fix 
+		if (!message.channel.nsfw) return message.reply("this is not a NSFW channel, Baka!");
 		if (args.length === 0) args.push(1);
 		if (args.length > 5) args.push(0, 1, 5);
-		let allPics = fs.readdirSync(workpath).filter(pics => pics.includes("."));
+		let allPics = fs.readdirSync(lewdworkpath).filter(pics => pics.includes("."));
 		let removed = [];
 		for (let i = args[0]; i > 0; i--) {
 			if (allPics.length !== 0) {
@@ -24,12 +25,12 @@ module.exports = {
 
 				message.channel.send({
 					files: [{
-						attachment: workpath + "/" + allPics[fileNr]
+						attachment: lewdworkpath + "/" + allPics[fileNr]
 					}]
 				})
 					.then(() => { // TODO: splice moved removed
 						if (!(message.guild.id === 430767868125118464)) {
-							fs.renameSync(workpath + "/" + removed[0], workpath + "/../Posted/" + removed[0]);
+							fs.renameSync(lewdworkpath + "/" + removed[0], lewdworkpath + "/../Posted/" + removed[0]);
 							console.log("moved " + removed[0]);
 							removed.splice(0, 1);
 						}
@@ -39,7 +40,7 @@ module.exports = {
 					.catch((e) => console.error(e));
 
 			} else {
-				message.channel.send("Dir Emtpy!"); //TODO: add crying emote
+				message.channel.send("Dir Emtpy!"); //TODO: add crying emote if emtpy copy to all "TOPOST"
 			}
 		}
 	}
