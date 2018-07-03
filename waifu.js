@@ -1,6 +1,6 @@
 const fs = require("fs");
 const Discord = require("discord.js");
-const { prefix, token, ch_botID, beta_serverID } = require("./config.json");
+const {prefix, token, ch_botID, beta_serverID} = require("./config.json");
 
 const client = new Discord.Client();
 const cooldowns = new Discord.Collection();
@@ -32,7 +32,8 @@ client.on("message", msg => {
 
 	const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
-	if (!command) return;
+	// checks if the command even exists
+	if (!command) return msg.reply("Invalid command");
 
 	// for server only commands
 	if (msg.channel.type !== "text" && command.guildOnly) return msg.reply("I can't execute that command inside DMs!");
@@ -40,10 +41,10 @@ client.on("message", msg => {
 	// for beta commands
 	if (msg.channel.type === "text" && command.beta && !(msg.guild.id === beta_serverID)) return msg.reply("Sorry, this is a Beta command and not usable on this Server");
 
-	//checks if the user provided the correct arguments
-	if (command.args && !args.length) return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
+	// if the user provided arguments if needed
+	if (command.args && !args.length) return msg.reply(`You didn't provide any arguments! \n**Usage: ${command.usage}`); //TODO: test this
 
-	//cheks the cooldown
+	// cooldown
 	if (!cooldowns.has(command.name)) {
 		cooldowns.set(command.name, new Discord.Collection());
 	}
@@ -74,6 +75,7 @@ client.on("message", msg => {
 		setTimeout(() => timestamps.delete(cdType), cooldownAmount);
 	}
 
+	// the command execute
 	try {
 		command.execute(msg, args);
 	} catch (error) {

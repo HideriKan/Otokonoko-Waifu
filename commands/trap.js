@@ -1,7 +1,5 @@
 const fs = require("fs");
-const {
-	workpath
-} = require("./../config.json"); // change
+const {workpath} = require("./../config.json");
 
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
@@ -12,8 +10,8 @@ module.exports = {
 	aliases: ["t", "traps"],
 	description: "posts traps / the cooldown is 12hours",
 	usage: "<nubmer of files(1-5)>",
-	cooldown: 43200, //TODO: add server cd 43200
-	execute(message, args) { // TODO: fix 
+	cooldown: 43200, 
+	execute(message, args) { 
 		if (args.length === 0) args.push(1);
 		if (args.length > 5) args.push(0, 1, 5);
 		let allPics = fs.readdirSync(workpath).filter(pics => pics.includes("."));
@@ -27,7 +25,7 @@ module.exports = {
 						attachment: workpath + "/" + allPics[fileNr]
 					}]
 				})
-					.then(() => { // TODO: splice moved removed
+					.then(() => {
 						if (!(message.guild.id === 430767868125118464)) {
 							fs.renameSync(workpath + "/" + removed[0], workpath + "/../Posted/" + removed[0]);
 							console.log("moved " + removed[0]);

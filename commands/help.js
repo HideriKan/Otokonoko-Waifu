@@ -1,6 +1,4 @@
-const {
-	prefix
-} = require("../config.json");
+const {prefix} = require("../config.json");
 
 module.exports = {
 	name: "help",
@@ -10,7 +8,7 @@ module.exports = {
 	cooldown: 2,
 	execute(message, args) {
 		let nonBeta;
-		const data = []; // to collet command(s) data
+		const data = [];
 		const {
 			commands
 		} = message.client;
@@ -28,8 +26,8 @@ module.exports = {
 			data.push(`\nYou can send \`${prefix}help <command name>\` to get more info on a specific command!`);
 
 			return message.channel.send(data, {
-				split: true
-			})
+					split: true
+				})
 				.catch(e => console.error(e));
 		}
 
