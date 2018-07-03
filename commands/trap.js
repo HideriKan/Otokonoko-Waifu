@@ -10,10 +10,11 @@ module.exports = {
 	aliases: ["t", "traps"],
 	description: "posts traps / the cooldown is 12hours",
 	usage: "<nubmer of files(1-5)>",
-	cooldown: 43200, 
+	cooldown: 43200,
+	guildOnly: true,
 	execute(message, args) { 
 		if (args.length === 0) args.push(1);
-		if (args.length > 5) args.push(0, 1, 5);
+		if (args.length > 5) message.channel.send("The maximum is 5 per command.\nYour request has been reduced to 5").then(() => args.push(0, 1, 5));
 		let allPics = fs.readdirSync(workpath).filter(pics => pics.includes("."));
 		let removed = [];
 		for (let i = args[0]; i > 0; i--) {

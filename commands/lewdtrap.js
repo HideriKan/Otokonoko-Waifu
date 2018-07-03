@@ -7,15 +7,15 @@ function getRandomInt(max) {
 
 module.exports = {
 	name: "lewdtrap",
-	aliases: ["lt", "ltraps"],
+	aliases: ["lt", "lewdtraps", "ltraps", "ltrap"],
 	description: "posts lewd traps",
 	usage: "<nubmer of files(1-10)>",
-	cooldown: 10,
+	cooldown: 5,
 	execute(message, args) {
 		
 		if (!message.channel.nsfw) return message.reply("this is not a NSFW channel, Baka!");
 		if (args.length === 0) args.push(1);
-		if (args.length > 5) args.push(0, 1, 5);
+		if (args.length > 10) message.channel.send("The maximum is 10 per command.\nYour request has been reduced to 10").then(() => args.push(0, 1, 10));
 
 		let allPics = fs.readdirSync(lewdworkpath).filter(pics => pics.includes("."));
 		let removed = [];
@@ -41,7 +41,7 @@ module.exports = {
 					.catch((e) => console.error(e));
 
 			} else {
-				message.channel.send("Dir Emtpy!"); //TODO: add crying emote | if emtpy copy to all "TOPOST"
+				message.channel.send("Dir Emtpy!"); //TODO:if emtpy copy to all "TOPOST"
 			}
 		}
 	}

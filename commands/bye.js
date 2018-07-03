@@ -5,7 +5,7 @@ module.exports = {
 	usage: "",
 	beta: true,
 	execute(message) {
-		message.channel.send("Good bye.")
+		message.channel.send("Good bye. :wave:")
 			.then(() => process.exit(0));
 	},
 };
