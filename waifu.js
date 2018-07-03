@@ -1,6 +1,6 @@
 const fs = require("fs");
 const Discord = require("discord.js");
-const {prefix, token, ch_botID, beta_serverID} = require("./config.json");
+const {prefix, beta_token, beta_ch_botID, beta_serverID} = require("./config.json");
 
 const client = new Discord.Client();
 const cooldowns = new Discord.Collection();
@@ -16,7 +16,7 @@ for (const fileEnding of commandFiles) {
 client.on("ready", () => {
 	if (client.guilds) { //only on my server
 		// console.log(client.user.guildID);
-		let ch_bot_dev = client.channels.get(ch_botID);
+		let ch_bot_dev = client.channels.get(beta_ch_botID);
 		ch_bot_dev.send("What can I do for you Master?");
 	}
 	client.user.setActivity("Traps (-help)", {
@@ -85,4 +85,4 @@ client.on("message", msg => {
 
 });
 
-client.login(token);
+client.login(beta_token);
