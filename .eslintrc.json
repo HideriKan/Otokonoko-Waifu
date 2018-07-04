@@ -6,10 +6,11 @@
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "sourceType": "module"
+        "sourceType": "module",
+        "ecmaVersion": 2017
     },
     "rules": {
-        "no-console":"off",
+        "no-console": "off",
         "indent": [
             "error",
             "tab"

@@ -26,8 +26,8 @@ module.exports = {
 			data.push(`\nYou can send \`${prefix}help <command name>\` to get more info on a specific command!`);
 
 			return message.channel.send(data, {
-					split: true
-				})
+				split: true
+			})
 				.catch(e => console.error(e));
 		}
 
@@ -42,9 +42,9 @@ module.exports = {
 		if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(", ")}`);
 		if (command.description) data.push(`**Description:** ${command.description}`);
 		if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
-		if (command.beta) data.push("**Beta command! only usable in my Server**")
-		if (command.guildOnly) data.push("**Server only command**")
-		if (command.args) data.push("**This command needs additional arguments**")
+		if (command.beta) data.push("**Beta command! only usable in my Server**");
+		if (command.guildOnly) data.push("**Server only command**");
+		if (command.args) data.push("**This command needs additional arguments**");
 		data.push(`**Cooldown:** ${command.cooldown || 1} second(s)`);
 
 		message.channel.send(data, {

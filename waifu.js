@@ -42,7 +42,7 @@ client.on("message", msg => {
 	if (msg.channel.type === "text" && command.beta && !(msg.guild.id === beta_serverID)) return msg.reply("Sorry, this is a Beta command and not usable on this Server");
 
 	// if the user provided arguments if needed
-	if (command.args && !args.length) return msg.reply(`You didn't provide any arguments! \n**Usage: ${command.usage}`); //TODO: test this
+	if (command.args && !args.length) return msg.reply(`You didn't provide any arguments! \n**Usage:** ${command.usage}`); //TODO: test this
 
 	// cooldown
 	if (!cooldowns.has(command.name)) {
