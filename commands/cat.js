@@ -1,9 +1,15 @@
+const Discord = require("discord.js");
 const snekfech = require("snekfetch");
 
 async function execute(message) {
 	const {body} = await snekfech.get("https://aws.random.cat/meow");
 
-	message.channel.send(body.file)
+	const embed = new Discord.RichEmbed()
+		.setColor(message.guild.me.displayColor)
+		.setTitle("Moew :cat:")
+		.setImage(body.file);
+
+	message.channel.send(embed)
 		.catch(console.error);
 }
 

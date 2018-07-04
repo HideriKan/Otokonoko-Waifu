@@ -1,18 +1,25 @@
+const Discord = require("discord.js");
+
 module.exports = {
 	name: "avatar",
 	aliases: ["icon", "pfp"],
-	description: "Get the avatar URL of the tagged user(s), or your own avatar.",
+	description: "Get the avatar URL of your own avatar, or the tagged user(s).",
 	usage: "<@user(s)>",
 	cooldown: 3,
 	execute(message) {
+		const embed = new Discord.RichEmbed()
+			.setColor(message.guild.me.displayColor);
+
 		if (!message.mentions.users.size) {
-			return message.channel.send(`Your avatar: ${message.author.displayAvatarURL}`);
+			return message.channel.send(embed
+				.setTitle("Your Avatar")
+				.setImage(message.author.avatarURL));
 		}
 
-		const avatarList = message.mentions.users.map(user => {
-			return `${user.username}'s avatar: ${user.displayAvatarURL}`;
-		});
+		const user = message.mentions.users.first();
+		embed.setTitle(user.username)
+			.setImage(user.displayAvatarURL);
 
-		message.channel.send(avatarList);
+		message.channel.send(embed);
 	},
 };
