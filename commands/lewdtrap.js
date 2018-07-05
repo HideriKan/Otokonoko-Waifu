@@ -13,7 +13,7 @@ module.exports = {
 	usage: "<nubmer of files(1-10)>",
 	cooldown: 5,
 	execute(message, args) {
-		
+
 		if (!message.channel.nsfw) return message.reply("this is not a NSFW channel, Baka!");
 		if (args.length === 0) args.push(1);
 		if (args.length > 10) message.channel.send("The maximum is 10 per command.\nYour request has been reduced to 10").then(() => args.push(0, 1, 10));

@@ -14,14 +14,9 @@ for (const fileEnding of commandFiles) {
 }
 
 client.on("ready", () => {
-	if (client.guilds) { //only on my server
-		// console.log(client.user.guildID);
-		let ch_bot_dev = client.channels.get(ch_botID);
-		ch_bot_dev.send("What can I do for you Master?");
-	}
-	client.user.setActivity("Traps (-help)", {
-		type: "WATCHING"
-	});
+	// let ch_bot_dev = client.channels.get(ch_botID);
+	// ch_bot_dev.send("What can I do for you Master?");
+	client.user.setActivity("Traps (-help)", {type: "WATCHING"});
 });
 
 client.on("message", msg => {
