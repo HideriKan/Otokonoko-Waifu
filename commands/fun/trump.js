@@ -3,7 +3,7 @@ const { RichEmbed } = require("discord.js");
 const snekfech = require("snekfetch");
 const api = "https://api.whatdoestrumpthink.com/api/";
 
-module.exports = class xCommand extends Command {
+module.exports = class TrumpCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: "trump",

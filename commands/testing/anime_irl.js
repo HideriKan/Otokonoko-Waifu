@@ -1,8 +1,9 @@
-const Discord = require("discord.js");
+const { Command } = require("discord.js-commando");
+const { RichEmbed } = require("discord.js");
 const snekfech = require("snekfetch");
 const api = "https://www.reddit.com/r/anime_irl/new.json";
 
-async function execute(message) {
+async function execute(msg) {
 
 }
 

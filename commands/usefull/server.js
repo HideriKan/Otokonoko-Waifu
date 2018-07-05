@@ -1,4 +1,4 @@
-const {Command} = require("discord.js-commando");
+const { Command } = require("discord.js-commando");
 const Discord = require("discord.js");
 
 module.exports = class ServerCommand extends Command {
@@ -8,7 +8,7 @@ module.exports = class ServerCommand extends Command {
 			group: "usefull",
 			memberName: "server",
 			description: "Display info about this server.",
-			examples:["server"],
+			examples:["server", "s"],
 			aliases: ["s"],
 			guildOnly: true,
 			cooldown: 2,
@@ -16,6 +16,7 @@ module.exports = class ServerCommand extends Command {
 	}
 	run(msg) {
 		const embed = new Discord.RichEmbed()
+			.setColor(msg.guild.me.displayColor)
 			.setTitle(msg.guild.name)
 			.setDescription(msg.guild.memberCount);
 			

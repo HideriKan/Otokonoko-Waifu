@@ -1,7 +1,7 @@
 const {	Command } = require("discord.js-commando");
 const {	RichEmbed } = require("discord.js");
 
-module.exports = class xCommand extends Command {
+module.exports = class AvatarCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: "avatar",
@@ -29,7 +29,6 @@ module.exports = class xCommand extends Command {
 
 		msg.mentions.users.forEach(user => {
 			const embed = new RichEmbed()
-				.setColor(msg.guild.me.displayColor)
 				.setTitle(`Avatar of ${user.username}`)
 				.setImage(user.displayAvatarURL);
 			msg.channel.send(embed);

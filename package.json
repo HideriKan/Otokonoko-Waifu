@@ -2,6 +2,11 @@
   "name": "anime-waifu",
   "version": "",
   "main": "waifu.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node .",
+    "lint": "eslint ."
+  },
   "dependencies": {
     "bufferutil": "^3.0.5",
     "discord.js": "^11.3.2",

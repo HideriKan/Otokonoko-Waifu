@@ -9,6 +9,27 @@ const api = "";
 const { RichEmbed } = require("discord.js");
 const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str;
 
+module.exports = class xCommand extends Command {
+	constructor(client) {
+		super(client, {
+			name: "",
+			memberName: "",
+			group: "",
+			description: "",
+			throttling: {
+				usages: 1, // in the time frame
+				duration: 3 // in seconds
+			},
+			aliases: [],
+			examples: [], // []required <>optional
+			details: "", // long version of description
+
+		});
+	}
+	run(msg, args) {
+
+	}
+};
 
 module.exports = class xCommand extends Command {
 	constructor(client) {
@@ -16,15 +37,15 @@ module.exports = class xCommand extends Command {
 			name: "",
 			memberName: "",
 			group: "",
-			aliases: [],
 			description: "",
-			examples: [], // []required <>optional
 			throttling: {
 				usages: 1, // in the time frame
 				duration: 3 // in seconds
 			},
-
+			aliases: [],
+			examples: [], // []required <>optional
 			details: "", // long version of description
+
 			guildOnly: true, // for server commands only 
 			guarded: true,
 			nsfw: true,
@@ -39,7 +60,8 @@ module.exports = class xCommand extends Command {
 				prompt: "What text would you like the bot to say?",
 				type: "string", // https://discord.js.org/#/docs/commando/master/class/CommandRegistry?scrollTo=registerDefaultTypes
 				validate: text => {},
-				default:
+				default: "",
+				wait: 30,
 			}]
 		});
 	}
