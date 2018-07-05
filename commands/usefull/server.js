@@ -1,5 +1,5 @@
 const {Command} = require("discord.js-commando");
-
+const Discord = require("discord.js");
 
 module.exports = class ServerCommand extends Command {
 	constructor(client) {
@@ -12,9 +12,13 @@ module.exports = class ServerCommand extends Command {
 			aliases: ["s"],
 			guildOnly: true,
 			cooldown: 2,
-		}, );
+		});
 	}
 	run(msg) {
-		msg.channel.send(`**Server name**: ${msg.guild.name}\n**Total members**: ${msg.guild.memberCount}`);
+		const embed = new Discord.RichEmbed()
+			.setTitle(msg.guild.name)
+			.setDescription(msg.guild.memberCount);
+			
+		msg.channel.send(embed);
 	}
 };

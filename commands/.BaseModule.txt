@@ -1,11 +1,55 @@
-module.exports = {
-	name: "",
-	aliases: [],
-	description: "",
-	usage: "", // []required <>optional
-	cooldown: 2,
-	guildOnly: true, // for server commands only 
-	beta: true, // for beta server only
-	args: ture, // if args needed
-	execute(message, args) {}
-}
+//Base
+const { Command } = require("discord.js-commando");
+
+//API
+const snekfech = require("snekfetch");
+const api = "";
+
+//Embed
+const { RichEmbed } = require("discord.js");
+const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str;
+
+
+module.exports = class xCommand extends Command {
+	constructor(client) {
+		super(client, {
+			name: "",
+			memberName: "",
+			group: "",
+			aliases: [],
+			description: "",
+			examples: [], // []required <>optional
+			throttling: {
+				usages: 1, // in the time frame
+				duration: 3 // in seconds
+			},
+
+			details: "", // long version of description
+			guildOnly: true, // for server commands only 
+			guarded: true,
+			nsfw: true,
+			ownerOnly: true,
+			userPermissions: [],
+			clientPermissions: [], //https://discordapp.com/developers/docs/topics/permissions	
+			
+			argsSingleQuotes: true,
+			argsCount: 1, // max numbers
+			args: [{
+				key: "text",
+				prompt: "What text would you like the bot to say?",
+				type: "string", // https://discord.js.org/#/docs/commando/master/class/CommandRegistry?scrollTo=registerDefaultTypes
+				validate: text => {},
+				default:
+			}]
+		});
+	}
+
+    hasPermission(msg) {
+		if (!this.client.isOwner(msg.author)) return "Only the bot owner(s) may use this command.";
+		return true;
+	}
+
+	run(msg, args) {
+
+	}
+};

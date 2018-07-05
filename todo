@@ -3,3 +3,4 @@ Persissions(roles/user based) for commands
 Server based commands
 remove/purdge command
 reddit command
+replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js

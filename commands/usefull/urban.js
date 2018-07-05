@@ -1,34 +1,48 @@
-const Discord = require("discord.js");
+const {Command} = require("discord.js-commando");
+const {RichEmbed} = require("discord.js");
 const snekfech = require("snekfetch");
 const api = "https://api.urbandictionary.com/v0/define";
 const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str;
 
-async function execute(message, args) {
-	const {body} = await snekfech.get(api).query({
-		term: args.join(" ")
-	});
+module.exports = class UrbanCommand extends Command {
+	constructor(client) {
+		super(client, {
+			name: "urban",
+			memberName: "urban",
+			group: "usefull",
+			examples: ["urban trap"], // []required <>optional
+			description: "Searches the Urban Dictionary for you input",
+			guildOnly: true, // for server commands only 
+			argsCount: 1, // max numbers
+			throttling: {
+				usages: 1, // in the time frame
+				duration: 2 // in seconds
+			},
+			args: [{
+				key: "text",
+				prompt: "For what would you like to search in the Urban Dictionary",
+				type: "string"
+			}]
+		});
+	}
 
-	if (body.result_type === "no_results") return message.channel.send(`No results found for **${args.join(" ")}**`);
+	async run(msg, {text}) {
+		const {body} = await snekfech.get(api).query({
+			term: text
+		});
 
-	const [answer] = body.list;
-	const embed = new Discord.RichEmbed()
-		.setColor("#EFFF00")
-		.setTitle(answer.word)
-		.setURL(answer.permalink)
-		.addField("Definition", trim(answer.definition, 1024))
-		.addField("Example", trim(answer.example, 1024))
-		.addField("Rating", `${answer.thumbs_up} thumbs up.\n${answer.thumbs_down} thumbs down.`)
-		.setFooter(`Tags: ${body.tags.join(", ")}`);
+		if (body.result_type === "no_results") return msg.channel.send(`No results found for **${text}**`);
 
-	message.channel.send(embed);
+		const [answer] = body.list;
+		const embed = new RichEmbed()
+			.setColor("#EFFF00")
+			.setTitle(answer.word)
+			.setURL(answer.permalink)
+			.addField("Definition", trim(answer.definition, 1024))
+			.addField("Example", trim(answer.example, 1024))
+			.addField("Rating", `${answer.thumbs_up} thumbs up.\n${answer.thumbs_down} thumbs down.`)
+			.setFooter(`Tags: ${body.tags.join(", ")}`);
 
-}
-
-module.exports = {
-	name: "urban",
-	description: "searches the Urban Dictionary for you input",
-	usage: "[text]", // []required <>optional
-	cooldown: 2,
-	args: true, // if args needed
-	execute: execute
+		msg.channel.send(embed);
+	}
 };
