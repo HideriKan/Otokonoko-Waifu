@@ -1,20 +1,40 @@
 const { Command } = require("discord.js-commando");
 const { RichEmbed } = require("discord.js");
 const snekfech = require("snekfetch");
-const api = "https://www.reddit.com/r/anime_irl/new.json";
+const api = "https://www.reddit.com/";
 
-async function execute(msg) {
+module.exports = class AnimeIRLCommand extends Command {
+	constructor(client) {
+		super(client, {
+			name: "anime_irl",
+			memberName: "anime_irl",
+			group: "fun",
+			description: "",
+			throttling: {
+				usages: 1, // in the time frame
+				duration: 3 // in seconds
+			},
+			aliases: ["airl"],
+			examples: [], // []required <>optional
+			details: "", // long version of description
 
-}
-
-module.exports = {
-	name: "anime_irl",
-	aliases: ["airl"],
-	description: "",
-	usage: "", // []required <>optional
-	cooldown: 2,
-	guildOnly: true, // for server commands only 
-	beta: true, // for beta server only
-	args: true, // if args needed
-	execute: execute
+		});
+	}
+	async run(msg) {
+		const { body } = await snekfech.get(`${api}r/anime_irl/top.json`); 
+		// const about = await snekfech.get(`${api}r/anime_irl/about.json`);
+		// body.data.children.forEach(e => {
+		// 	if (e.kind === "t3") {
+		// 		// console.log("test")
+		// 		// if (e.data.post_hint == "image") {
+		// 		// 	console.log(e);
+		// 		// }
+		// 	}
+		// });
+		const embed = new RichEmbed()
+			.setFooter(body.data.children[0].data.author)
+			.setTitle(body.data.children[0].data.title)
+			.setImage(body.data.children[0].data.url);
+		msg.channel.send(embed);
+	}
 };

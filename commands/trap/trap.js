@@ -1,7 +1,6 @@
 const fs = require("fs");
 const { workpath } = require("./../../config.json");
 const { Command } = require("discord.js-commando");
-// const { Command } = require("discord.js-commando");
 
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
@@ -15,8 +14,8 @@ module.exports = class TrapCommand extends Command {
 			group: "trap",
 			aliases: ["t", "traps"],
 			description: "posts traps",
+			examples: ["trap", "trap 5"],
 			details: "This command was created with the intetion for my daily Trap posting", // long version of description
-			examples: ["trap 5", "t 5"],
 			throttling: {
 				usages: 2, // in the time frame
 				duration: 43200 // in seconds
@@ -27,19 +26,17 @@ module.exports = class TrapCommand extends Command {
 			args: [{
 				key: "num",
 				prompt: "How many trap would you like me to post?",
-				type: "integer", // https://discord.js.org/#/docs/commando/master/class/CommandRegistry?scrollTo=registerDefaultTypes
-				validate: num => {
-					if(num < 5) return true;
-					num = 5;
-					return "The maximum is 5 per command.\nYour request has been reduced to 5";
-				},
+				type: "integer",
 				default: 1
 			}]
-
 		});
 	}
 
 	run(msg, { num }) { 
+		if (num > 5) {
+			msg.channel.send("The maximum is 5 per command.\nYour request has been reduced to 5");
+			num = 5;
+		}
 		let allPics = fs.readdirSync(workpath).filter(pics => pics.includes("."));
 		let removed = [];
 		for (let i = num; i > 0; i--) {

@@ -14,24 +14,34 @@ module.exports = class LewdtrapCommand extends Command {
 			group: "trap",
 			aliases: ["lt", "lewdtraps", "ltraps", "ltrap"],
 			description: "posts lewd traps",
-			guildOnly: true, // for server commands only
 			examples: ["lewdtrap 5", "lt 10"],
 			nsfw: true,
 			throttling: {
 				usages: 2, // in the time frame
 				duration: 5 // in seconds
 			},
+			guarded: true,
+			guildOnly: true,
+			numCount: 1, // max numbers
+			args: [{
+				key: "num",
+				prompt: "How many trap would you like me to post?",
+				type: "integer",
+				default: 1
+			}]
 		});
 	}
-	run(msg, args) {
-		if (!msg.channel.nsfw) return msg.reply("this is not a NSFW channel, Baka!");
-		if (args.length === 0) args.push(1);
-		if (args.length > 10) msg.channel.send("The maximum is 10 per command.\nYour request has been reduced to 10").then(() => args.push(0, 1, 10));
+
+	run(msg, num) {
+		if (num > 10) {
+			msg.channel.send("The maximum is 10 per command.\nYour request has been reduced to 10");
+			num = 10;
+		}
 
 		let allPics = fs.readdirSync(lewdworkpath).filter(pics => pics.includes("."));
 		let removed = [];
 
-		for (let i = args[0]; i > 0; i--) {
+		for (let i = num; i > 0; i--) {
 			if (allPics.length !== 0) {
 				const fileNr = getRandomInt(allPics.length);
 
