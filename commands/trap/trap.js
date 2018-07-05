@@ -1,5 +1,6 @@
 const fs = require("fs");
-const {workpath} = require("./../config.json");
+const {workpath} = require("./../../config.json");
+
 
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
