@@ -5,11 +5,13 @@ async function execute(message, args) {
 
 	if (!args.length) {
 		const {body} = await snekfech.get(`${api}v1/quotes/random`);
+		
 		return message.channel.send(`**Trump said:**\n${body.message}`).catch(console.error);
 	}
 
 	if (!message.mentions.users.size) {
 		const {body} = await snekfech.get(`${api}v1/quotes/personalized?q=${args[0]}`);
+		
 		return message.channel.send(`**Trump maybe said:**\n${body.message}`).catch(console.error);
 	}
 

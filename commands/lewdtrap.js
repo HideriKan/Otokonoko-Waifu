@@ -9,6 +9,7 @@ module.exports = {
 	name: "lewdtrap",
 	aliases: ["lt", "lewdtraps", "ltraps", "ltrap"],
 	description: "posts lewd traps",
+	guildOnly: true, // for server commands only
 	usage: "<nubmer of files(1-10)>",
 	cooldown: 5,
 	execute(message, args) {
@@ -25,10 +26,10 @@ module.exports = {
 				const fileNr = getRandomInt(allPics.length);
 
 				message.channel.send({
-						files: [{
-							attachment: lewdworkpath + "/" + allPics[fileNr]
-						}]
-					})
+					files: [{
+						attachment: lewdworkpath + "/" + allPics[fileNr]
+					}]
+				})
 					.then(() => {
 						if (!(message.guild.id === 430767868125118464)) {
 							fs.renameSync(lewdworkpath + "/" + removed[0], lewdworkpath + "/../Posted/" + removed[0]);

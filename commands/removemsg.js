@@ -15,7 +15,7 @@ module.exports = {
 	description: "deletes the message of the command and the given message",
 	usage: "[id of message(s)]", // []required <>optional
 	cooldown: 5,
-	beta: true, // for beta server only
+	// beta: true, // for beta server only
 	args: true, // if args needed
 	execute: execute
 };

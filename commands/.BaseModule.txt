@@ -9,3 +9,18 @@ module.exports = {
 	args: true, // if args needed
 	execute(message, args) {}
 };
+
+async function execute(message, args) {
+
+}
+module.exports = {
+	name: "",
+	aliases: [],
+	description: "",
+	usage: "", // []required <>optional
+	cooldown: 2,
+	guildOnly: true, // for server commands only 
+	beta: true, // for beta server only
+	args: true, // if args needed
+	execute:execute
+};
