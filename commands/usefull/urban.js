@@ -11,8 +11,8 @@ module.exports = class UrbanCommand extends Command {
 			memberName: "urban",
 			group: "usefull",
 			examples: ["urban trap"], // []required <>optional
-			description: "Searches the Urban Dictionary for you input",
-			guildOnly: true, // for server commands only 
+			description: "Urban Dictionary as a Command",
+			details: "Searches the Urban Dictionary for you input",
 			argsCount: 1, // max numbers
 			throttling: {
 				usages: 1, // in the time frame
@@ -35,7 +35,7 @@ module.exports = class UrbanCommand extends Command {
 
 		const [answer] = body.list;
 		const embed = new RichEmbed()
-			.setColor("#EFFF00")
+			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 			.setTitle(answer.word)
 			.setURL(answer.permalink)
 			.addField("Definition", trim(answer.definition, 1024))

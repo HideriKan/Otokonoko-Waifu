@@ -10,6 +10,8 @@ module.exports = class AnimalFactsCommand extends Command {
 			memberName: "animalfacts",
 			group: "fun",
 			description: "Sends a random Animal Fact!",
+			aliases:["afacts"],
+			examples:["animalfacts"],
 			throttling: {
 				usages: 1, // in the time frame
 				duration: 3 // in seconds
@@ -18,10 +20,11 @@ module.exports = class AnimalFactsCommand extends Command {
 	}
 	async run(msg) {
 		const {body} = await snekfech.get(`${api}facts/random`);
+		if (!body.type) body.tpye ="Cat";
 		const embed = new RichEmbed()
+			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 			.setTitle(`${body.type} fact!`)
-			.setDescription(body.text)
-			.setFooter(body.updatedAt);
+			.setDescription(body.text);
 		return msg.channel.send(embed);
 	}
 };

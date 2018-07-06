@@ -1,5 +1,7 @@
+check TODOs
+review animalfacts
+review bye
+learn how to store in db
 replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
     change help to embed
 Add emotes to messages
-reddit command
-change embed color

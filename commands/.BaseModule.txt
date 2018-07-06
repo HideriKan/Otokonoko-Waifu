@@ -21,8 +21,8 @@ module.exports = class xCommand extends Command {
 				duration: 3 // in seconds
 			},
 			aliases: [],
-			examples: [], // []required <>optional
-			details: "", // long version of description
+			examples: [],
+			details: "",
 
 		});
 	}
@@ -43,10 +43,10 @@ module.exports = class xCommand extends Command {
 				duration: 3 // in seconds
 			},
 			aliases: [],
-			examples: [], // []required <>optional
-			details: "", // long version of description
+			examples: [],
+			details: "",
 
-			guildOnly: true, // for server commands only 
+			guildOnly: true,
 			guarded: true,
 			nsfw: true,
 			ownerOnly: true,
@@ -64,11 +64,6 @@ module.exports = class xCommand extends Command {
 				wait: 30,
 			}]
 		});
-	}
-
-    hasPermission(msg) {
-		if (!this.client.isOwner(msg.author)) return "Only the bot owner(s) may use this command.";
-		return true;
 	}
 
 	run(msg, args) {

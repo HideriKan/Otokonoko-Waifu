@@ -1,5 +1,4 @@
 // require consts
-// const fs = require("fs");
 const Commando = require("discord.js-commando");
 const Discord = require("discord.js");
 const {oneLine} = require("common-tags");
@@ -71,7 +70,7 @@ client.registry
 		["trap", "The Best Commands", true],
 		["usefull", "Usefull commands that are usefull"],
 		["fun", "Fun/Stupid commands"],
-		["testing", "Testing Commands"]
+		["dev", "in-Dev/Dev Commands"]
 	])
 
 	// Registers all built-in groups, commands, and argument types
@@ -81,3 +80,7 @@ client.registry
 	.registerCommandsIn(path.join(__dirname, "commands"));
 
 client.login(token);
+
+process.on("unhandledRejection", (reason, p) => {
+	console.log("Unhandled Rejection at: ", p, "reason: ", reason);
+});

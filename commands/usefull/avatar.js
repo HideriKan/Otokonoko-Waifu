@@ -14,13 +14,13 @@ module.exports = class AvatarCommand extends Command {
 			throttling: {
 				usages: 1, // in the time frame
 				duration: 3 // in seconds
-			},
+			}, // add args
 		});
 	}
 	run(msg) {
 		if (!msg.mentions.users.size) {
 			const embed = new RichEmbed()
-				.setColor(msg.guild.me.displayColor);
+				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT");
 
 			return msg.channel.send(embed
 				.setTitle("Your Avatar")

@@ -10,19 +10,18 @@ module.exports = class CatCommand extends Command {
 			memberName: "cat",
 			group: "fun",
 			description: "Sends a random Cat",
-			details: "Sends a random Cat image/gif", // long version of description
+			examples:["cat"],
 			throttling: {
 				usages: 1, // in the time frame
 				duration: 3 // in seconds
 			},
-
 		});
 	}
-	async run(msg) {
+	async run(msg) { //TODO: 403 catch
 		const { body } = await snekfech.get(api);
 
 		const embed = new RichEmbed()
-			.setColor(msg.guild.me.displayColor)
+			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 			.setTitle("Moew :cat:")
 			.setImage(body.file);
 

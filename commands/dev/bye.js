@@ -5,10 +5,10 @@ module.exports = class ByeCommand extends Command {
 		super(client, {
 			name: "bye",
 			memberName: "bye",
-			group: "usefull",
+			group: "dev",
 			description: "Disconnects the bot",
 			aliases: ["exit"],
-			examples: ["bye"], // []required <>optional
+			examples: ["bye"],
 			ownerOnly: true,
 			args: [{
 				key: "text",
@@ -21,7 +21,7 @@ module.exports = class ByeCommand extends Command {
 	}
 	run(msg,{ text }) {
 		const embed = new RichEmbed()
-			.setColor(15105570)
+			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 			.setTitle("Exit");
 		if (text !== "Confirm") return msg.channel.send(embed.setDescription("Arborting"));
 		msg.channel.send(embed.setDescription("Good bye. :wave:"))

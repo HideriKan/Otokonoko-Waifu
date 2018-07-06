@@ -15,38 +15,36 @@ module.exports = class TrapCommand extends Command {
 			aliases: ["t", "traps"],
 			description: "posts traps",
 			examples: ["trap", "trap 5"],
-			details: "This command was created with the intetion for my daily Trap posting", // long version of description
+			details: "Max. amount of number is `5`. Posts a Trap out of my local Folder. This command was created with the intetion for my daily Trap posting",
 			throttling: {
 				usages: 2, // in the time frame
 				duration: 43200 // in seconds
 			},
 			guarded: true,
 			guildOnly: true,
-			numCount: 1, // max numbers
+			argCount: 1, // max numbers
 			args: [{
-				key: "num",
-				prompt: "How many trap would you like me to post?",
+				key: "number",
+				prompt: "How many trap(s) would you like me to post?",
 				type: "integer",
 				default: 1
 			}]
 		});
 	}
 
-	run(msg, { num }) { 
-		if (num > 5) {
+	run(msg, { number }) { 
+		if (number > 5) {
 			msg.channel.send("The maximum is 5 per command.\nYour request has been reduced to 5");
-			num = 5;
+			number = 5;
 		}
+
 		let allPics = fs.readdirSync(workpath).filter(pics => pics.includes("."));
 		let removed = [];
-		for (let i = num; i > 0; i--) {
+
+		for (let i = number; i > 0; i--) {
 			if (allPics.length !== 0) {
 				const fileNr = getRandomInt(allPics.length);
-				// const embed = new RichEmbed()
-				// 	.setColor(msg.guild.me.displayColor)
-				// 	.attachFile({"attachment": workpath + "/" + allPics[fileNr]});
 
-				// msg.channel.send(embed) 
 				msg.channel.send({
 					files: [{
 						attachment: workpath + "/" + allPics[fileNr]

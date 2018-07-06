@@ -22,26 +22,26 @@ module.exports = class LewdtrapCommand extends Command {
 			},
 			guarded: true,
 			guildOnly: true,
-			numCount: 1, // max numbers
+			argCount: 1, // max numbers
 			args: [{
-				key: "num",
-				prompt: "How many trap would you like me to post?",
+				key: "number",
+				prompt: "How many lewd trap(s) would you like me to post?",
 				type: "integer",
 				default: 1
 			}]
 		});
 	}
 
-	run(msg, num) {
-		if (num > 10) {
+	run(msg, number) {
+		if (number > 10) {
 			msg.channel.send("The maximum is 10 per command.\nYour request has been reduced to 10");
-			num = 10;
+			number = 10;
 		}
 
 		let allPics = fs.readdirSync(lewdworkpath).filter(pics => pics.includes("."));
 		let removed = [];
 
-		for (let i = num; i > 0; i--) {
+		for (let i = number; i > 0; i--) {
 			if (allPics.length !== 0) {
 				const fileNr = getRandomInt(allPics.length);
 
