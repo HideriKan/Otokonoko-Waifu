@@ -2,8 +2,10 @@ const { Command } = require("discord.js-commando");
 const { RichEmbed } = require("discord.js");
 const snekfech = require("snekfetch");
 const { imgurClientID } = require("./../../config.json"); 
+
 const redditAPI = "https://www.reddit.com";
 const imgurAPI = "https://api.imgur.com/3/image/";
+const gfycatAPI = "https://api.gfycat.com/v1/gfycats/";
 
 module.exports = class RedditCommand extends Command {
 	constructor(client) {
@@ -41,16 +43,16 @@ module.exports = class RedditCommand extends Command {
 
 		});
 	}
-	async run(msg, { subreddit, sort }) { //TODO: include text posts, videos (.webm/gifcat)
+	async run(msg, { subreddit, sort }) { //TODO: dont repost // post highest // arg loop x times // include text posts, videos (.webm till it supports it)
 		try {
 			const { body } = await snekfech.get(`${redditAPI}/r/${subreddit}/${sort}.json`);
 			const about = await snekfech.get(`${redditAPI}/r/${subreddit}/about.json`);
 
 			for (let i = 0; i < body.data.children.length; i++) {
 				let data = body.data.children[i].data;
-				// data.url = "https://gfycat.com/KlutzySleepyFlatcoatretriever";
 
 				if (data.url.includes("https://imgur.com/") ||
+					data.url.includes("https://gfycat.com/") ||
 					data.url.includes(".jpg") ||
 					data.url.includes(".gif") ||
 					data.url.includes(".gifv") ||
@@ -68,13 +70,16 @@ module.exports = class RedditCommand extends Command {
 						.setFooter(`Karma ${data.score} by u/${data.author}`);
 
 					if (data.url.includes("https://imgur.com/")) {
-						const imageHash = data.url.replace("https://imgur.com/", "");
-						const imgur = await snekfech.get(imgurAPI+imageHash).set("Authorization", `Client-ID ${imgurClientID}`);
+						const hash = data.url.replace("https://imgur.com/", "");
+						const imgur = await snekfech.get(imgurAPI + hash).set("Authorization", `Client-ID ${imgurClientID}`);
 						embed.setImage(imgur.body.data.link);
+					} else if (data.url.includes("https://gfycat.com/")) {
+						const hash = data.url.replace("https://gfycat.com/", "");
+						const gfycat = await snekfech.get(gfycatAPI + hash);
+						embed.setImage(gfycat.body.gfyItem.gifUrl);
 					} else if (data.url.includes(".gifv")) { //only until discord supports gifv
 						embed.setImage(data.url.replace(".gifv",".gif"));
-					}
-					else{
+					} else {
 						embed.setImage(data.url);
 					}
 						
