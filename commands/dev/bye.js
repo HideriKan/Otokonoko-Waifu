@@ -10,20 +10,13 @@ module.exports = class ByeCommand extends Command {
 			aliases: ["exit"],
 			examples: ["bye"],
 			ownerOnly: true,
-			args: [{
-				key: "text",
-				prompt: "Please respond with `Confirm` to Disconnects the bot",
-				type: "string",
-				wait: 30,
-			}]
-
 		});
 	}
-	run(msg,{ text }) {
+	run(msg, agrs) {
 		const embed = new RichEmbed()
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 			.setTitle("Exit");
-		if (text !== "Confirm") return msg.channel.send(embed.setDescription("Arborting"));
+		if (agrs !== "Confirm") return msg.channel.send(embed.setDescription("Arborting"));
 		msg.channel.send(embed.setDescription("Good bye. :wave:"))
 			.then(() => process.exit(0));
 	}

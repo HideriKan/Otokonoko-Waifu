@@ -17,15 +17,20 @@ module.exports = class CatCommand extends Command {
 			},
 		});
 	}
-	async run(msg) { //TODO: 403 catch
-		const { body } = await snekfech.get(api);
+	async run(msg) {
+		try {
+			const { body } = await snekfech.get(api);
 
-		const embed = new RichEmbed()
-			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-			.setTitle("Moew :cat:")
-			.setImage(body.file);
+			const embed = new RichEmbed()
+				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
+				.setTitle("Moew :cat:")
+				.setImage(body.file);
 
-		msg.channel.send(embed)
-			.catch(console.error);
+			msg.channel.send(embed)
+				.catch(console.error);
+		} catch (err) {
+			if (err == ("Error: 403 Forbidden")) return msg.reply("403 Forbidden");
+			console.error(err);
+		}
 	}
 };

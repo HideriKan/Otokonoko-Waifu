@@ -13,12 +13,12 @@ module.exports = class TrapCommand extends Command {
 			memberName: "trap",
 			group: "trap",
 			aliases: ["t", "traps"],
-			description: "posts traps",
+			description: "Posts traps",
 			examples: ["trap", "trap 5"],
 			details: "Max. amount of number is `5`. Posts a Trap out of my local Folder. This command was created with the intetion for my daily Trap posting",
 			throttling: {
 				usages: 2, // in the time frame
-				duration: 43200 // in seconds
+				duration: 10 // in seconds
 			},
 			guarded: true,
 			guildOnly: true,
@@ -60,7 +60,12 @@ module.exports = class TrapCommand extends Command {
 					.catch((e) => console.error(e));
 
 			} else {
-				msg.channel.send("Dir Emtpy!"); //TODO: add crying emote
+				// msg.reply("ayy your the first to get this message. dont know if this will work but yea, <@146493901803487233>"); //TODO:test this before
+				// const allPosetedPics = fs.readdirSync(workpath + "/../Posted/").filter(pics => pics.includes("."));
+				// allPosetedPics.forEach(pic => {
+				// 	fs.renameSync(workpath + "/../Posted/" + pic, workpath + "/" + pic);
+				// });
+				msg.channel.send("Dir Emtpy!, <@146493901803487233>");
 			}
 		}
 	}

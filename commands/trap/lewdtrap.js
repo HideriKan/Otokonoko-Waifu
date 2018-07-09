@@ -13,7 +13,7 @@ module.exports = class LewdtrapCommand extends Command {
 			memberName: "lewdtrap",
 			group: "trap",
 			aliases: ["lt", "lewdtraps", "ltraps", "ltrap"],
-			description: "posts lewd traps",
+			description: "Posts lewd traps",
 			examples: ["lewdtrap 5", "lt 10"],
 			nsfw: true,
 			throttling: {
@@ -60,7 +60,11 @@ module.exports = class LewdtrapCommand extends Command {
 					.catch((e) => console.error(e));
 
 			} else {
-				msg.channel.send("Dir Emtpy!"); //TODO:if emtpy copy to all "TOPOST"
+				msg.reply("ayy your the first to get this message. dont know if this will work but yea, <@146493901803487233>"); //TODO:test this before
+				// const allPosetedPics = fs.readdirSync(lewdworkpath + "/../Posted/").filter(pics => pics.includes("."));
+				// allPosetedPics.forEach(pic => {
+				// 	fs.renameSync(lewdworkpath + "/../Posted/" + pic, lewdworkpath + "/" + pic);
+				// });
 			}
 
 		}

@@ -16,32 +16,36 @@ module.exports = class TrumpCommand extends Command {
 				duration: 3 // in seconds
 			},
 			details: "Without any arguments it sends a random trump quote. With a `name` it will send a personalized quote with the given `name`. With a `@user` it will send a personalized quote with the `users nickname`. The command will not ping the user",
-		}); //TODO: add args
+			args:[{
+				key: "name",
+				prompt: "",
+				type: "string"
+			}],
+		});
 	}
-	async run(msg, args) { //TODO: (mabye) change .setTumbnaul img to .setAuthor
+	async run(msg, {name}) {
 		const embed = new RichEmbed()
-			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-			.setThumbnail("https://pbs.twimg.com/profile_images/874276197357596672/kUuht00m_400x400.jpg");
+			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT");
 
-		if (!args.length) {
+		if (!name.length) {
 			const { body } = await snekfech.get(`${api}v1/quotes/random`);
-			embed.setTitle("Trump said")
+			embed.setAuthor("Trump said", "https://pbs.twimg.com/profile_images/874276197357596672/kUuht00m_400x400.jpg")
 				.setDescription(body.message);
 
 			return msg.channel.send(embed).catch(console.error);
 		}
 
 		if (!msg.mentions.users.size) {
-			args = args.charAt(0).toUpperCase() + args.slice(1);
-			const { body } = await snekfech.get(`${api}v1/quotes/personalized?q=${args}`);
-			embed.setTitle("Trump maybe said")
+			name = name.charAt(0).toUpperCase() + name.slice(1);
+			const { body } = await snekfech.get(`${api}v1/quotes/personalized?q=${name}`);
+			embed.setAuthor("Trump maybe said", "https://pbs.twimg.com/profile_images/874276197357596672/kUuht00m_400x400.jpg")
 				.setDescription(body.message);
 			return msg.channel.send(embed).catch(console.error);
 		}
 
 		const usersNickname = msg.mentions.members.map(user => user.nickname);
 		const { body } = await snekfech.get(`${api}v1/quotes/personalized?q=${usersNickname}`);
-		embed.setTitle("Trump maybe said")
+		embed.setAuthor("Trump maybe said", "https://pbs.twimg.com/profile_images/874276197357596672/kUuht00m_400x400.jpg")
 			.setDescription(body.message);
 
 		return msg.channel.send(embed).catch(console.error);

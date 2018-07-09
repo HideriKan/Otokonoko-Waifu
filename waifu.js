@@ -1,8 +1,7 @@
-// require consts
 const Commando = require("discord.js-commando");
 const Discord = require("discord.js");
-const {oneLine} = require("common-tags");
-const {prefix,owner,token,} = require("./config.json");
+const { oneLine } = require("common-tags");
+const { prefix, owner, token } = require("./config.json");
 const path = require("path");
 const sqlite = require("sqlite");
 
@@ -17,7 +16,7 @@ client
 	.on("ready", () => {
 		// let ch_bot_dev = client.channels.get(ch_botID);
 		// ch_bot_dev.send("What can I do for you Master?");
-		client.user.setActivity("Traps (-help)", {
+		client.user.setActivity("Traps (,,help)", {
 			type: "WATCHING"
 		});
 	})
