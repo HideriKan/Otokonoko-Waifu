@@ -8,11 +8,16 @@ const sqlite = require("sqlite");
 const client = new Commando.Client({
 	commandPrefix: prefix,
 	owner: owner,
-	disableEveryone: true
+	disableEveryone: true,
+	unknownCommandResponse: false
 });
 client.commands = new Discord.Collection();
 
 client
+	.on("message", msg =>{
+		if (msg.author.id === "462878456598888449" && msg.content === "kms") msg.channel.send("do it");
+		if (msg.author.id === "462878456598888449" && msg.content === "do it") msg.channel.send("no u");
+	})
 	.on("ready", () => {
 		// let ch_bot_dev = client.channels.get(ch_botID);
 		// ch_bot_dev.send("What can I do for you Master?");
@@ -66,7 +71,7 @@ client.setProvider(
 client.registry
 	// Registers your custom command groups
 	.registerGroups([
-		["trap", "The Best Commands", true],
+		["trap", "The Best Commands", true], //change to traps
 		["usefull", "Usefull commands that are usefull"],
 		["fun", "Fun/Stupid commands"],
 		["dev", "in-Dev/Dev Commands"]

@@ -18,6 +18,7 @@ module.exports = class CatCommand extends Command {
 		});
 	}
 	async run(msg) {
+		// console.log("test");
 		try {
 			const { body } = await snekfech.get(api);
 
@@ -29,7 +30,7 @@ module.exports = class CatCommand extends Command {
 			msg.channel.send(embed)
 				.catch(console.error);
 		} catch (err) {
-			if (err == ("Error: 403 Forbidden")) return msg.reply("403 Forbidden");
+			if (err == "Error: 403 Forbidden") return msg.reply("403 Forbidden");
 			console.error(err);
 		}
 	}

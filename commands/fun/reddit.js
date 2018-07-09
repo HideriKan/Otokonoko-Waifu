@@ -48,29 +48,33 @@ module.exports = class RedditCommand extends Command {
 
 			for (let i = 0; i < body.data.children.length; i++) {
 				let data = body.data.children[i].data;
-				data.url = "https://gfycat.com/KlutzySleepyFlatcoatretriever";
+				// data.url = "https://gfycat.com/KlutzySleepyFlatcoatretriever";
 
-				if (data.url.includes("https://imgur.com") ||
+				if (data.url.includes("https://imgur.com/") ||
 					data.url.includes(".jpg") ||
 					data.url.includes(".gif") ||
 					data.url.includes(".gifv") ||
 					data.url.includes(".png") &&
 					data.over_18 == msg.channel.nsfw &&
-					!data.spoiler) {
+					!data.spoiler) 
+				{
 
 					const redditIcon = about.body.data.icon_img;
 					const embed = new RichEmbed()
 						.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-						.setAuthor(data.subreddit_name_prefixed, redditIcon)
+						.setAuthor(data.subreddit_name_prefixed, redditIcon, redditAPI + "/" + data.subreddit_name_prefixed)
 						.setTitle(data.title)
 						.setURL(redditAPI + data.permalink)
-						.setFooter(`Karma ${data.score} by u /${data.author}`);
+						.setFooter(`Karma ${data.score} by u/${data.author}`);
 
-					if (data.url.includes("https://imgur.com")) {
+					if (data.url.includes("https://imgur.com/")) {
 						const imageHash = data.url.replace("https://imgur.com/", "");
 						const imgur = await snekfech.get(imgurAPI+imageHash).set("Authorization", `Client-ID ${imgurClientID}`);
 						embed.setImage(imgur.body.data.link);
-					} else {
+					} else if (data.url.includes(".gifv")) { //only until discord supports gifv
+						embed.setImage(data.url.replace(".gifv",".gif"));
+					}
+					else{
 						embed.setImage(data.url);
 					}
 						
@@ -80,7 +84,7 @@ module.exports = class RedditCommand extends Command {
 			msg.channel.send("Sorry no Images to post found");
 		} catch (err) {
 			if (err == "Error: 404 Not Found") return msg.reply("404. Subreddit now found please check the spelling");
-			if (err == ("Error: 403 Forbidden")) return msg.reply("403 Forbidden. Dont know why :shrug:");
+			if (err == "Error: 403 Forbidden") return msg.reply("403 Forbidden. Dont know why :shrug:");
 			console.error(err);
 		}
 
