@@ -1,28 +1,72 @@
-const Discord = require("discord.js");
+//Base
+const { Command } = require("discord.js-commando");
 
-module.exports = {
-	name: "",
-	aliases: [],
-	description: "",
-	usage: "", // []required <>optional
-	cooldown: 2,
-	guildOnly: true, // for server commands only 
-	beta: true, // for beta server only
-	args: true, // if args needed
-	execute(message, args) {}
+//API
+const snekfech = require("snekfetch");
+const api = "";
+
+//Embed
+const { RichEmbed } = require("discord.js");
+const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str;
+
+module.exports = class xCommand extends Command {
+	constructor(client) {
+		super(client, {
+			name: "",
+			memberName: "",
+			group: "",
+			description: "",
+			throttling: {
+				usages: 1, // in the time frame
+				duration: 3 // in seconds
+			},
+			aliases: [],
+			examples: [],
+			details: "",
+
+		});
+	}
+	run(msg, args) {
+
+	}
 };
 
-async function execute(message, args) {
+module.exports = class xCommand extends Command {
+	constructor(client) {
+		super(client, {
+			name: "",
+			memberName: "",
+			group: "",
+			description: "",
+			throttling: {
+				usages: 1, // in the time frame
+				duration: 3 // in seconds
+			},
+			aliases: [],
+			examples: [],
+			details: "",
 
-}
-module.exports = {
-	name: "",
-	aliases: [],
-	description: "",
-	usage: "", // []required <>optional
-	cooldown: 2,
-	guildOnly: true, // for server commands only 
-	beta: true, // for beta server only
-	args: true, // if args needed
-	execute:execute
+			guildOnly: true,
+			guarded: true,
+			nsfw: true,
+			ownerOnly: true,
+			userPermissions: [],
+			clientPermissions: [], //https://discordapp.com/developers/docs/topics/permissions	
+			
+			argsSingleQuotes: true,
+			argsCount: 1, // max numbers
+			args: [{
+				key: "text",
+				prompt: "What text would you like the bot to say?",
+				type: "string", // https://discord.js.org/#/docs/commando/master/class/CommandRegistry?scrollTo=registerDefaultTypes
+				validate: text => {},
+				default: "",
+				wait: 30,
+			}]
+		});
+	}
+
+	run(msg, args) {
+
+	}
 };
