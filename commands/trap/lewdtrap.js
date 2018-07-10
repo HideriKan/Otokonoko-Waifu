@@ -32,7 +32,7 @@ module.exports = class LewdtrapCommand extends Command {
 		});
 	}
 
-	run(msg, number) {
+	run(msg, { number }) {
 		if (number > 10) {
 			msg.channel.send("The maximum is 10 per command.\nYour request has been reduced to 10");
 			number = 10;
