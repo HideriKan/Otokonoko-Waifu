@@ -33,7 +33,7 @@ module.exports = class TrapCommand extends Command {
 	}
 
 	run(msg, { number }) {
-		if (!fs.existsSync(workpath)) return msg.reply("Sowwy, Something went wwong ówò");
+		if (!fs.existsSync(workpath)) return msg.reply("Sowwy, something went wwong ówò");
 		if (number > 5) {
 			msg.channel.send("The maximum is 5 per command.\nYour request has been reduced to 5");
 			number = 5;
