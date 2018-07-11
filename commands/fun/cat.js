@@ -24,7 +24,7 @@ module.exports = class CatCommand extends Command {
 
 			const embed = new RichEmbed()
 				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-				.setTitle("Moew :cat:")
+				.setTitle("Moew \:cat:") // eslint-disable-line
 				.setImage(body.file);
 
 			msg.channel.send(embed)

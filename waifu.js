@@ -4,6 +4,7 @@ const { oneLine } = require("common-tags");
 const { prefix, owner, token } = require("./config.json");
 const path = require("path");
 const sqlite = require("sqlite");
+// const reaction = new Discord.ReactionEmoji();
 
 const client = new Commando.Client({
 	commandPrefix: prefix,
@@ -14,10 +15,26 @@ const client = new Commando.Client({
 client.commands = new Discord.Collection();
 
 client
-	.on("message", msg =>{
-		if (msg.author.id === "462878456598888449" && msg.content === "kms") msg.channel.send("do it");
-		if (msg.author.id === "462878456598888449" && msg.content === "do it") msg.channel.send("no u");
+	.on("message", async msg => {
+		if (msg.author.id === "462878456598888449" && msg.content === "kms") return msg.channel.send("do it");
+		if (msg.author.id === "462878456598888449" && msg.content === "do it") return msg.channel.send("no u");
+		if (msg.content.toLocaleLowerCase().includes("trap")) {
+			if(msg.guild){
+				const emote = msg.guild.emojis.find(emote =>{
+					return emote.name.toLocaleLowerCase().includes("owo");
+				});
+				if(emote) {
+					return msg.react(emote);
+				}
+			}
+			await msg.react("🇴").catch(console.error);
+			await msg.react("🇼").catch(console.error);
+			await msg.react("🅾").catch(console.error);
+		}
 	})
+	// .on("messageReactionAdd", (msgR, user)=>{
+	// 	console.log(msgR);
+	// })
 	.on("ready", () => {
 		// let ch_bot_dev = client.channels.get(ch_botID);
 		// ch_bot_dev.send("What can I do for you Master?");
@@ -71,7 +88,7 @@ client.setProvider(
 client.registry
 	// Registers your custom command groups
 	.registerGroups([
-		["trap", "The Best Commands", true], //change to traps
+		["trap", "The Best Commands", true], // TODO:change to traps
 		["usefull", "Usefull commands that are usefull"],
 		["fun", "Fun/Stupid commands"],
 		["dev", "in-Dev/Dev Commands"]

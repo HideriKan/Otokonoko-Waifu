@@ -57,7 +57,7 @@ module.exports = class RedditCommand extends Command {
 					data.url.includes(".gif") ||
 					data.url.includes(".gifv") ||
 					data.url.includes(".png") &&
-					data.over_18 == msg.channel.nsfw &&
+					data.over_18 == msg.channel.nsfw && // posts in nsfw
 					!data.spoiler) 
 				{
 

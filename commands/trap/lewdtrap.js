@@ -33,6 +33,7 @@ module.exports = class LewdtrapCommand extends Command {
 	}
 
 	run(msg, number) {
+		if (!fs.existsSync(lewdworkpath)) return msg.reply("Sowwy, Something went wwong ówò");
 		if (number > 10) {
 			msg.channel.send("The maximum is 10 per command.\nYour request has been reduced to 10");
 			number = 10;

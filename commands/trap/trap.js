@@ -32,7 +32,8 @@ module.exports = class TrapCommand extends Command {
 		});
 	}
 
-	run(msg, { number }) { 
+	run(msg, { number }) {
+		if (!fs.existsSync(workpath)) return msg.reply("Sowwy, Something went wwong ówò");
 		if (number > 5) {
 			msg.channel.send("The maximum is 5 per command.\nYour request has been reduced to 5");
 			number = 5;
@@ -42,7 +43,7 @@ module.exports = class TrapCommand extends Command {
 		let removed = [];
 
 		for (let i = number; i > 0; i--) {
-			if (allPics.length !== 0) {
+			if (allPics.length !== 0) { // make a oneline out of this shit
 				const fileNr = getRandomInt(allPics.length);
 
 				msg.channel.send({
