@@ -1,7 +1,12 @@
 const Commando = require("discord.js-commando");
 const Discord = require("discord.js");
 const { oneLine } = require("common-tags");
-const { prefix, owner, token } = require("./config.json");
+const {
+	prefix,
+	owner,
+	// token,
+	beta_token
+} = require("./config.json");
 const path = require("path");
 const sqlite = require("sqlite");
 // const reaction = new Discord.ReactionEmoji();
@@ -19,11 +24,11 @@ client
 		if (msg.author.id === "462878456598888449" && msg.content === "kms") return msg.channel.send("do it");
 		if (msg.author.id === "462878456598888449" && msg.content === "do it") return msg.channel.send("no u");
 		if (msg.content.toLocaleLowerCase().includes("trap")) {
-			if(msg.guild){
-				const emote = msg.guild.emojis.find(emote =>{
+			if (msg.guild) {
+				const emote = msg.guild.emojis.find(emote => {
 					return emote.name.toLocaleLowerCase().includes("owo");
 				});
-				if(emote) {
+				if (emote) {
 					return msg.react(emote);
 				}
 			}
@@ -100,7 +105,8 @@ client.registry
 	// Registers all of your commands in the ./commands/ directory
 	.registerCommandsIn(path.join(__dirname, "commands"));
 
-client.login(token);
+// client.login(token);
+client.login(beta_token);
 
 process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: ", p, "reason: ", reason);

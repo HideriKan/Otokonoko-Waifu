@@ -45,7 +45,7 @@ module.exports = class RedditCommand extends Command {
 
 		});
 	}
-	async run(msg, { subreddit, sort }) { //TODO: dont repost // post highest // arg loop x times // include text posts, videos (.webm till it supports it)
+	async run(msg, { subreddit, sort }) { //TODO: dont repost // post highest // arg loop/post x times // include text posts(, videos (.webm till it supports it))
 		try {
 			const { body } = await snekfech.get(`${redditAPI}/r/${subreddit}/${sort}.json`);
 			const about = await snekfech.get(`${redditAPI}/r/${subreddit}/about.json`);
@@ -72,6 +72,7 @@ module.exports = class RedditCommand extends Command {
 				if (data.spoiler) continue;
 				if (data.url.includes("https://imgur.com/") ||
 					data.url.includes("https://gfycat.com/") ||
+					data.url.includes("https://streamable.com/") ||
 					data.url.includes(".gifv") ||
 					data.url.includes(".jpg") ||
 					data.url.includes(".gif") ||
@@ -100,8 +101,12 @@ module.exports = class RedditCommand extends Command {
 						const gfycat = await snekfech.get(gfycatAPI + hash);
 						embed.setDescription(data.url);
 						embed.setImage(gfycat.body.gfyItem.gifUrl);
-					} else if (data.url.includes(".gifv")) { //only until discord supports gifv
+					} else if (data.url.includes(".gifv")) { // untill discord supports gifv
 						embed.setImage(data.url.replace(".gifv", ".gif"));
+					} else if (data.url.includes("https://streamable.com/")) { // till discord supports to embed videos
+						embed.setTitle(data.title);
+						msg.channel.send(embed);
+						return await msg.channel.send(data.url);
 					} else {
 						embed.setImage(data.url)
 							.setTitle(data.title);

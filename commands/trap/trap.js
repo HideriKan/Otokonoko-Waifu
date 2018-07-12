@@ -34,6 +34,7 @@ module.exports = class TrapCommand extends Command {
 
 	run(msg, { number }) {
 		if (!fs.existsSync(workpath)) return msg.reply("Sowwy, something went wwong ówò");
+		if (!fs.existsSync(workpath + "/../Posted/")) return msg.reply("Sowwy, something went wwong ówò");
 		if (number > 5) {
 			msg.channel.send("The maximum is 5 per command.\nYour request has been reduced to 5");
 			number = 5;
@@ -51,14 +52,14 @@ module.exports = class TrapCommand extends Command {
 						attachment: workpath + "/" + allPics[fileNr]
 					}]
 				})
+					.then(removed.push(allPics[fileNr]))
+					.then(allPics.splice(fileNr, 1))
+					.catch((e) => console.error(e))
 					.then(() => {
 						fs.renameSync(workpath + "/" + removed[0], workpath + "/../Posted/" + removed[0]);
 						console.log("moved " + removed[0]);
 						removed.splice(0, 1);
-					})
-					.then(removed.push(allPics[fileNr]))
-					.then(allPics.splice(fileNr, 1))
-					.catch((e) => console.error(e));
+					});
 
 			} else {
 				// msg.reply("ayy your the first to get this message. dont know if this will work but yea, <@146493901803487233>"); //TODO:test this before
