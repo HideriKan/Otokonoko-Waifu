@@ -67,8 +67,8 @@ module.exports = class RedditCommand extends Command {
 			for (let i = 0; i < body.data.children.length; i++) {
 				const data = body.data.children[i].data;
 
-				if (about.body.data.over18 && msg.channel.nsfw) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
-				if (data.over_18 && msg.channel.nsfw) continue;
+				if (about.body.data.over18 ^ msg.channel.nsfw) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
+				if (data.over_18 ^ msg.channel.nsfw) continue;
 				if (data.spoiler) continue;
 				if (data.url.includes("https://imgur.com/") ||
 					data.url.includes("https://gfycat.com/") ||
