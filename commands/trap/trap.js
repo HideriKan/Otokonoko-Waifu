@@ -6,7 +6,7 @@ function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
 }
 
-module.exports = class TrapCommand extends Command {
+module.exports = class TrapCommand extends Command { //TODO: change so lewd-/ trap can work as one
 	constructor(client) {
 		super(client, {
 			name: "trap",
@@ -28,7 +28,7 @@ module.exports = class TrapCommand extends Command {
 				prompt: "How many trap(s) would you like me to post?",
 				type: "integer",
 				default: 1
-			}]
+			}] // new arg for lewd with "-l", "-lewd" or "lewd"
 		});
 	}
 

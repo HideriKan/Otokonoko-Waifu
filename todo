@@ -5,5 +5,6 @@ learn how to store in db
 replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
     change help to embed
 Add emotes to messages
-emote details ?
+emote details ?; cossserver emote posting
 profile presence with steam link
+about with github link

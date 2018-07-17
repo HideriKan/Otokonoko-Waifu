@@ -18,13 +18,13 @@ module.exports = class SuggestCommand extends Command {
 		});
 	}
 
-	run(msg) {
+	async run(msg) {
 		try {
-			fs.appendFileSync("./todo", `\n${msg.content} in ${msg.guild ? msg.guild.id : msg.channel} by <@${msg.author.id}> at ${msg.createdAt}`);
+			fs.appendFileSync("./suggest", `${msg.content} in ${msg.guild ? msg.guild.id : msg.channel} by <@${msg.author.id}> at ${msg.createdAt}\n`);
 		} catch (error) {
 			console.error(error);
-			return msg.reply("Sowwy, something went wwong ówò");
+			return msg.reply("Sowwy, something went wwong ómò");
 		}
-		return msg.channel.send("message was send uwu");
+		return await msg.channel.send("message was send uwu");
 	}
 };
