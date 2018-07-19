@@ -14,6 +14,7 @@ const sqlite = require("sqlite");
 const client = new Commando.Client({
 	commandPrefix: prefix,
 	owner: owner,
+	invite: "https://discord.gg/uZAPmRV",
 	disableEveryone: true,
 	unknownCommandResponse: false
 });
@@ -21,28 +22,27 @@ client.commands = new Discord.Collection();
 
 client
 	.on("message", async msg => {
+		// hard couter to a bot :smug:
 		if (msg.author.id === "462878456598888449" && msg.content === "kms") return msg.channel.send("do it");
 		if (msg.author.id === "462878456598888449" && msg.content === "do it") return msg.channel.send("no u");
+
+		// owo reatction cuz we both love traps
 		if (msg.content.toLocaleLowerCase().includes("trap")) {
-			if (msg.guild) {
-				const emote = msg.guild.emojis.find(emote => {
-					return emote.name.toLocaleLowerCase().includes("owo");
+			if (msg.guild) { // seaches the guilds emotes for a owo
+				const emote = msg.guild.emojis.find(emote => { 
+					return emote.name.toLocaleLowerCase().includes("owo"); 
 				});
 				if (emote) {
 					return msg.react(emote);
 				}
 			}
+			// fallback for then no owo emote is in the guild
 			await msg.react("🇴").catch(console.error);
 			await msg.react("🇼").catch(console.error);
 			await msg.react("🅾").catch(console.error);
 		}
 	})
-	// .on("messageReactionAdd", (msgR, user)=>{
-	// 	console.log(msgR);
-	// })
 	.on("ready", () => {
-		// let ch_bot_dev = client.channels.get(ch_botID);
-		// ch_bot_dev.send("What can I do for you Master?");
 		client.user.setActivity("Traps (,,help)", {
 			type: "WATCHING"
 		});
@@ -105,9 +105,9 @@ client.registry
 	// Registers all of your commands in the ./commands/ directory
 	.registerCommandsIn(path.join(__dirname, "commands"));
 
-client.login(token);
-// client.login(beta_token);
-
 process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: ", p, "reason: ", reason);
 });
+
+client.login(token);
+// client.login(beta_token);

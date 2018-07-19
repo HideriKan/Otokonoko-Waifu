@@ -1,10 +1,12 @@
+replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
+    change help to embed
+help embed
 check TODOs
 review animalfacts
 review bye
 learn how to store in db
-replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
-    change help to embed
-Add emotes to messages
 emote details ?; cossserver emote posting
+add about with github link
+add master --> kein is my master and bla
+add math
 profile presence with steam link
-about with github link
