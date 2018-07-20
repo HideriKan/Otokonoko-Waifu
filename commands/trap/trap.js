@@ -31,30 +31,27 @@ module.exports = class TrapCommand extends Command {
 					default: 1
 				},
 				{
-					key: "lewd",
+					key: "lewdargs",
 					prompt: "this should be -lewd to post lewds",
 					type: "string",
 					default: "",
-					validate: lewd => {
-						if (lewd == "-lewd" ||
-							lewd == "-l") return true;
-						return false;
-					},
+					parse: (lewdargs, msg) => {
+						const validArgs = ["-lewd", "-nsfw", "-l"];
+						if (validArgs.includes(lewdargs.toLowerCase())) return lewdargs = true;
+						msg.channel.send("Unknown arg, Skipping...");
+						return lewdargs = false;
+					}
 				}
 			]
 		});
 	}
 
-	run(msg, { number, lewd }) {
+	run(msg, { number, lewdargs }) {
 		let path;
-		switch (lewd) { // check if a lewd is passed
-		case "-l":
-		case "-lewd":
-		case "-nsfw":
+		if(lewdargs) {
 			if (!msg.channel.nsfw) return msg.channel.send("Nyo nsfw in sfw channyews (・`m´・)");
 			path = lewdworkpath;
-			break;
-		default:
+		} else if (!lewdargs) {
 			path = workpath;
 		}
 		

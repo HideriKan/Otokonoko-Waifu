@@ -14,7 +14,7 @@ const sqlite = require("sqlite");
 const client = new Commando.Client({
 	commandPrefix: prefix,
 	owner: owner,
-	invite: "https://discord.gg/uZAPmRV",
+	// invite: "<https://discord.gg/uZAPmRV>",
 	disableEveryone: true,
 	unknownCommandResponse: false
 });
@@ -93,7 +93,7 @@ client.setProvider(
 client.registry
 	// Registers your custom command groups
 	.registerGroups([
-		["trap", "The Best Commands", true], // TODO:change to traps
+		["trap", "The Best Commands", true],
 		["usefull", "Usefull commands that are usefull"],
 		["fun", "Fun/Stupid commands"],
 		["dev", "in-Dev/Dev Commands"]

@@ -124,6 +124,18 @@ module.exports = class RedditCommand extends Command {
 
 		});
 	}
+
+	// db.prepare(`
+	// 			CREATE TABLE IF NOT EXISTS redditposted( 
+	// 				redditposted_id integer PRIMARY KEY AUTOINCREMENT, 
+	// 				subreddit_name text NOT NULL, 
+	// 				post_id text NULL, 
+	// 			)`
+	// ).run();
+
+	// db.prepare("INSERT INTO suggestions VALUES (?, ?, ?, ?, ?)")
+	// 	.run(null, x, y);
+
 	async run(msg, { subreddit, text }) { //TODO: (DB) dont repost // arg loop/post x times // include videos (.webm till it supports it)
 		try {
 			let isReddit;
@@ -151,8 +163,7 @@ module.exports = class RedditCommand extends Command {
 						if (!(!about.body.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
 						if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler) continue; //hope this works like I want it to be
 
-						const embed = await getEmbedData(data, about.body.data.icon_img, msg); //TODO: test if oneliner works
-						return msg.channel.send(embed);
+						return msg.channel.send(await getEmbedData(data, about.body.data.icon_img, msg));
 					}
 				}
 				return msg.channel.send("Sowwy nyo Images found to post uwu");
@@ -166,8 +177,7 @@ module.exports = class RedditCommand extends Command {
 					if (!(!about.body.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
 					if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler) return; //hope this works like I want it to be
 
-					const embed = await getEmbedData(data, about.body.data.icon_img, msg);
-					return msg.channel.send(embed);
+					return msg.channel.send(await getEmbedData(data, about.body.data.icon_img, msg));
 				}
 			}
 			return msg.reply("I dont know what you did but you broke something");

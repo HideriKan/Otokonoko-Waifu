@@ -6,6 +6,7 @@
     "start": "node ."
   },
   "dependencies": {
+    "better-sqlite3": "^4.1.4",
     "bufferutil": "^3.0.5",
     "discord.js": "^11.3.2",
     "discord.js-commando": "^0.10.0",

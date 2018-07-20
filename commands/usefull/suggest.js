@@ -1,5 +1,4 @@
 const { Command } = require("discord.js-commando");
-const fs = require("fs");
 
 module.exports = class SuggestCommand extends Command {
 	constructor(client) {
@@ -14,17 +13,17 @@ module.exports = class SuggestCommand extends Command {
 			},
 			aliases: [],
 			examples: ["suggest du stinkst"],
-			details: "yo",
+			//details: "yo",
 		});
 	}
 
-	async run(msg) {
-		try {
-			fs.appendFileSync("./suggest", `${msg.content} in ${msg.guild ? msg.guild.id : msg.channel} by <@${msg.author.id}> at ${msg.createdAt}\n`);
+	run(msg) {
+		try {			
+			msg.client.channels.get("469875124494139392").send(`${msg.content} in ${msg.guild ? `Guild:${msg.guild.id} Channel:<#${msg.channel.id}>` : msg.channel.type} by <@${msg.author.id}>`);
 		} catch (error) {
 			console.error(error);
 			return msg.reply("Sowwy, something went wwong ómò");
 		}
-		return await msg.channel.send("message was send uwu");
+		return msg.channel.send("message was send uwu");
 	}
 };
