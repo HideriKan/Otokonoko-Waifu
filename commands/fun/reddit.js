@@ -2,10 +2,14 @@ const { Command } = require("discord.js-commando");
 const { RichEmbed } = require("discord.js");
 const snekfech = require("snekfetch");
 const { imgurClientID } = require("./../../config.json");
+const path = require("path");
+const sqlite = require("better-sqlite3");
+const db = new sqlite(path.join(__dirname,"database.sqlite3"));
 
 const redditAPI = "https://www.reddit.com";
 const imgurAPI = "https://api.imgur.com/3/";
 const gfycatAPI = "https://api.gfycat.com/v1/gfycats/";
+
 
 // img endings that can be posted
 function imgEnding(data) {
@@ -120,24 +124,14 @@ module.exports = class RedditCommand extends Command {
 					type: "string",
 					default: ""
 				}
-			] // wished args are [post x times]
+			] // TODO: wished args are [post x times]
 
 		});
 	}
 
-	// db.prepare(`
-	// 			CREATE TABLE IF NOT EXISTS redditposted( 
-	// 				redditposted_id integer PRIMARY KEY AUTOINCREMENT, 
-	// 				subreddit_name text NOT NULL, 
-	// 				post_id text NULL, 
-	// 			)`
-	// ).run();
-
-	// db.prepare("INSERT INTO suggestions VALUES (?, ?, ?, ?, ?)")
-	// 	.run(null, x, y);
-
+	
 	async run(msg, { subreddit, text }) { //TODO: (DB) dont repost // arg loop/post x times // include videos (.webm till it supports it)
-		try {
+		try {		
 			let isReddit;
 			switch (text) { // check if a sort is passed
 			case "":
@@ -153,15 +147,37 @@ module.exports = class RedditCommand extends Command {
 			}
 
 			if(isReddit) { // code for when a subreddit is passed
+				// db.prepare("DROP TABLE IF EXISTS redditposted").run();
+				db.prepare(`
+				CREATE TABLE IF NOT EXISTS redditposted( 
+					redditposted_id integer PRIMARY KEY AUTOINCREMENT, 
+					subreddit_name text NOT NULL, 
+					post_id text NULL,
+					guild_id text,
+					time_send datetime NOT NULL)
+					`
+				).run();
+				db.prepare("DELETE FROM redditposted WHERE time_send < DATETIME('NOW', '-1 day')").run(); // make this work
+				const dbcheck = db.prepare("SELECT * FROM redditposted WHERE post_id == (?)");
+				const dbinsert = db.prepare("INSERT INTO redditposted VALUES (?, ?, ?, ?, datetime(?))");
+
 				const { body } = await snekfech.get(`${redditAPI}/r/${subreddit}/${text}.json`);
 				const about = await snekfech.get(`${redditAPI}/r/${subreddit}/about.json`);
-
+				let time_posted = new Date(msg.createdTimestamp);
+				
 				for (let i = 0; i < body.data.children.length; i++) {
 					const data = body.data.children[i].data;
 
 					if (checkSuitability(data)) {
 						if (!(!about.body.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
 						if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler) continue; //hope this works like I want it to be
+
+						let row = dbcheck.get(data.id); // add guild id to select
+						if(!row) { // 
+							dbinsert.run(null, data.subreddit, data.id, msg.guild ? msg.guild.id : "", time_posted.toISOString());
+						}else {
+							continue;
+						}
 
 						return msg.channel.send(await getEmbedData(data, about.body.data.icon_img, msg));
 					}
