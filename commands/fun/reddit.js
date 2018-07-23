@@ -10,6 +10,19 @@ const redditAPI = "https://www.reddit.com";
 const imgurAPI = "https://api.imgur.com/3/";
 const gfycatAPI = "https://api.gfycat.com/v1/gfycats/";
 
+const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str; // will cut the string if it will go over the max
+
+// db.prepare("DROP TABLE IF EXISTS redditposted").run();
+db.prepare(`
+CREATE TABLE IF NOT EXISTS redditposted( 
+	redditposted_id integer PRIMARY KEY, 
+	subreddit_name text NOT NULL, 
+	post_id text NOT NULL,
+	guild_or_user_id integer NOT NULL,
+	time_send datetime NOT NULL)`
+).run(); // redditposted_id is probally not needed
+const dbcheck = db.prepare("SELECT * FROM redditposted WHERE post_id == (?) AND guild_or_user_id == (?)");
+const dbinsert = db.prepare("INSERT INTO redditposted VALUES (?, ?, ?, ?, datetime(?))");
 
 // img endings that can be posted
 function imgEnding(data) {
@@ -45,7 +58,7 @@ async function getEmbedData(data, redditIcon, msg) {
 	const embed = new RichEmbed()
 		.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 		.setAuthor(data.subreddit_name_prefixed, redditIcon ? redditIcon : "" , redditAPI + "/" + data.subreddit_name_prefixed)
-		.setTitle(embedTitle)
+		.setTitle(trim(embedTitle, 256))
 		.setURL(redditAPI + data.permalink)
 		.setFooter(`Karma ${data.score} by u/${data.author}`);
 
@@ -123,14 +136,20 @@ module.exports = class RedditCommand extends Command {
 					prompt: "Either sort the subreddit for `hot`, top`, `new`, `controversial`, `rising`, `no sort` or post a comment",
 					type: "string",
 					default: ""
+				},
+				{
+					key: "number",
+					prompt:"number of times to send a post",
+					type: "integer",
+					default: 1,
 				}
-			] // TODO: wished args are [post x times]
+			]
 
 		});
 	}
 
 	
-	async run(msg, { subreddit, text }) { //TODO: (DB) dont repost // arg loop/post x times // include videos (.webm till it supports it)
+	async run(msg, { subreddit, text, number}) { // arg loop/post x times // include videos (.webm till it supports it)
 		try {		
 			let isReddit;
 			switch (text) { // check if a sort is passed
@@ -147,40 +166,38 @@ module.exports = class RedditCommand extends Command {
 			}
 
 			if(isReddit) { // code for when a subreddit is passed
-				// db.prepare("DROP TABLE IF EXISTS redditposted").run();
-				db.prepare(`
-				CREATE TABLE IF NOT EXISTS redditposted( 
-					redditposted_id integer PRIMARY KEY AUTOINCREMENT, 
-					subreddit_name text NOT NULL, 
-					post_id text NULL,
-					guild_id text,
-					time_send datetime NOT NULL)
-					`
-				).run();
-				db.prepare("DELETE FROM redditposted WHERE time_send < DATETIME('NOW', '-1 day')").run(); // make this work
-				const dbcheck = db.prepare("SELECT * FROM redditposted WHERE post_id == (?)");
-				const dbinsert = db.prepare("INSERT INTO redditposted VALUES (?, ?, ?, ?, datetime(?))");
+				let postCount = 0;
+				db.prepare("DELETE FROM redditposted WHERE time_send < DATETIME('NOW', '-1 day')").run();
 
 				const { body } = await snekfech.get(`${redditAPI}/r/${subreddit}/${text}.json`);
 				const about = await snekfech.get(`${redditAPI}/r/${subreddit}/about.json`);
 				let time_posted = new Date(msg.createdTimestamp);
 				
+				if (number > body.data.children.length) {
+					msg.channel.send(`Your request has been reduced to ${body.data.children.length}`);
+					number = body.data.children.length;
+				}
+
 				for (let i = 0; i < body.data.children.length; i++) {
-					const data = body.data.children[i].data;
+					for (let j = 0; j <= number; j++) {
+						const data = body.data.children[i].data;
 
-					if (checkSuitability(data)) {
-						if (!(!about.body.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
-						if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler) continue; //hope this works like I want it to be
+						if (checkSuitability(data)) {
+							if (!(!about.body.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
+							if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler) continue; //hope this works like I want it to be
 
-						let row = dbcheck.get(data.id); // add guild id to select
-						if(!row) { // 
-							dbinsert.run(null, data.subreddit, data.id, msg.guild ? msg.guild.id : "", time_posted.toISOString());
-						}else {
-							continue;
+							let row = dbcheck.get(data.id, (msg.guild ? msg.guild.id : msg.author.id));
+							if(!row) {
+								dbinsert.run(null, data.subreddit, data.id, (msg.guild ? msg.guild.id : msg.author.id), time_posted.toISOString());
+							}else {
+								continue;
+							}
+
+							msg.channel.send(await getEmbedData(data, about.body.data.icon_img, msg));
+							postCount++;
 						}
-
-						return msg.channel.send(await getEmbedData(data, about.body.data.icon_img, msg));
 					}
+					if (postCount == number) return console.log("succ reddit commad");
 				}
 				return msg.channel.send("Sowwy nyo Images found to post uwu");
 
