@@ -1,10 +1,22 @@
 const fs = require("fs");
 const { workpath , lewdworkpath } = require("./../../config.json");
 const { Command } = require("discord.js-commando");
+const path = require("path");
+const sqlite = require("better-sqlite3");
+const db = new sqlite(path.join(__dirname,"database.sqlite3"));
 
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
 }
+
+// db.prepare("DROP TABLE IF EXISTS trapposts").run();
+db.prepare(`CREATE TABLE IF NOT EXISTS trapposts (
+	trappost_id INTEGER PRIMARY KEY,
+	path TEXT NOT NULL,
+	is_lewd INTEGER NOT NULL,
+	guild_or_user_id NOT NULL)`).run();
+const dbInsert = db.prepare("INSERT INTO trapposts VALUES (?, ?, ?, ?)");
+const getRows = db.prepare("SELECT * FROM trapposts WHERE is_lewd = (?)");
 
 module.exports = class TrapCommand extends Command {
 	constructor(client) {
@@ -13,22 +25,28 @@ module.exports = class TrapCommand extends Command {
 			memberName: "trap",
 			group: "trap",
 			aliases: ["t", "traps"],
-			description: "Posts traps",
+			description: "Posts a Otokonoko picture out of my local Folder.",
 			examples: ["trap", "trap 5", "trap 1 -lewd"],
-			details: "Max. amount of number is `5`. With an `-lewd`, `-l` or `-nsfw` after the number it will post NSFW picture. Posts a picture out of my local Folder. This command was created with the intetion for my daily Trap posting.",
+			details: "Max. amount of number is `5`. With an `-lewd`, `-l` or `-nsfw` after the number it will post NSFW picture. Will (hopefully) not repost in the same server or user DM's, unless I save the same image twice. This command was created with the intetion for my daily Trap posting.",
 			throttling: {
 				usages: 2, // in the time frame
 				duration: 10 // in seconds
 			},
 			guarded: true,
-			guildOnly: true,
 			argCount: 2, // max numbers
 			args: [
 				{
 					key: "number",
 					prompt: "How many trap(s) would you like me to post?",
 					type: "integer",
-					default: 1
+					default: 1,
+					parse: (num, msg) => {
+						if (num > 5) {
+							msg.channel.send("The maximum is 5 per command./nYour request has been reduced to 5");
+							return num = 5;
+						}
+						return num;
+					}
 				},
 				{
 					key: "lewdargs",
@@ -47,44 +65,42 @@ module.exports = class TrapCommand extends Command {
 	}
 
 	run(msg, { number, lewdargs }) {
-		let path;
-		if(lewdargs) {
-			if (!msg.channel.nsfw) return msg.channel.send("Nyo nsfw in sfw channyews (・`m´・)");
-			path = lewdworkpath;
-		} else if (!lewdargs) {
-			path = workpath;
-		}
-		
-		if (!fs.existsSync(path)) return msg.reply("Sowwy, something went wwong ówò");
-		if (number > 5) {
-			msg.channel.send("The maximum is 5 per command.\nYour request has been reduced to 5");
-			number = 5;
-		}
-
-		// check in db
-		let allPics = fs.readdirSync(path).filter(pics => pics.includes("."));
+		let allPics, dbTemp, imgPath, lewdNum;
 		let removed = [];
 
-		for (let i = number; i > 0; i--) {
-			if (!allPics) {
-				//unlock all pics in db
-				return msg.channel.send("Dir Emtpy!, <@146493901803487233>");
-			}
+		if(lewdargs) { // vars for lewd or not lewd
+			if (msg.guild ? !msg.channel.nsfw : false) return msg.channel.send("Nyo nsfw in sfw channyews (・`m´・)");
+			imgPath = lewdworkpath;
+			lewdNum = 1;
+			dbTemp = getRows.all(1);
+		} else if (!lewdargs) {
+			imgPath = workpath;
+			lewdNum = 0;
+			dbTemp = getRows.all(0);
+		}
+		for (let i = 0; i < dbTemp.length; i++) { // get already posted images in an array
+			if ((msg.guild ? msg.guild.id : msg.author.id) == dbTemp[i].guild_or_user_id
+				&& lewdNum == dbTemp[i].is_lewd)
+				removed.push(dbTemp[i].path);
+		}
+		if (!fs.existsSync(imgPath)) return msg.reply("Sowwy, something went wwong ówò (dir not found)");
+		
+		allPics = fs.readdirSync(imgPath).filter(pics => pics.includes(".")); // get all images
+		allPics = allPics.filter(e => !removed.includes(e)); // sort out already posted images
+
+		for (let i = 0; i < number; i++) {
+			if (!allPics.length) return msg.channel.send("thats all, all gone"); // TODO: reset db
+
 			const fileNr = getRandomInt(allPics.length);
 
 			msg.channel.send({
 				files: [{
-					attachment: path + "/" + allPics[fileNr]
+					attachment: imgPath + "/" + allPics[fileNr]
 				}]
-			})
-				.then(removed.push(allPics[fileNr]))
-				.then(allPics.splice(fileNr, 1)) // move to db 
-				.catch((e) => console.error(e))
-				.then(() => {
-					fs.renameSync(path + "/" + removed[0], path + "/../Posted/" + removed[0]);
-					console.log("moved " + removed[0]);
-					removed.splice(0, 1);
-				});		
+			}).catch((e) => console.error(e));
+
+			dbInsert.run(null, allPics[fileNr], lewdNum, msg.guild ? msg.guild.id : msg.author.id);
+			allPics.splice(fileNr, 1); // move to db 
 		}	
 	}
 };
