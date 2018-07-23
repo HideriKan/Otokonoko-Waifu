@@ -7,7 +7,14 @@ const api = "";
 
 //Embed
 const { RichEmbed } = require("discord.js");
-const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str;
+
+//Datebase
+const path = require("path");
+const sqlite = require("better-sqlite3");
+const db = new sqlite(path.join(__dirname,"database.sqlite3"));
+
+//USEFULL
+const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str; // will cut the string if it will go over the max
 
 module.exports = class xCommand extends Command {
 	constructor(client) {
