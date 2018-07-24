@@ -1,4 +1,5 @@
 #own ignores
+Otokonoko Waifu.code-workspace
 config.json
 *.1.*
 database.sqlite3

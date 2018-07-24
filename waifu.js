@@ -1,5 +1,4 @@
 const Commando = require("discord.js-commando");
-const Discord = require("discord.js");
 const { oneLine } = require("common-tags");
 const {
 	prefix,
@@ -18,7 +17,6 @@ const client = new Commando.Client({
 	disableEveryone: true,
 	unknownCommandResponse: false
 });
-client.commands = new Discord.Collection();
 
 client
 	.on("message", async msg => {
@@ -42,11 +40,17 @@ client
 			await msg.react("🅾").catch(console.error);
 		}
 	})
+	.on("guildCreate", ch => ch.send("What can I do for you Master?"))//server join
+	//.on("guildMemberAdd", user => )  // whenever someone join a guild
+	//.on("guildMeberRemove", user => ) // whenever someone leave a guild
+	.on("guildUnavailable", guild => console.log(`guild:${guild.name} unavailable`))
 	.on("ready", () => {
+		console.log("Ready!");
 		client.user.setActivity("Traps (,,help)", {
 			type: "WATCHING"
 		});
 	})
+	.on("degub", console.log)
 	.on("error", console.error)
 	.on("warn", console.warn)
 	.on("commandError", (cmd, err) => {
@@ -79,12 +83,8 @@ client
 			${guild ? `in guild ${guild.name} (${guild.id})` : "globally"}.
 		`);
 	})
-	.on("disconnect", () => {
-		console.warn("Disconnected!");
-	})
-	.on("reconnecting", () => {
-		console.warn("Reconnecting...");
-	});
+	.on("disconnect", () => console.warn("Disconnected!"))
+	.on("reconnecting", () => console.warn("Reconnecting..."));
 
 client.setProvider(
 	sqlite.open(path.join(__dirname, "database.sqlite3")).then(db => new Commando.SQLiteProvider(db))
@@ -98,16 +98,14 @@ client.registry
 		["fun", "Fun/Stupid commands"],
 		["dev", "in-Dev/Dev Commands"]
 	])
-
 	// Registers all built-in groups, commands, and argument types
 	.registerDefaults()
-
 	// Registers all of your commands in the ./commands/ directory
 	.registerCommandsIn(path.join(__dirname, "commands"));
+
+client.login(token);
+// client.login(beta_token);
 
 process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: ", p, "reason: ", reason);
 });
-
-client.login(token);
-// client.login(beta_token);
