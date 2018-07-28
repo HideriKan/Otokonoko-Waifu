@@ -5,7 +5,7 @@ module.exports = class SuggestCommand extends Command {
 		super(client, {
 			name: "suggest",
 			memberName: "suggest",
-			group: "dev",
+			group: "usefull",
 			description: "write a suggestion to me",
 			throttling: {
 				usages: 1, // in the time frame
