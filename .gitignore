@@ -2,6 +2,7 @@
 config.json
 *.1.*
 database.sqlite3
+src/
 
 # Logs
 logs
