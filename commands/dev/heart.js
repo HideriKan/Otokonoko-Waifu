@@ -8,11 +8,12 @@ module.exports = class HeartCommand extends Command {
 			memberName: "h",
 			group: "dev",
 			description: "",
+			aliases: ["h"],
+			ownerOnly: true,
 			throttling: {
 				usages: 1, // in the time frame
 				duration: 3 // in seconds
 			},
-			aliases: ["h"],
 			args: [{
 				key: "id",
 				prompt: "Give me the ID of the Message you want me to remove",
@@ -23,6 +24,6 @@ module.exports = class HeartCommand extends Command {
 	async run(msg, { id }) {
 		msg.delete();
 		const m = await msg.channel.fetchMessage(id);
-		m.react("💖");
+		m.reactions.every(e => m.react(e.emoji));
 	}
 };
