@@ -5,6 +5,7 @@ module.exports = class xCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: "join",
+<<<<<<< HEAD
 			memberName: "join",
 			group: "dev",
 			description: "joins a channel",
@@ -24,3 +25,20 @@ module.exports = class xCommand extends Command {
 		vc.join();
 	}
 };
+=======
+			memberName: "j",
+			group: "dev",
+			description: "Join the Channel",
+			throttling: {
+				usages: 1, // in the time frame
+				duration: 10 // in seconds
+			},
+			aliases: ["j"],
+			examples: [],
+		});
+	}
+	run(msg) {
+		msg.member.voiceChannel.join();
+	}
+};
+>>>>>>> ae7dea75ee52276d8a79e307adb735319c10d8b9
