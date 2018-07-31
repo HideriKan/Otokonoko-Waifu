@@ -56,7 +56,7 @@ async function getEmbedData(data, redditIcon, msg) {
 	let embedTitle = data.title;
 	let embedDes;
 	const embed = new RichEmbed()
-		.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
+		.setColor("#b68a86")
 		.setAuthor(data.subreddit_name_prefixed, redditIcon ? redditIcon : "" , redditAPI + "/" + data.subreddit_name_prefixed)
 		.setTitle(trim(embedTitle, 256))
 		.setURL(redditAPI + data.permalink)

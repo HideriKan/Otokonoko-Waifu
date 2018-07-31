@@ -25,9 +25,9 @@ module.exports = class TrapCommand extends Command {
 			memberName: "trap",
 			group: "trap",
 			aliases: ["t", "traps"],
-			description: "Posts a Otokonoko picture out of my local Folder.",
+			description: "Posts a Otokonoko picture.",
 			examples: ["trap", "trap 5", "trap 1 -lewd"],
-			details: "Max. amount of number is `5`. With an `-lewd`, `-l` or `-nsfw` after the number it will post NSFW picture. Will (hopefully) not repost in the same server or user DM's, unless I save the same image twice. This command was created with the intetion for my daily Trap posting.",
+			details: "Max. amount of number is `5`. With an `-lewd`, `-l` or `-nsfw` after the number it will post NSFW picture. Will (hopefully) not repost in the same server or user DM's. This command was created with the intetion for my daily Trap posting.",
 			throttling: {
 				usages: 2, // in the time frame
 				duration: 10 // in seconds

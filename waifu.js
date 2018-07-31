@@ -39,6 +39,19 @@ client
 			await msg.react("🇼").catch(console.error);
 			await msg.react("🅾").catch(console.error);
 		}
+
+		//some stuid way to notify me
+		if (msg.channel.id == ("315509598440128513" || "311850727809089536")) {
+			if (msg.content.startsWith("$h") ||
+				msg.content.startsWith("$w") ||
+				msg.content.startsWith("$m")) {
+				if (msg.content.startsWith("$mm")) return;
+				if (msg.content.startsWith("$mu")) return;
+				const privatech = client.channels.get("453146268995289108");
+				privatech.send(`<#${msg.channel.id}>roll!`)
+					.then(msg => msg.delete(10000));
+			}
+		}
 	})
 	.on("guildCreate", ch => ch.send("What can I do for you Master?"))//server join
 	//.on("guildMemberAdd", user => )  // whenever someone join a guild
