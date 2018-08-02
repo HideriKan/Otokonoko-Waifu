@@ -8,18 +8,33 @@ const {
 } = require("./config.json");
 const path = require("path");
 const sqlite = require("sqlite");
-// const reaction = new Discord.ReactionEmoji();
+const sqlite3 = require("better-sqlite3");
+const checkdb = new sqlite3(path.join(__dirname, "./commands/dev/database.sqlite3"));
 
 const client = new Commando.Client({
 	commandPrefix: prefix,
 	owner: owner,
 	// invite: "<https://discord.gg/uZAPmRV>",
 	disableEveryone: true,
-	unknownCommandResponse: false
+	unknownCommandResponse: false 
 });
 
 client
 	.on("message", async msg => {
+		//mude bot claim check
+		if (msg.author.id === "432610292342587392") {
+			// if (msg.content.includes("kein")) {
+			let time_posted = new Date(msg.createdTimestamp);
+			console.log("marrie");
+			let married = "💖 **Otokonoko Waifu** and **Kisumi Shigino** are now married! 💖";
+			married = married.match(/\*\*[a-z ]+\*\*/gi); //msg.content
+			let marriedUserName = married[0].substring(2, married[0].length - 2);
+			console.log(marriedUserName);
+
+			checkdb.prepare("INSERT INTO mudaeusers VALUES (?, datetime(?))").run(marriedUserName, time_posted.toISOString());
+			// }
+		}
+
 		// hard couter to a bot :smug:
 		if (msg.author.id === "462878456598888449" && msg.content === "kms") return msg.channel.send("do it");
 		if (msg.author.id === "462878456598888449" && msg.content === "do it") return msg.channel.send("no u");
@@ -49,7 +64,8 @@ client
 				if (msg.content.startsWith("$mu")) return;
 				const privatech = client.channels.get("453146268995289108");
 				privatech.send(`<#${msg.channel.id}>roll!`)
-					.then(msg => msg.delete(10000));
+					.then(msg => msg.delete(10000))
+					.catch(console.err);
 			}
 		}
 	})
