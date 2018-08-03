@@ -23,16 +23,14 @@ client
 	.on("message", async msg => {
 		//mude bot claim check
 		if (msg.author.id === "432610292342587392") {
-			// if (msg.content.includes("kein")) {
-			let time_posted = new Date(msg.createdTimestamp);
-			console.log("marrie");
-			let married = "💖 **Otokonoko Waifu** and **Kisumi Shigino** are now married! 💖";
-			married = married.match(/\*\*[a-z ]+\*\*/gi); //msg.content
-			let marriedUserName = married[0].substring(2, married[0].length - 2);
-			console.log(marriedUserName);
+			if (msg.content.includes("are now married!")) {
+				let time_posted = new Date(msg.createdTimestamp);
+				let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
+				let marriedUserName = married[0].substring(2, married[0].length - 6);
 
-			checkdb.prepare("INSERT INTO mudaeusers VALUES (?, datetime(?))").run(marriedUserName, time_posted.toISOString());
-			// }
+				checkdb.prepare("INSERT INTO mudaeusers VALUES (?, datetime(?))").run(marriedUserName, time_posted.toISOString());
+				console.log(`${marriedUserName} got married`);
+			}
 		}
 
 		// hard couter to a bot :smug:
@@ -56,13 +54,13 @@ client
 		}
 
 		//some stuid way to notify me
-		if (msg.channel.id == ("315509598440128513" || "311850727809089536")) {
+		if (msg.channel.id == ("315509598440128513")) {
 			if (msg.content.startsWith("$h") ||
 				msg.content.startsWith("$w") ||
 				msg.content.startsWith("$m")) {
 				if (msg.content.startsWith("$mm")) return;
 				if (msg.content.startsWith("$mu")) return;
-				const privatech = client.channels.get("453146268995289108");
+				const privatech = client.channels.get("296984061287596032");
 				privatech.send(`<#${msg.channel.id}>roll!`)
 					.then(msg => msg.delete(10000))
 					.catch(console.err);

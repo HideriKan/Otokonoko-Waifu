@@ -208,7 +208,7 @@ module.exports = class RedditCommand extends Command {
 
 				if (checkSuitability(data))  {
 					if (!(!about.body.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
-					if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler) return; //hope this works like I want it to be
+					if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler)  return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
 
 					return msg.channel.send(await getEmbedData(data, about.body.data.icon_img, msg));
 				}
