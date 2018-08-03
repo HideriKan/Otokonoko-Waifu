@@ -29,7 +29,7 @@ client
 			let married = "💖 **Otokonoko Waifu** and **Kisumi Shigino** are now married! 💖";
 			married = married.match(/\*\*[a-z ]+\*\*/gi); //msg.content
 			let marriedUserName = married[0].substring(2, married[0].length - 2);
-			console.log(marriedUserName);
+			
 
 			checkdb.prepare("INSERT INTO mudaeusers VALUES (?, datetime(?))").run(marriedUserName, time_posted.toISOString());
 			// }
