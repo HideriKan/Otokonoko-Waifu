@@ -136,3 +136,21 @@ client.login(token);
 process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: ", p, "reason: ", reason);
 });
+
+
+// time trigger for mudae resets
+let now = new Date();
+
+function nextHour() {
+	let hour = now.getHours();
+	if((hour % 3) === 0) return hour + 3;
+	else if ((hour % 3) === 1) return hour + 2;
+	else if ((hour % 3) === 2) return hour + 1;
+}
+
+let triggerTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), nextHour(), 4, 0, 0)-now;
+setInterval(() => {
+	console.log("mudaeuser table reset");
+	checkdb.prepare("DELETE FROM mudaeusers").run();
+	triggerTime = 10800000000; // 10800000000 are 3 hours
+}, triggerTime);
