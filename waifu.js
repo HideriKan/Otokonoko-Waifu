@@ -24,11 +24,11 @@ client
 		//mude bot claim check
 		if (msg.author.id === "432610292342587392") {
 			if (msg.content.includes("are now married!")) {
-				let time_posted = new Date(msg.createdTimestamp);
+				let time_posted = new Date(msg.createdTimestamp).toISOString();
 				let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
 				let marriedUserName = married[0].substring(2, married[0].length - 6);
 
-				checkdb.prepare("INSERT INTO mudaeusers VALUES (?, datetime(?))").run(marriedUserName, time_posted.toISOString());
+				checkdb.prepare("INSERT INTO mudaeusers VALUES (?, datetime(?))").run(marriedUserName, time_posted);
 				console.log(`${marriedUserName} got married`);
 			}
 		}

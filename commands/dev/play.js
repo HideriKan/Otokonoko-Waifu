@@ -14,13 +14,23 @@ module.exports = class JoinCommand extends Command {
 			},
 			aliases: ["j"],
 			examples: [],
-			details: "Plays something in the Channel you are in"
+			details: "Plays something in the Channel you are in",
+			guildOnly: true
 		});
 	}
 	async run(msg) {
-		msg.member.voiceChannel.join()
-			.then(connection => {
-				connection.playFile("./src/combobreak.mp3");
-			});
+		if (msg.member.voiceChannel) {
+			if (msg.client.voiceConnections.find("id", msg.member.voiceChannel.id)) {
+				const dispatcher = connection.playFile("./src/moetest.mp3");
+			} 
+			else {
+				const connection = await msg.member.voiceChannel.join();
+				const dispatcher = connection.playFile("./src/moetest.mp3");
+				
+			}
+		} else {
+			msg.reply("You need to join a voice channel first!");
+		}
+  
 	}
 };

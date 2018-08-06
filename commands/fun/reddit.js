@@ -171,7 +171,6 @@ module.exports = class RedditCommand extends Command {
 
 				const { body } = await snekfech.get(`${redditAPI}/r/${subreddit}/${text}.json`);
 				const about = await snekfech.get(`${redditAPI}/r/${subreddit}/about.json`);
-				let time_posted = new Date(msg.createdTimestamp);
 				
 				if (number > body.data.children.length) {
 					msg.channel.send(`Your request has been reduced to ${body.data.children.length}`);
@@ -186,9 +185,10 @@ module.exports = class RedditCommand extends Command {
 							if (!(!about.body.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
 							if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler) continue; //hope this works like I want it to be
 
+							let time_posted = new Date(msg.createdTimestamp).toISOString();
 							let row = dbcheck.get(data.id, (msg.guild ? msg.guild.id : msg.author.id));
 							if(!row) {
-								dbinsert.run(null, data.subreddit, data.id, (msg.guild ? msg.guild.id : msg.author.id), time_posted.toISOString());
+								dbinsert.run(null, data.subreddit, data.id, (msg.guild ? msg.guild.id : msg.author.id), time_posted);
 							}else {
 								continue;
 							}
