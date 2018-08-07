@@ -33,10 +33,11 @@ const getusers = db.prepare("SELECT * FROM mudaeusers");
 // aftertemp.forEach(e => {
 // 	afterin.run(e.name, "303648302707245056", e.claimed);
 // });
+db.prepare("DROP TABLE IF EXISTS temp").run();
 
-function ComUser(status, name, userObj, claimed = false) {
+function ComUser(status, member, userObj, claimed = false) {
 	this.status = status;
-	this.name = name;
+	this.member = member;
 	this.user = userObj;
 	this.claimed = claimed ? "✅" : "❌";
 }
@@ -59,19 +60,14 @@ module.exports = class CheckCommand extends Command {
 		});
 	}
 
-	test(msg, userName) {
-		msg.channel.send(userName);
-	}
-
-
 	run(msg) { // if online // if claim is ready
 		let allUsers = [];
 		let dbusers = getusers.all();
 
 		dbusers.forEach(e => {
-			let user = msg.guild.members.find(member => member.user.username == e.name);
+			let member = msg.guild.members.find(member => member.user.id == e.id);
 			let comUser = new ComUser
-			(user.presence.status, e.name, user, e.claimed);
+			(member.user.presence.status, e.id, member, e.claimed);
 			allUsers.push(comUser);
 		});
 
@@ -117,13 +113,13 @@ module.exports = class CheckCommand extends Command {
 			.setFooter("if you want to be in this list do " + msg.client.commandPrefix+"mudae add")
 			;
 		if (online.length != 0)
-			embed.addField("Online", online.map(e => `${e.claimed} ${e.name}`).join("\n"), true);
+			embed.addField("Online", online.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
 		if (idle.length != 0)
-			embed.addField("Idle", idle.map(e => `${e.claimed} ${e.name}`).join("\n"), true);
+			embed.addField("Idle", idle.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
 		if (dnd.length != 0)
-			embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} ${e.name}`).join("\n"), true);
+			embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
 		if (offline.length != 0)
-			embed.addField("Offline", offline.map(e => `${e.claimed} ${e.name}`).join("\n"), true);
+			embed.addField("Offline", offline.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
 			// .setDescription(allUsers.map(e=> e.claimed + " " + e.name).join("\n"));
 
 			// get now

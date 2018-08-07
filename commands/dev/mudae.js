@@ -12,6 +12,10 @@ const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0"
 const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ?");
 const dbclaimed = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE id = ?");
 
+function send(msg,text) {
+	msg.channel.send(text);
+}
+
 module.exports = class MudaeCommand extends Command {
 	constructor(client) {
 		super(client, {
@@ -49,63 +53,73 @@ module.exports = class MudaeCommand extends Command {
 			
 			if (msg.mentions.members.size) {
 				//if anyone got mentioned
-			
+				
+				if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
 				msg.mentions.members.forEach(e => {
 					let check = dbcheck.get(e.user.id);
 					if (check)
-						return msg.channel.send(e.displayName + " is already is the list everyone **BEFORE** this user is now in the list");
+						return send(msg, e.displayName + " is already is the list, everyone **BEFORE** this user is now in the list");
 					dbinsert.run(e.user.id,e.guild.id);
-					return msg.channel.send("added " + e.user.displayName);
+					return send(msg, "added " + e.user.displayName);
 				});
 
 			} else if (text) {
 				// if with any text afterwards is passed
 			
-				let users = text.split(",");
-				users.forEach(e => {
-					if (!msg.guild.members.find("id", text)) return msg.channel.send("noone found with that id on your server");
-					let check = dbcheck.get(text);
-					if (check) return msg.reply("User is already in the list :Wink:");
-					dbinsert.run(e, msg.guild.id);
-					return msg.channel.send("added " + e);
-
-				});
+				if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
+				let member = msg.guild.members.find("id", text);
+				if (!member) return send(msg, "noone found with that id on your server");
+				let check = dbcheck.get(text);
+				if (check) return msg.reply("User(s) is already in the list :Wink:");
+				dbinsert.run(text, msg.guild.id);
+				return send(msg, "added " + member.displayName);
 
 			} else if (!text) {
 				// if only add is passed
 
 				let check = dbcheck.get(msg.author.id);
-				if (check) return msg.reply("You are already in the list :Wink:");
-				dbinsert.run(msg.author.id, msg.guild.it);
-				return msg.channel.send("added " + msg.author.username);
+				if (check) return send(msg, "You are already in the list :Wink:");
+				dbinsert.run(msg.author.id, msg.guild.id);
+				return send(msg, "added " + msg.member.displayName);
 			}
 
 		} else if (method == "remove") {
 			// removes the user from the list
 			if(text) {
+
+				if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
 				dbdel.run(text);
-				return msg.channel.send("donno if it worked but the user maybe got removed " + text);
+				let member = msg.guild.members.find("id", text);
+				if(!member) return send(msg,"This user is not a member of this guild");
+				return send(msg, member.displayName +  " got removed");
 			}
 			dbdel.run(msg.author.id);
-			return msg.channel.send("donno if it worked but you maybe got removed " + text);
+			return send(msg, msg.member.displayName + " got removed from the list");
 
 		} else if (method == "reset") {
 			// sets all users claimed to 0
 
+			if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
 			dbreset.run();
+			send(msg, "List reset");
 		} else if (method == "claimed") {
 			// change the claimed status
 			if (text) {
 				// seaches for the passed userId
-				
+
+				if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
+				let member = msg.guild.members.find("id", text); 
 				let check = dbcheck.get(text);
-				if (check) return msg.channel.send("User not found in List");
+				if (!check) return send(msg, "User not found in List");
 				dbclaimed.run(text);
-			
+				send(msg, member.displayName + " now got a shown claim");
+				
+				
 			} else if (!text) {
 				// just takes the author id
 
 				dbclaimed.run(msg.author.id);
+				send(msg,msg.member.displayName + " now got a shown claim");
 			}
 		}
 	}
