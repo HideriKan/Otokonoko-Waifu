@@ -52,7 +52,7 @@ module.exports = class MudaeCommand extends Command {
 			
 				msg.mentions.members.forEach(e => {
 					let check = dbcheck.get(e.user.id);
-					if (!check)
+					if (check)
 						return msg.channel.send(e.displayName + " is already is the list everyone **BEFORE** this user is now in the list");
 					dbinsert.run(e.user.id,e.guild.id);
 					return msg.channel.send("added " + e.user.displayName);
@@ -65,7 +65,7 @@ module.exports = class MudaeCommand extends Command {
 				users.forEach(e => {
 					if (!msg.guild.members.find("id", text)) return msg.channel.send("noone found with that id on your server");
 					let check = dbcheck.get(text);
-					if (!check) return msg.reply("User is already in the list :Wink:");
+					if (check) return msg.reply("User is already in the list :Wink:");
 					dbinsert.run(e, msg.guild.id);
 					return msg.channel.send("added " + e);
 
@@ -75,7 +75,7 @@ module.exports = class MudaeCommand extends Command {
 				// if only add is passed
 
 				let check = dbcheck.get(msg.author.id);
-				if (!check) return msg.reply("You are already in the list :Wink:");
+				if (check) return msg.reply("You are already in the list :Wink:");
 				dbinsert.run(msg.author.id, msg.guild.it);
 				return msg.channel.send("added " + msg.author.username);
 			}

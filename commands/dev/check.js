@@ -11,14 +11,14 @@ const db = new sqlite3(path.join(__dirname, "database.sqlite3"));
 
 // db.prepare("DROP TABLE IF EXISTS mudaeusers").run();
 db.prepare("CREATE TABLE IF NOT EXISTS mudaeusers("+
-	"id text NOT NULL ,"+
-	"guild_id text NOT NULL"+
+	"id text NOT NULL,"+
+	"guild_id text NOT NULL,"+
 	"claimed integer DEFAULT 1)"
 ).run();
 const getusers = db.prepare("SELECT * FROM mudaeusers");
 
 // first this
-// db.prepare("CREATE TABLE IF NOT EXITS temp"+ 
+// db.prepare("CREATE TABLE IF NOT EXISTS temp("+ 
 // 	"name text NOT NULL ," + 
 // 	"claimed integer DEFAULT 1)"
 // ).run()
@@ -29,7 +29,7 @@ const getusers = db.prepare("SELECT * FROM mudaeusers");
 // });
 // then this
 // const aftertemp = db.prepare("SELECT * FROM temp").all();
-// const afterin = db.prepare("INSERT INTO mudaeusers (?, ?, ?)")
+// const afterin = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, ?)");
 // aftertemp.forEach(e => {
 // 	afterin.run(e.name, "303648302707245056", e.claimed);
 // });
