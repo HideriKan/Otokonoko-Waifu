@@ -6,10 +6,11 @@ const path = require("path");
 const sqlite = require("better-sqlite3");
 const db = new sqlite(path.join(__dirname,"database.sqlite3"));
 
-const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 1)");
+const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 0)");
 const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ?");
 const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0");
 const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ?");
+const dbclaimed = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE id = ?");
 
 module.exports = class MudaeCommand extends Command {
 	constructor(client) {
@@ -92,6 +93,20 @@ module.exports = class MudaeCommand extends Command {
 			// sets all users claimed to 0
 
 			dbreset.run();
+		} else if (method == "claimed") {
+			// change the claimed status
+			if (text) {
+				// seaches for the passed userId
+				
+				let check = dbcheck.get(text);
+				if (check) return msg.channel.send("User not found in List");
+				dbclaimed.run(text);
+			
+			} else if (!text) {
+				// just takes the author id
+
+				dbclaimed.run(msg.author.id);
+			}
 		}
 	}
 };
