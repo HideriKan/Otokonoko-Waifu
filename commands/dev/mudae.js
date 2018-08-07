@@ -6,10 +6,10 @@ const path = require("path");
 const sqlite = require("better-sqlite3");
 const db = new sqlite(path.join(__dirname,"database.sqlite3"));
 
-const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE name = ?");
-const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, 1)");
-const dbdel = db.prepare("DELETE FROM mudaeusers WHERE name = ?");
+const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 1)");
+const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ?");
 const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0");
+const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ?");
 
 module.exports = class MudaeCommand extends Command {
 	constructor(client) {
@@ -18,6 +18,7 @@ module.exports = class MudaeCommand extends Command {
 			memberName: "m",
 			group: "dev",
 			description: "listing command for check",
+			guildOnly: true,
 			throttling: {
 				usages: 1, // in the time frame
 				duration: 5 // in seconds
@@ -42,34 +43,54 @@ module.exports = class MudaeCommand extends Command {
 	}
 
 	run(msg,{method , text}) {
-		if (method == "add") {
-			if (msg.mentions.users.size) {
-				msg.mentions.users.forEach(e => {
-					let check = dbcheck(e.username);
+		if (method == "add") { 
+			// adds user(s) depending with different args
+			
+			if (msg.mentions.members.size) {
+				//if anyone got mentioned
+			
+				msg.mentions.members.forEach(e => {
+					let check = dbcheck.get(e.user.id);
 					if (!check)
-						return msg.channel.send(e.username+ " is already is the list everyone **AFTER** this user is now in the list");
-					dbinsert.run(e.username);
-					return msg.channel.send("everyone got added to the list");
+						return msg.channel.send(e.displayName + " is already is the list everyone **BEFORE** this user is now in the list");
+					dbinsert.run(e.user.id,e.guild.id);
+					return msg.channel.send("added " + e.user.displayName);
 				});
+
 			} else if (text) {
-				if (!msg.guild.members.find("name",text))
-					return msg.channel.send("noone found with that name in your server");
-				let check = dbcheck.all(text);
-				if (!check)
-					return msg.reply("You are already in the list :Wink:");
+				// if with any text afterwards is passed
+			
 				let users = text.split(",");
-				users.forEach(e => dbinsert.run(e) );
+				users.forEach(e => {
+					if (!msg.guild.members.find("id", text)) return msg.channel.send("noone found with that id on your server");
+					let check = dbcheck.get(text);
+					if (!check) return msg.reply("User is already in the list :Wink:");
+					dbinsert.run(e, msg.guild.id);
+					return msg.channel.send("added " + e);
+
+				});
+
 			} else if (!text) {
-				let check = dbcheck.all(msg.author.username);
-				if (!check)
-					return msg.reply("You are already in the list :Wink:");
-				dbinsert.run(msg.author.username);
+				// if only add is passed
+
+				let check = dbcheck.get(msg.author.id);
+				if (!check) return msg.reply("You are already in the list :Wink:");
+				dbinsert.run(msg.author.id, msg.guild.it);
 				return msg.channel.send("added " + msg.author.username);
 			}
+
 		} else if (method == "remove") {
-			dbdel.run(text);
-			return msg.channel.send("donno if it worked but you maybe removed " + text);
+			// removes the user from the list
+			if(text) {
+				dbdel.run(text);
+				return msg.channel.send("donno if it worked but the user maybe got removed " + text);
+			}
+			dbdel.run(msg.author.id);
+			return msg.channel.send("donno if it worked but you maybe got removed " + text);
+
 		} else if (method == "reset") {
+			// sets all users claimed to 0
+
 			dbreset.run();
 		}
 	}

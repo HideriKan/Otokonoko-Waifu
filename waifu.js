@@ -27,7 +27,7 @@ client
 				let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
 				let marriedUserName = married[0].substring(2, married[0].length - 6);
 
-				checkdb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE name = ?").run(marriedUserName);
+				checkdb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(marriedUserName);
 				console.log(`${marriedUserName} got married`);
 			}
 		}

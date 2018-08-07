@@ -11,10 +11,28 @@ const db = new sqlite3(path.join(__dirname, "database.sqlite3"));
 
 // db.prepare("DROP TABLE IF EXISTS mudaeusers").run();
 db.prepare("CREATE TABLE IF NOT EXISTS mudaeusers("+
-	"name text NOT NULL ,"+
+	"id text NOT NULL ,"+
+	"guild_id text NOT NULL"+
 	"claimed integer DEFAULT 1)"
 ).run();
 const getusers = db.prepare("SELECT * FROM mudaeusers");
+
+// first this
+// db.prepare("CREATE TABLE IF NOT EXITS temp"+ 
+// 	"name text NOT NULL ," + 
+// 	"claimed integer DEFAULT 1)"
+// ).run()
+// const tempin = db.prepare("INSERT INTO temp VALUES (?, ?)");
+// const table = db.prepare("SELECT * FROM mudaeusers").all();
+// table.forEach(e => {
+// 	tempin.run(e.name, e.claimed);
+// });
+// then this
+// const aftertemp = db.prepare("SELECT * FROM temp").all();
+// const afterin = db.prepare("INSERT INTO mudaeusers (?, ?, ?)")
+// aftertemp.forEach(e => {
+// 	afterin.run(e.name, "303648302707245056", e.claimed);
+// });
 
 function ComUser(status, name, userObj, claimed = false) {
 	this.status = status;
@@ -22,20 +40,6 @@ function ComUser(status, name, userObj, claimed = false) {
 	this.user = userObj;
 	this.claimed = claimed ? "✅" : "❌";
 }
-
-// function getNow() {
-// 	let now;
-// 	now = new Date();
-// 	return now;
-// }
-
-// function nextHour() {
-// 	let hour = now.getHours();
-// 	if ((hour % 3) === 0) return hour + 3;
-// 	else if ((hour % 3) === 1) return hour + 2;
-// 	else if ((hour % 3) === 2) return hour + 1;
-// }
-// let now = getNow();
 
 module.exports = class CheckCommand extends Command {
 	constructor(client) {
