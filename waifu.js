@@ -139,28 +139,28 @@ process.on("unhandledRejection", (reason, p) => {
 
 // time trigger for mudae resets
 
-function getNow() {
-	let now;
-	now = new Date();
-	return now;
+function getCurrentDate() {
+	return new Date();
 }
+
+function getNextHourInDate() {
+	let now = getCurrentDate();
+	let hour = now.getHours();
+	if((hour % 3) === 0) return hour + 3;
+	else if ((hour % 3) === 1) return hour + 2;
+	else if ((hour % 3) === 2) return hour + 1;
+	return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, 4, 0, 0);
+}
+
+let triggerTime = getNextHourInDate() - getCurrentDate();
+setTimeout(async () => {
+	await sendMsgtoBotCH("mudaeuser reset");
+	checkdb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();
+	triggerTime = getNextHourInDate() - getCurrentDate();
+	await sendMsgtoBotCH("Next Reset in " + triggerTime + "ms");
+}, triggerTime);
 
 async function sendMsgtoBotCH(text) {
 	const botCh = await client.channels.get("311850727809089536");
 	botCh.send(text);
 }
-
-let now = getNow();
-function nextHour() {
-	let hour = now.getHours();
-	if((hour % 3) === 0) return hour + 3;
-	else if ((hour % 3) === 1) return hour + 2;
-	else if ((hour % 3) === 2) return hour + 1;
-}
-
-let triggerTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), nextHour(), 4, 0, 0) - getNow();
-setInterval(() => {
-	sendMsgtoBotCH("mudaeuser reset");
-	checkdb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();
-	triggerTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), nextHour(), 4, 0, 0) - getNow();
-}, triggerTime);
