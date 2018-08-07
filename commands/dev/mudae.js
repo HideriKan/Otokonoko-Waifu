@@ -9,6 +9,7 @@ const db = new sqlite(path.join(__dirname,"database.sqlite3"));
 const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE name = ?");
 const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, 1)");
 const dbdel = db.prepare("DELETE FROM mudaeusers WHERE name = ?");
+const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0");
 
 module.exports = class MudaeCommand extends Command {
 	constructor(client) {
@@ -65,10 +66,11 @@ module.exports = class MudaeCommand extends Command {
 				dbinsert.run(msg.author.username);
 				return msg.channel.send("added " + msg.author.username);
 			}
-		}
-		if (method == "remove") {
+		} else if (method == "remove") {
 			dbdel.run(text);
 			return msg.channel.send("donno if it worked but you maybe removed " + text);
+		} else if (method == "reset") {
+			dbreset.run();
 		}
 	}
 };

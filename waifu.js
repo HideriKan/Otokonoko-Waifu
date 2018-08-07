@@ -161,6 +161,6 @@ function nextHour() {
 let triggerTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), nextHour(), 4, 0, 0) - getNow();
 setInterval(() => {
 	sendMsgtoBotCH("mudaeuser reset");
-	checkdb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE claimed = 1").run();
+	checkdb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();
 	triggerTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), nextHour(), 4, 0, 0) - getNow();
 }, triggerTime);
