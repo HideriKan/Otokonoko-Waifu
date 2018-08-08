@@ -22,15 +22,14 @@ const client = new Commando.Client({
 client
 	.on("message", async msg => {
 		//mude bot claim check
-		if (msg.author.id === "432610292342587392") {
-			if (msg.content.includes("are now married!")) {
-				let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
-				let marriedUserName = married[0].substring(2, married[0].length - 6);
-				let user = msg.guild.members.find( m => m.username == marriedUserName);
-				
-				checkdb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
-				console.log(`${marriedUserName} got married`);
-			}
+		if (msg.author.id === "432610292342587392" && msg.content.includes("are now married!")) {
+			let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
+			let marriedUserName = married[0].substring(2, married[0].length - 6);
+			let user = msg.guild.members.find(m => m.user.username == marriedUserName);
+			
+			checkdb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
+			console.log(`${marriedUserName} got married`);
+			msg.react("💖");
 		}
 
 		// hard couter to a bot :smug:
@@ -60,6 +59,7 @@ client
 				msg.content.startsWith("$m")) {
 				if (msg.content.startsWith("$mm")) return;
 				if (msg.content.startsWith("$mu")) return;
+				
 				const privatech = client.channels.get("296984061287596032");
 				privatech.send(`<#${msg.channel.id}>roll!`)
 					.then(msg => msg.delete(10000))
@@ -72,6 +72,42 @@ client
 	//.on("guildMeberRemove", user => ) // whenever someone leave a guild
 	.on("guildUnavailable", guild => console.log(`guild:${guild.name} unavailable`))
 	.on("ready", () => {
+		// time trigger for mudaeusers resets
+		function getNextResetDateInMs() {
+			let now = new Date();
+			let hour = now.getHours();
+
+			switch (hour % 3) {
+			case 0:
+				if (now.getMinutes() < 5) break;
+				hour += 3;
+				break;
+			case 1:
+				hour += 2;
+				break;
+			case 2:
+				hour += 1;
+				break;
+			}
+
+			let date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, 4, 0, 0);
+			console.log(date - now);
+			return date - now;
+		}
+
+		function resetTable() {
+			client.channels.get("311850727809089536").send("List reset");
+			checkdb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();	
+		}
+
+		function interval() {
+			resetTable();
+			setInterval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
+		}
+
+		setTimeout(interval, getNextResetDateInMs());
+		//end of mudae reset
+
 		console.log("Ready!");
 		client.user.setActivity("Traps (,,help)", {
 			type: "WATCHING"
@@ -136,25 +172,3 @@ client.login(token);
 process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: ", p, "reason: ", reason);
 });
-
-
-// time trigger for mudaeusers resets
-function getNextResetDateInMs() {
-	let now = new Date();
-	let hour = now.getHours();
-	if((hour % 3) === 0) hour + 3;
-	else if ((hour % 3) === 1) hour + 2;
-	else if ((hour % 3) === 2) hour + 1;
-	let date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, 4, 0, 0);
-	return date - now;
-}
-
-
-async function resetTable() {
-	const botCh = await client.channels.get("311850727809089536");
-	botCh.send("List reset");
-	checkdb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();	
-}
-
-const interval = () => setInterval(resetTable, 10800000);
-setTimeout(interval, getNextResetDateInMs());
