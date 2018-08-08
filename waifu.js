@@ -90,8 +90,9 @@ client
 				break;
 			}
 
-			let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour-1, 4, 0, 0);
+			let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
 			console.log(now);
+			console.log(date);
 			console.log(date - now);
 			return date - now;
 		}
