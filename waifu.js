@@ -75,26 +75,27 @@ client
 		// time trigger for mudaeusers resets
 		function getNextResetDateInMs() {
 			let now = new Date();
+			let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
 			let hour = now.getUTCHours();
 
 			switch (hour % 3) {
 			case 0:
-				if (now.getMinutes() < 5) break;
-				hour += 3;
+				hour += 1;
 				break;
 			case 1:
-				hour += 2;
+				if (now.getUTCMinutes() < 5) break;
+				hour += 3;
 				break;
 			case 2:
-				hour += 1;
+				hour += 2;
 				break;
 			}
 
 			let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
-			console.log(now);
+			console.log(UTCNow);
 			console.log(date);
-			console.log(date - now);
-			return date - now;
+			console.log(date - UTCNow);
+			return date - UTCNow;
 		}
 
 		function resetTable() {
