@@ -1,7 +1,7 @@
 replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
-    change help to embed
+	change help to embed
+>update trigger script for linux/windows to update with git
 check / mudae perform check with guild id
-help embed
 check TODOs
 review animalfacts
 review bye
