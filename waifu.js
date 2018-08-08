@@ -75,7 +75,7 @@ client
 		// time trigger for mudaeusers resets
 		function getNextResetDateInMs() {
 			let now = new Date();
-			let hour = now.getHours();
+			let hour = now.getUTCHours();
 
 			switch (hour % 3) {
 			case 0:
@@ -90,7 +90,8 @@ client
 				break;
 			}
 
-			let date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, 4, 0, 0);
+			let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour-1, 4, 0, 0);
+			console.log(now);
 			console.log(date - now);
 			return date - now;
 		}
