@@ -26,8 +26,9 @@ client
 			if (msg.content.includes("are now married!")) {
 				let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
 				let marriedUserName = married[0].substring(2, married[0].length - 6);
-
-				checkdb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(marriedUserName);
+				let user = msg.guild.members.find( m => m.username == marriedUserName);
+				
+				checkdb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
 				console.log(`${marriedUserName} got married`);
 			}
 		}

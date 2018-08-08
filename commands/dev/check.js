@@ -65,7 +65,7 @@ module.exports = class CheckCommand extends Command {
 		let dbusers = getusers.all();
 
 		dbusers.forEach(e => {
-			let member = msg.guild.members.find(member => member.user.id == e.id);
+			let member = msg.guild.members.find(member => member.user.id == e.id); //TODO: change to ("id",e.id)
 			let comUser = new ComUser
 			(member.user.presence.status, e.id, member, e.claimed);
 			allUsers.push(comUser);
