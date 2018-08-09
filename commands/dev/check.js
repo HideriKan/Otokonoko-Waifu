@@ -110,16 +110,16 @@ module.exports = class CheckCommand extends Command {
 		const embed = new RichEmbed()
 			.setTitle("Mudae Claims")
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-			.setFooter("if you want to be in this list do " + msg.client.commandPrefix+"mudae add")
-			;
+			.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add`);
+
 		if (online.length != 0)
 			embed.addField("Online", online.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
+		if (offline.length != 0)
+			embed.addField("Offline", offline.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
 		if (idle.length != 0)
 			embed.addField("Idle", idle.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
 		if (dnd.length != 0)
 			embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
-		if (offline.length != 0)
-			embed.addField("Offline", offline.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
 			// .setDescription(allUsers.map(e=> e.claimed + " " + e.name).join("\n"));
 
 			// get now

@@ -54,7 +54,7 @@ module.exports = class MudaeCommand extends Command {
 			if (msg.mentions.members.size) {
 				//if anyone got mentioned
 				
-				if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
+				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with `@user` is Owner only");
 				msg.mentions.members.forEach(e => {
 					let check = dbcheck.get(e.user.id);
 					if (check)
@@ -66,7 +66,7 @@ module.exports = class MudaeCommand extends Command {
 			} else if (text) {
 				// if with any text afterwards is passed
 			
-				if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
+				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				let member = msg.guild.members.find("id", text);
 				if (!member) return send(msg, "noone found with that id on your server");
 				let check = dbcheck.get(text);
@@ -87,7 +87,7 @@ module.exports = class MudaeCommand extends Command {
 			// removes the user from the list
 			if(text) {
 
-				if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
+				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				dbdel.run(text);
 				let member = msg.guild.members.find("id", text);
 				if(!member) return send(msg,"This user is not a member of this guild");
@@ -107,7 +107,7 @@ module.exports = class MudaeCommand extends Command {
 			if (text) {
 				// seaches for the passed userId
 
-				if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
+				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				let member = msg.guild.members.find("id", text); 
 				let check = dbcheck.get(text);
 				if (!check) return send(msg, "User not found in List");

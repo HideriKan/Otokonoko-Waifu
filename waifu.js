@@ -18,6 +18,7 @@ const client = new Commando.Client({
 	disableEveryone: true,
 	unknownCommandResponse: false 
 });
+let isTimerSet = false;
 
 client
 	.on("message", async msg => {
@@ -67,55 +68,21 @@ client
 			}
 		}
 	})
-	.on("guildCreate", ch => ch.send("What can I do for you Master?"))//server join
-	//.on("guildMemberAdd", user => )  // whenever someone join a guild
-	//.on("guildMeberRemove", user => ) // whenever someone leave a guild
-	.on("guildUnavailable", guild => console.log(`guild:${guild.name} unavailable`))
 	.on("ready", () => {
-		// time trigger for mudaeusers resets
-		function getNextResetDateInMs() {
-			let now = new Date();
-			let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
-			let hour = now.getUTCHours();
-
-			switch (hour % 3) {
-			case 0:
-				hour += 1;
-				break;
-			case 1:
-				if (now.getUTCMinutes() < 5) break;
-				hour += 3;
-				break;
-			case 2:
-				hour += 2;
-				break;
-			}
-
-			let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
-			console.log(UTCNow);
-			console.log(date);
-			console.log(date - UTCNow);
-			return date - UTCNow;
-		}
-
-		function resetTable() {
-			client.channels.get("311850727809089536").send("List reset");
-			checkdb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();	
-		}
-
-		function interval() {
-			resetTable();
-			setInterval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
-		}
-
-		setTimeout(interval, getNextResetDateInMs());
-		//end of mudae reset
+		if (isTimerSet) { // time trigger for mudaeusers resets
+			setTimeout(interval, getNextResetDateInMs());
+			isTimerSet = true;
+		} //end of mudae reset
 
 		console.log("Ready!");
 		client.user.setActivity("Traps (,,help)", {
 			type: "WATCHING"
 		});
 	})
+	.on("guildCreate", ch => ch.send("What can I do for you Master?"))//server join
+	//.on("guildMemberAdd", user => )  // whenever someone join a guild
+	//.on("guildMeberRemove", user => ) // whenever someone leave a guild
+	.on("guildUnavailable", guild => console.log(`guild:${guild.name} unavailable`))
 	.on("degub", console.log)
 	.on("error", console.error)
 	.on("warn", console.warn)
@@ -175,3 +142,38 @@ client.login(token);
 process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: ", p, "reason: ", reason);
 });
+
+function getNextResetDateInMs() {
+	let now = new Date();
+	let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+	let hour = now.getUTCHours();
+
+	switch (hour % 3) {
+	case 0:
+		hour += 1;
+		break;
+	case 1:
+		if (now.getUTCMinutes() < 5) break;
+		hour += 3;
+		break;
+	case 2:
+		hour += 2;
+		break;
+	}
+
+	let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
+	console.log(UTCNow);
+	console.log(date);
+	console.log(date - UTCNow);
+	return date - UTCNow;
+}
+
+function resetTable() {
+	client.channels.get("311850727809089536").send("List reset");
+	checkdb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();	
+}
+
+function interval() {
+	resetTable();
+	setInterval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
+}
