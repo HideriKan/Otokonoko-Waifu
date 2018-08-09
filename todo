@@ -1,4 +1,5 @@
 replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
+<<<<<<< HEAD
     change help to embed
 chech has info till next reset
 check und muade in same file
@@ -12,3 +13,17 @@ review bye
 >add about with github link >add master --> kein is my master and bla
 >>add math
 >>profile presence with steam seach
+=======
+	change help to embed
+>update trigger script for linux/windows to update with git
+check / mudae perform check with guild id
+check TODOs
+review animalfacts
+review bye
+learn how to store in db
+emote details ?; cossserver emote posting
+add about with github link
+add master --> kein is my master and bla
+add math
+profile presence with steam link
+>>>>>>> 2de2584d3b44bf9420bb8d947670fb16876febaf
