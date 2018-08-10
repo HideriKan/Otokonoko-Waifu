@@ -1,3 +1,3 @@
 git fetch --all
 
-git --reset origin/master
+git reset --hard origin/master
