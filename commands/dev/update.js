@@ -26,8 +26,10 @@ module.exports = class UpdateCommand extends Command {
 			bat.stderr.on("data", data => console.log(data.toString()));
 			bat.on("exit", code => {
 				if (!code) {
+					bat.kill();
 					return msg.channel.send(`Update succ *code: ${code}*`);
 				}
+				bat.kill();
 				return msg.channel.send(`Update failed *code: ${code}*`);
 			});
 

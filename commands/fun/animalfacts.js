@@ -20,11 +20,13 @@ module.exports = class AnimalFactsCommand extends Command {
 	}
 	async run(msg) {
 		const {body} = await snekfech.get(`${api}facts/random`);
-		if (!body.type) body.tpye ="Cat";
+
+		if (body.type == undefined) body.tpye ="Cat";
 		const embed = new RichEmbed()
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 			.setTitle(`${body.type} fact!`)
 			.setDescription(body.text);
+
 		return msg.channel.send(embed);
 	}
 };

@@ -8,7 +8,7 @@ module.exports = class RemovemsgCommand extends Command {
 			group: "dev",
 			aliases: ["rmsg"],
 			description: "Deletes a message",
-			examples: ["removemsg 464428306251382796"], // []requireD <>optional
+			examples: ["removemsg 464428306251382796"],
 			throttling: {
 				usages: 1, // in the time frame
 				duration: 3 // in seconds
@@ -25,10 +25,11 @@ module.exports = class RemovemsgCommand extends Command {
 	}
 
 	async run(msg, { id }) {
-		if (!msg.deletable) return msg.reply("I don't have the permission to delete that message"); //still remove own message ?? what
+		if (!msg.deletable) return msg.reply("I don't have the permission to delete that message");
 		msg.delete();
+		
 		const m = await msg.channel.fetchMessage(id);
-		console.log(`deleted "${m.content}"`);
 		m.delete();
+		console.log(`deleted "${m.content}"`);
 	}
 };

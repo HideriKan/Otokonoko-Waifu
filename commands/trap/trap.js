@@ -16,7 +16,8 @@ db.prepare(`CREATE TABLE IF NOT EXISTS trapposts (
 	is_lewd INTEGER NOT NULL,
 	guild_or_user_id NOT NULL)`).run();
 const dbInsert = db.prepare("INSERT INTO trapposts VALUES (?, ?, ?, ?)");
-const getRows = db.prepare("SELECT * FROM trapposts WHERE is_lewd = (?)");
+const getRows = db.prepare("SELECT * FROM trapposts WHERE is_lewd = ?");
+const dbreset = db.prepare("DELETE FROM trapposts WHERE guild_or_user_id = ?");
 
 module.exports = class TrapCommand extends Command {
 	constructor(client) {
@@ -85,11 +86,16 @@ module.exports = class TrapCommand extends Command {
 		}
 		if (!fs.existsSync(imgPath)) return msg.reply("Sowwy, something went wwong ówò (dir not found)");
 		
-		allPics = fs.readdirSync(imgPath).filter(pics => pics.includes(".")); // get all images
-		allPics = allPics.filter(e => !removed.includes(e)); // sort out already posted images
+		allPics = fs.readdirSync(imgPath).filter(pics => pics.includes(".")); // get all images from db
+		allPics = allPics.filter(e => !removed.includes(e)); // sorting out already posted images
 
 		for (let i = 0; i < number; i++) {
-			if (!allPics.length) return msg.channel.send("thats all, all gone"); // TODO: reset db
+			if (!allPics.length) {
+				msg.channel.send("No more Images found, reseting the list!");
+				dbreset.run(msg.guild ? msg.guild.id : msg.author.id);
+				i--;
+				continue;
+			}
 
 			const fileNr = getRandomInt(allPics.length);
 

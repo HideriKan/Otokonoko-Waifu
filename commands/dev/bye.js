@@ -1,5 +1,6 @@
 const { Command } = require("discord.js-commando");
 const { RichEmbed } = require("discord.js");
+
 module.exports = class ByeCommand extends Command {
 	constructor(client) {
 		super(client, {
@@ -12,10 +13,11 @@ module.exports = class ByeCommand extends Command {
 			ownerOnly: true,
 		});
 	}
-	run(msg, agrs) {
+
+	run(msg) {
 		const embed = new RichEmbed()
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-			.setDescription("Good bye. \:wave:")
+			.setDescription("Good bye. 👋")
 			.setTitle("Exit");
 		msg.channel.send(embed) // eslint-disable-line
 			.then(() => process.exit(0));
