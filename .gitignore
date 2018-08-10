@@ -1,9 +1,8 @@
 #own ignores
 Otokonoko Waifu.code-workspace
 config.json
-*.1.*
 database.sqlite3
-src/
+src/dev/
 
 # Logs
 logs
