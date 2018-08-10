@@ -47,7 +47,7 @@ module.exports = class CheckCommand extends Command {
 		super(client, {
 			name: "check",
 			memberName: "c",
-			group: "fun",
+			group: "dev",
 			description: "list the claims of mudae",
 			throttling: {
 				usages: 1, // in the time frame

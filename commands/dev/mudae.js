@@ -21,7 +21,7 @@ module.exports = class MudaeCommand extends Command {
 		super(client, {
 			name: "mudae",
 			memberName: "m",
-			group: "fun",
+			group: "dev",
 			description: "listing command for check",
 			guildOnly: true,
 			throttling: {
