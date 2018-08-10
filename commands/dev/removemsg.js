@@ -13,7 +13,8 @@ module.exports = class RemovemsgCommand extends Command {
 				usages: 1, // in the time frame
 				duration: 3 // in seconds
 			},
-			details: "This command deltes the message with the remove command and the message of the ID. The command needs to be in the same Channel as the Message requested to remove",ownerOnly: true,
+			details: "This command deltes the message with the remove command and the message of the ID. The command needs to be in the same Channel as the Message requested to remove",
+			ownerOnly: true,
 			argsCount: 1,
 			args: [{
 				key: "id",
