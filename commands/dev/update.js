@@ -20,7 +20,7 @@ module.exports = class UpdateCommand extends Command {
 	run(msg) {
 		if (process.platform === "win32") { // windows only
 			const { spawn } = require("child_process");
-			const bat = spawn(__dirname + "/../../src/scripts/my.bat");
+			const bat = spawn(__dirname + `/../../src/scripts/${this.name}.bat`);
 
 			bat.stdout.on("data", data => console.log(data.toString()));
 			bat.stderr.on("data", data => console.log(data.toString()));
@@ -31,6 +31,9 @@ module.exports = class UpdateCommand extends Command {
 				return msg.channel.send(`Update failed *code: ${code}*`);
 			});
 
+		}
+		if (process.platform === "linux") {
+			//... execFile .sh
 		}
 	}
 };
