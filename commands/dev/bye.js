@@ -15,9 +15,9 @@ module.exports = class ByeCommand extends Command {
 	run(msg, agrs) {
 		const embed = new RichEmbed()
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
+			.setDescription("Good bye. \:wave:")
 			.setTitle("Exit");
-		if (agrs !== "Confirm") return msg.channel.send(embed.setDescription("Arborting"));
-		msg.channel.send(embed.setDescription("Good bye. \:wave:")) // eslint-disable-line
+		msg.channel.send(embed) // eslint-disable-line
 			.then(() => process.exit(0));
 	}
 };
