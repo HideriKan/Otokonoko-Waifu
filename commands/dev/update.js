@@ -19,8 +19,8 @@ module.exports = class UpdateCommand extends Command {
 	}
 	run(msg) {
 		if (process.platform === "linux") { // execFile .sh
-			const { execFile } = require("child_process");
-			const sh = execFile(__dirname + `/../../src/scripts/${this.name}.sh`);
+			const { exec } = require("child_process");
+			const sh = exec(__dirname + `/../../src/scripts/${this.name}.sh`);
 
 			sh.stdout.on("data", data => console.log(data.toString()));
 			sh.stderr.on("data", data => console.log(data.toString()));
