@@ -47,7 +47,7 @@ module.exports = class UpdateCommand extends Command {
 
 function outcomeMsg(msg, code) {
 	if (!code) {
-		return msg.channel.send(`Update succ *code: ${code}*`);
+		return msg.channel.send(`Update successful *code: ${code}*`);
 	}
 	return msg.channel.send(`Update failed *code: ${code}*`);
 }
