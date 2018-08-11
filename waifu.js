@@ -180,6 +180,7 @@ function interval() {
 
 //traps
 maindb.prepare("DROP TABLE IF EXISTS traps").run();
+maindb.prepare("DROP TABLE IF EXISTS trapposts").run();
 maindb.prepare("CREATE TABLE IF NOT EXISTS traps ("+
 	"trappost_id INTEGER PRIMARY KEY,"+
 	"path TEXT NOT NULL,"+
@@ -192,6 +193,8 @@ maindb.prepare("DETACH trapposts").run();
 maindb.prepare("ALTER TABLE traps RENAME TO trapposts").run();
 
 //mudae
+maindb.prepare("DROP TABLE IF EXISTS temp").run();
+maindb.prepare("DROP TABLE IF EXISTS mudaeusers").run();
 maindb.prepare("CREATE TABLE IF NOT EXISTS temp("+
 	"id text NOT NULL,"+
 	"guild_id text NOT NULL,"+
