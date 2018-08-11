@@ -25,8 +25,8 @@ module.exports = class UpdateCommand extends Command {
 			sh.stdout.on("data", data => console.log(data.toString()));
 			sh.stderr.on("data", data => console.log(data.toString()));
 			sh.on("exit", code => {
+				outcomeMsg(msg, code);
 				sh.kill();
-				userMsgOutcome(msg, code);
 			});
 			return;
 		} else if (process.platform === "win32") { // windows only
@@ -36,8 +36,8 @@ module.exports = class UpdateCommand extends Command {
 			bat.stdout.on("data", data => console.log(data.toString()));
 			bat.stderr.on("data", data => console.log(data.toString()));
 			bat.on("exit", code => {
+				outcomeMsg(msg, code);
 				bat.kill();
-				userMsgOutcome(msg, code);
 			});
 			return;
 		}
@@ -45,7 +45,7 @@ module.exports = class UpdateCommand extends Command {
 	}
 };
 
-function userMsgOutcome(msg, code) {
+function outcomeMsg(msg, code) {
 	if (!code) {
 		return msg.channel.send(`Update succ *code: ${code}*`);
 	}
