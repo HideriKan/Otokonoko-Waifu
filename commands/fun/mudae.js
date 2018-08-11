@@ -6,11 +6,11 @@ const path = require("path");
 const sqlite = require("better-sqlite3");
 const db = new sqlite(path.join(__dirname,"/../../database.sqlite3"));
 
-const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 0)");
 const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ?");
-const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0");
+const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 0)");
 const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ?");
-const dbclaimed = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE id = ?");
+const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0");
+const dbSetClaim = db.prepare("UPDATE mudaeusers SET claimed = ? WHERE id = ?"); // 1 == has claim; 0 == has no claim;
 
 function send(msg,text) {
 	msg.channel.send(text);
@@ -102,7 +102,7 @@ module.exports = class MudaeCommand extends Command {
 			if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
 			dbreset.run();
 			send(msg, "List reset");
-		} else if (method == "claimed") {
+		} else if (method == "claim") {
 			// change the claimed status
 			if (text) {
 				// seaches for the passed userId
@@ -111,16 +111,36 @@ module.exports = class MudaeCommand extends Command {
 				let member = msg.guild.members.find("id", text); 
 				let check = dbcheck.get(text);
 				if (!check) return send(msg, "User not found in List");
-				dbclaimed.run(text);
-				send(msg, member.displayName + " now got a shown claim");
+				dbSetClaim.run(1, text);
+				send(msg, member.displayName + " now has a claim in the List");
 				
 				
 			} else if (!text) {
 				// just takes the author id
 
-				dbclaimed.run(msg.author.id);
-				send(msg,msg.member.displayName + " now got a shown claim");
+				dbSetClaim.run(1, msg.author.id);
+				send(msg,msg.member.displayName + " now has a claim in the List");
 			}
+		} else if (method == "noclaim") {
+			// change the claimed status
+			if (text) {
+				// seaches for the passed userId
+
+				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
+				let member = msg.guild.members.find("id", text); 
+				let check = dbcheck.get(text);
+				if (!check) return send(msg, "User not found in List");
+				dbSetClaim.run(0, text);
+				send(msg, member.displayName + " now has not a claim in the List");
+				
+				
+			} else if (!text) {
+				// just takes the author id
+
+				dbSetClaim.run(0, msg.author.id);
+				send(msg,msg.member.displayName + " now has not a claim in the List");
+			}
+
 		}
 	}
 };

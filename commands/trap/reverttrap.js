@@ -3,7 +3,7 @@ const { Command } = require("discord.js-commando");
 //Database 
 const path = require("path");
 const sqlite = require("better-sqlite3");
-const db = new sqlite(path.join(__dirname, "database.sqlite3"));
+const db = new sqlite(path.join(__dirname, "/../../database.sqlite3"));
 
 const dbremove = db.prepare("DELETE FROM trapposts WHERE trappost_id = (SELECT MAX(trappost_id) FROM trapposts WHERE guild_or_user_id = (?))");
 
