@@ -23,13 +23,13 @@ module.exports = class AvatarCommand extends Command {
 				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT");
 
 			return msg.channel.send(embed
-				.setTitle("Your Avatar")
+				.setTitle("Here is your Avatar")
 				.setImage(msg.author.avatarURL));
 		}
 
 		msg.mentions.users.forEach(user => {
 			const embed = new RichEmbed()
-				.setTitle(`Avatar of ${user.username}`)
+				.setTitle(`here is the avatar of ${user.username}`)
 				.setImage(user.displayAvatarURL);
 			msg.channel.send(embed);
 		});

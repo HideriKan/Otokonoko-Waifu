@@ -1,5 +1,5 @@
 const { Command } = require("discord.js-commando");
-const Discord = require("discord.js");
+const { RichEmbed } = require("discord.js");
 
 module.exports = class ServerCommand extends Command {
 	constructor(client) {
@@ -14,8 +14,9 @@ module.exports = class ServerCommand extends Command {
 			cooldown: 2,
 		});
 	}
+	
 	run(msg) {
-		const embed = new Discord.RichEmbed()
+		const embed = new RichEmbed()
 			.setColor(msg.guild.me.displayColor)
 			.setTitle(msg.guild.name)
 			.setDescription(msg.guild.memberCount);

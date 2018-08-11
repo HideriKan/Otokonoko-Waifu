@@ -18,7 +18,7 @@ const client = new Commando.Client({
 	disableEveryone: true,
 	unknownCommandResponse: false 
 });
-let isTimerSet = false;
+let isTimerNotSet = true;
 
 client
 	.on("message", async msg => {
@@ -69,9 +69,9 @@ client
 		}
 	})
 	.on("ready", () => {
-		if (isTimerSet) { // time trigger for mudaeusers resets
+		if (isTimerNotSet) { // time trigger for mudaeusers resets
 			setTimeout(interval, getNextResetDateInMs());
-			isTimerSet = true;
+			isTimerNotSet = false;
 		} //end of mudae reset
 
 		console.log("Ready!");

@@ -10,7 +10,7 @@ module.exports = class TrumpCommand extends Command {
 			memberName: "trump",
 			group: "fun",
 			description: "(mabye) Quotes trump",
-			examples: ["trump", "trump name", "trump @user"], // []required <>optional
+			examples: ["trump", "trump name", "trump @user"],
 			throttling: {
 				usages: 1, // in the time frame
 				duration: 3 // in seconds

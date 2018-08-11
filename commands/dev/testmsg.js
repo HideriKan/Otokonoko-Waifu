@@ -1,7 +1,7 @@
 //Base
 const { Command } = require("discord.js-commando");
 
-module.exports = class xCommand extends Command {
+module.exports = class TestMsgCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: "testmsg",
@@ -13,14 +13,6 @@ module.exports = class xCommand extends Command {
 		});
 	}
 	run(msg) {
-		msg.channel.fetchMessage("474881589659041792")
-			.then(mssg =>{
-
-				let married = mssg.content.match(/\*\*[^()]+\*\* and/gi); //msg.content
-				let marriedUserName = married[0].substring(2, married[0].length - 6);
-
-
-				console.log(marriedUserName);
-			});
+		console.log(msg);
 	}
 };
