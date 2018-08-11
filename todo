@@ -1,10 +1,11 @@
 replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
 >update trigger script for linux/windows to update with git
+>claim remove when give
 >chech has info till next reset
 >check und muade in same file
 >check / mudae perform check with guild id
->>help embed
 >check TODOs
+>>help embed
 >>review animalfacts
 >>review bye
 >>emote details ?; cossserver emote posting
