@@ -18,20 +18,7 @@ module.exports = class UpdateCommand extends Command {
 		});
 	}
 	run(msg) {
-		if (process.platform === "win32") { // windows only
-			const { spawn } = require("child_process");
-			const bat = spawn(__dirname + `/../../src/scripts/${this.name}.bat`);
-
-			bat.stdout.on("data", data => console.log(data.toString()));
-			bat.stderr.on("data", data => console.log(data.toString()));
-			bat.on("exit", code => {
-				bat.kill();
-				userMsgOutcome(msg, code);
-			});
-
-		}
-		if (process.platform === "linux") {
-			//... execFile .sh
+		if (process.platform === "linux") { // execFile .sh
 			const { execFile } = require("child_process");
 			const sh = execFile(__dirname + `/../../src/scripts/${this.name}.sh`);
 
@@ -41,7 +28,20 @@ module.exports = class UpdateCommand extends Command {
 				sh.kill();
 				userMsgOutcome(msg, code);
 			});
+			return;
+		} else if (process.platform === "win32") { // windows only
+			const { spawn } = require("child_process");
+			const bat = spawn(__dirname + `/../../src/scripts/${this.name}.bat`);
+
+			bat.stdout.on("data", data => console.log(data.toString()));
+			bat.stderr.on("data", data => console.log(data.toString()));
+			bat.on("exit", code => {
+				bat.kill();
+				userMsgOutcome(msg, code);
+			});
+			return;
 		}
+
 	}
 };
 
