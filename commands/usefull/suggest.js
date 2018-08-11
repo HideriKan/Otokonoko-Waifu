@@ -12,8 +12,7 @@ module.exports = class SuggestCommand extends Command {
 				duration: 5 // in seconds
 			},
 			aliases: [],
-			examples: ["suggest du stinkst"],
-			//details: "yo",
+			details: "Sends the message written after the command to me",
 		});
 	}
 
@@ -24,6 +23,6 @@ module.exports = class SuggestCommand extends Command {
 			console.error(error);
 			return msg.reply("Sowwy, something went wwong ómò");
 		}
-		return msg.channel.send("message was send uwu");
+		return msg.channel.send("message was sent uwu");
 	}
 };
