@@ -7,7 +7,7 @@ const { RichEmbed } = require("discord.js");
 //Datebase
 const path = require("path");
 const sqlite3 = require("better-sqlite3");
-const db = new sqlite3(path.join(__dirname, "database.sqlite3"));
+const db = new sqlite3(path.join(__dirname, "/../../database.sqlite3"));
 
 // db.prepare("DROP TABLE IF EXISTS mudaeusers").run();
 db.prepare("CREATE TABLE IF NOT EXISTS mudaeusers("+
@@ -16,24 +16,6 @@ db.prepare("CREATE TABLE IF NOT EXISTS mudaeusers("+
 	"claimed integer DEFAULT 1)"
 ).run();
 const getusers = db.prepare("SELECT * FROM mudaeusers");
-
-// first this
-// db.prepare("CREATE TABLE IF NOT EXISTS temp("+ 
-// 	"name text NOT NULL ," + 
-// 	"claimed integer DEFAULT 1)"
-// ).run()
-// const tempin = db.prepare("INSERT INTO temp VALUES (?, ?)");
-// const table = db.prepare("SELECT * FROM mudaeusers").all();
-// table.forEach(e => {
-// 	tempin.run(e.name, e.claimed);
-// });
-// then this
-// const aftertemp = db.prepare("SELECT * FROM temp").all();
-// const afterin = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, ?)");
-// aftertemp.forEach(e => {
-// 	afterin.run(e.name, "303648302707245056", e.claimed);
-// });
-db.prepare("DROP TABLE IF EXISTS temp").run();
 
 function ComUser(status, member, userObj, claimed = false) {
 	this.status = status;
@@ -65,9 +47,8 @@ module.exports = class CheckCommand extends Command {
 		let dbusers = getusers.all();
 
 		dbusers.forEach(e => {
-			let member = msg.guild.members.find(member => member.user.id == e.id); //TODO: change to ("id",e.id)
-			let comUser = new ComUser
-			(member.user.presence.status, e.id, member, e.claimed);
+			let member = msg.guild.members.find(member => member.user.id == e.id);
+			let comUser = new ComUser(member.user.presence.status, e.id, member, e.claimed);
 			allUsers.push(comUser);
 		});
 

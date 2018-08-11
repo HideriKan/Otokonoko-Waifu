@@ -2,7 +2,7 @@
 Otokonoko Waifu.code-workspace
 config.json
 database.sqlite3
-src/dev/
+dev/
 
 # Logs
 logs

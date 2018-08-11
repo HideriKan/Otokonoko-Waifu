@@ -4,7 +4,7 @@ const snekfech = require("snekfetch");
 const { imgurClientID } = require("./../../config.json");
 const path = require("path");
 const sqlite = require("better-sqlite3");
-const db = new sqlite(path.join(__dirname,"database.sqlite3"));
+const db = new sqlite(path.join(__dirname,"/../../database.sqlite3"));
 
 const redditAPI = "https://www.reddit.com";
 const imgurAPI = "https://api.imgur.com/3/";

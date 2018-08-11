@@ -3,7 +3,7 @@ const { workpath , lewdworkpath } = require("./../../config.json");
 const { Command } = require("discord.js-commando");
 const path = require("path");
 const sqlite = require("better-sqlite3");
-const db = new sqlite(path.join(__dirname,"database.sqlite3"));
+const db = new sqlite(path.join(__dirname, "/../../database.sqlite3"));
 
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));

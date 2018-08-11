@@ -9,7 +9,7 @@ const {
 const path = require("path");
 const sqlite = require("sqlite");
 const sqlite3 = require("better-sqlite3");
-const checkdb = new sqlite3(path.join(__dirname, "./commands/dev/database.sqlite3"));
+const maindb = new sqlite3(path.join(__dirname, "database.sqlite3"));
 
 const client = new Commando.Client({
 	commandPrefix: prefix,
@@ -28,7 +28,7 @@ client
 			let marriedUserName = married[0].substring(2, married[0].length - 6);
 			let user = msg.guild.members.find(m => m.user.username == marriedUserName);
 			
-			checkdb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
+			maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
 			console.log(`${marriedUserName} got married`);
 			msg.react("💖");
 		}
@@ -170,10 +170,34 @@ function getNextResetDateInMs() {
 
 function resetTable() {
 	client.channels.get("311850727809089536").send("List reset");
-	checkdb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();	
+	maindb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();	
 }
 
 function interval() {
 	resetTable();
 	setInterval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
 }
+
+//traps
+maindb.prepare("DROP TABLE IF EXISTS traps").run();
+maindb.prepare("CREATE TABLE IF NOT EXISTS traps ("+
+	"trappost_id INTEGER PRIMARY KEY,"+
+	"path TEXT NOT NULL,"+
+	"is_lewd INTEGER NOT NULL,"+
+	"guild_or_user_id NOT NULL)"
+).run();
+maindb.prepare("ATTACH './commands/trap/database.sqlite3' AS trapposts").run();
+maindb.prepare("INSERT INTO traps SELECT * FROM trapposts").run();
+maindb.prepare("DETACH trapposts").run();
+maindb.prepare("ALTER TABLE traps RENAME TO trapposts").run();
+
+//mudae
+maindb.prepare("CREATE TABLE IF NOT EXISTS temp("+
+	"id text NOT NULL,"+
+	"guild_id text NOT NULL,"+
+	"claimed integer DEFAULT 1)"
+).run();
+maindb.prepare("ATTACH './commands/fun/database.sqlite3' AS mudaeusers").run();
+maindb.prepare("INSERT INTO temp SELECT * FROM mudaeusers").run();
+maindb.prepare("DETACH mudaeusers").run();
+maindb.prepare("ALTER TABLE temp RENAME TO mudaeusers").run();

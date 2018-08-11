@@ -25,17 +25,29 @@ module.exports = class UpdateCommand extends Command {
 			bat.stdout.on("data", data => console.log(data.toString()));
 			bat.stderr.on("data", data => console.log(data.toString()));
 			bat.on("exit", code => {
-				if (!code) {
-					bat.kill();
-					return msg.channel.send(`Update succ *code: ${code}*`);
-				}
 				bat.kill();
-				return msg.channel.send(`Update failed *code: ${code}*`);
+				userMsgOutcome(msg, code);
 			});
 
 		}
 		if (process.platform === "linux") {
 			//... execFile .sh
+			const { execFile } = require("child_process");
+			const sh = execFile(__dirname + `/../../src/scripts/${this.name}.sh`);
+
+			sh.stdout.on("data", data => console.log(data.toString()));
+			sh.stderr.on("data", data => console.log(data.toString()));
+			sh.on("exit", code => {
+				sh.kill();
+				userMsgOutcome(msg, code);
+			});
 		}
 	}
 };
+
+function userMsgOutcome(msg, code) {
+	if (!code) {
+		return msg.channel.send(`Update succ *code: ${code}*`);
+	}
+	return msg.channel.send(`Update failed *code: ${code}*`);
+}

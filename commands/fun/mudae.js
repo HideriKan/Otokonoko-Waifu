@@ -4,7 +4,7 @@ const { Command } = require("discord.js-commando");
 //Datebase
 const path = require("path");
 const sqlite = require("better-sqlite3");
-const db = new sqlite(path.join(__dirname,"database.sqlite3"));
+const db = new sqlite(path.join(__dirname,"/../../database.sqlite3"));
 
 const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 0)");
 const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ?");
