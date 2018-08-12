@@ -162,14 +162,11 @@ function getNextResetDateInMs() {
 	}
 
 	let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
-	console.log(UTCNow);
-	console.log(date);
-	console.log(date - UTCNow);
 	return date - UTCNow;
 }
 
 function resetTable() {
-	client.channels.get("311850727809089536").send("List reset");
+	client.channels.get("315509598440128513").send("List reset");
 	maindb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();	
 }
 
