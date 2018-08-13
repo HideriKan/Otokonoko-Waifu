@@ -10,9 +10,17 @@ module.exports = class TestMsgCommand extends Command {
 			description:"no",
 			aliases: ["test"],
 			ownerOnly: true,
+			args:[
+				{
+					key:"msgId",
+					prompt:"gimmi msgid",
+					type:"string"
+				}
+			]
 		});
 	}
-	run(msg) {
-		console.log(msg);
+	async run(msg, { msgId }) {
+		const thismsg = await msg.channel.fetchMessage(msgId);
+		console.log(thismsg);
 	}
 };

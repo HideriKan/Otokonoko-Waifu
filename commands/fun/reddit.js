@@ -13,8 +13,7 @@ const gfycatAPI = "https://api.gfycat.com/v1/gfycats/";
 const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str; // will cut the string if it will go over the max
 
 // db.prepare("DROP TABLE IF EXISTS redditposted").run();
-db.prepare(`
-CREATE TABLE IF NOT EXISTS redditposted( 
+db.prepare(`CREATE TABLE IF NOT EXISTS redditposted( 
 	redditposted_id integer PRIMARY KEY, 
 	subreddit_name text NOT NULL, 
 	post_id text NOT NULL,
