@@ -23,14 +23,24 @@ let isTimerNotSet = true;
 client
 	.on("message", async msg => {
 		//mude bot claim check
-		if (msg.author.id === "432610292342587392" && msg.content.includes("are now married!")) {
-			let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
-			let marriedUserName = married[0].substring(2, married[0].length - 6);
-			let user = msg.guild.members.find(m => m.user.username == marriedUserName);
-			
-			maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
-			console.log(`${marriedUserName} got married`);
-			msg.react("💖");
+		if (msg.author.id === "432610292342587392") {
+
+			if (msg.content.includes(" are now married!")) {
+				let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
+				let marriedUserName = married[0].substring(2, married[0].length - 6);
+				let user = msg.guild.members.find(m => m.user.username == marriedUserName);
+
+				maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
+				console.log(`${user.username} got married`);
+				msg.react("💖");
+			} else if (msg.content.includes(" was given to ")){
+				let user = msg.mentions.users.first();
+				
+				maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
+				console.log(`${user.username} got married`);
+				msg.react(":blobaww:357967083960795137");
+			}
+
 		}
 
 		// hard couter to a bot :smug:
