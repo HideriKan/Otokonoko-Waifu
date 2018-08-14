@@ -31,6 +31,7 @@ function ComUser(status, member, userObj, claimed = false) {
 }
 
 function nextRestInTimeString() {
+	const addZero = (element) => element.toString().padStart(2, 0);
 	let now = new Date();
 	let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
 	let hour = now.getUTCHours();
@@ -59,7 +60,7 @@ function nextRestInTimeString() {
 	m = m % 60;
 	h = h % 24;
 
-	return `${h}:${m}:${s}`;
+	return `${addZero(h)}:${addZero(m)}:${addZero(s)}`;
 }
 
 module.exports = class MudaeCommand extends Command {

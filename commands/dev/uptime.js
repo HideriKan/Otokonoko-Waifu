@@ -5,7 +5,9 @@ const { Command } = require("discord.js-commando");
 const { RichEmbed } = require("discord.js");
 
 function msToTimeString(ms) {
+	const addZero = (element) => element.toString().padStart(2, 0);
 	let d, h, m, s;
+
 	s = Math.floor(ms /1000);
 	m = Math.floor(s / 60);
 	s = s % 60;
@@ -13,7 +15,7 @@ function msToTimeString(ms) {
 	m = m % 60;
 	d = Math.floor(h /24);
 	h = h % 24;
-	return `${d}:${h}:${m}:${s}`;
+	return `${addZero(d)}:${addZero(h)}:${addZero(m)}:${addZero(s)}`;
 }
 
 module.exports = class UptimeCommand extends Command {
