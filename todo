@@ -1,5 +1,4 @@
 replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
->claim remove when give
 >check / mudae perform check with guild id
 >check TODOs
 >>help embed

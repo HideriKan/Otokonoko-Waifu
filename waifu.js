@@ -37,7 +37,7 @@ client
 				let user = msg.mentions.users.first();
 				
 				maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
-				console.log(`${user.username} got married`);
+				console.log(`${user.username} got given a char`);
 				msg.react(":blobaww:357967083960795137");
 			}
 

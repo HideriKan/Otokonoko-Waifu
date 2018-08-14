@@ -19,7 +19,8 @@ module.exports = class TrumpCommand extends Command {
 			args:[{
 				key: "name",
 				prompt: "",
-				type: "string"
+				type: "string",
+				default: ""
 			}],
 		});
 	}
