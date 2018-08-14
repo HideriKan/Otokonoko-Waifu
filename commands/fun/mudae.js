@@ -1,6 +1,8 @@
 //Base
 const { Command } = require("discord.js-commando");
 const { RichEmbed } = require("discord.js");
+const trim = (str, max = 18) => (str.length > max) ? `${str.slice(0, max-3)}...` : str; // will cut the string if it will go over the max
+
 //Datebase
 const path = require("path");
 const sqlite = require("better-sqlite3");
@@ -155,19 +157,13 @@ module.exports = class MudaeCommand extends Command {
 				.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add | next reset is in ${nextRestInTimeString()}`);
 	
 			if (online.length != 0)
-				embed.addField("Online", online.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
+				embed.addField("Online", online.map(e => `${e.claimed} ${trim(e.user.displayName)}`).join("\n"), true);
 			if (offline.length != 0)
-				embed.addField("Offline", offline.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
+				embed.addField("Offline", offline.map(e => `${e.claimed} ${trim(e.user.displayName)}`).join("\n"), true);
 			if (idle.length != 0)
-				embed.addField("Idle", idle.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
+				embed.addField("Idle", idle.map(e => `${e.claimed} ${trim(e.user.displayName)}`).join("\n"), true);
 			if (dnd.length != 0)
-				embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} ${e.user.displayName}`).join("\n"), true);
-				// .setDescription(allUsers.map(e=> e.claimed + " " + e.name).join("\n"));
-	
-				// get now
-				// get next reset
-				// get time left till next reset
-				// now - nextR
+				embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} ${trim(e.user.displayName)}`).join("\n"), true);
 	
 			msg.channel.send(embed);
 	
