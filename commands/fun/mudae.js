@@ -81,7 +81,7 @@ module.exports = class MudaeCommand extends Command {
 			},
 			aliases: ["m", "mu", "c"],
 			details: "List all users that got added to the list from the mudae add command. Can also perform a method `add`, `remove`, `claim`, `noclaim` or `reset` all can be used by the normal user except reset",
-			ownerOnly:true,
+			// ownerOnly:true,
 			args:[
 				{
 					key: "method",
