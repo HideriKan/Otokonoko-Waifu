@@ -16,7 +16,7 @@ const client = new Commando.Client({
 	owner: owner,
 	// invite: "<https://discord.gg/uZAPmRV>",
 	disableEveryone: true,
-	unknownCommandResponse: false 
+	unknownCommandResponse: false
 });
 let isTimerNotSet = true;
 
@@ -28,14 +28,14 @@ client
 			if (msg.content.includes(" are now married!")) {
 				let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
 				let marriedUserName = married[0].substring(2, married[0].length - 6);
-				let user = msg.guild.members.find(m => m.user.username == marriedUserName);
+				let member = msg.guild.members.find(m => m.user.username == marriedUserName);
 
-				maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
-				console.log(`${user.username} got married`);
+				maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(member.id);
+				console.log(`${member.user.username} got married`);
 				msg.react("💖");
 			} else if (msg.content.includes(" was given to ")){
 				let user = msg.mentions.users.first();
-				
+
 				maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
 				console.log(`${user.username} got given a char`);
 				msg.react(":blobaww:357967083960795137");
@@ -50,8 +50,8 @@ client
 		// owo reatction cuz we both love traps
 		if (msg.content.toLocaleLowerCase().includes("trap")) {
 			if (msg.guild) { // seaches the guilds emotes for a owo
-				const emote = msg.guild.emojis.find(emote => { 
-					return emote.name.toLocaleLowerCase().includes("owo"); 
+				const emote = msg.guild.emojis.find(emote => {
+					return emote.name.toLocaleLowerCase().includes("owo");
 				});
 				if (emote) {
 					return msg.react(emote);
@@ -70,7 +70,7 @@ client
 				msg.content.startsWith("$m")) {
 				if (msg.content.startsWith("$mm")) return;
 				if (msg.content.startsWith("$mu")) return;
-				
+
 				const privatech = client.channels.get("296984061287596032");
 				privatech.send(`<#${msg.channel.id}>roll!`)
 					.then(msg => msg.delete(10000))
@@ -177,7 +177,7 @@ function getNextResetDateInMs() {
 
 function resetTable() {
 	client.channels.get("315509598440128513").send("List reset");
-	maindb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();	
+	maindb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();
 }
 
 function interval() {

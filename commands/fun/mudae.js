@@ -1,7 +1,7 @@
 //Base
 const { Command } = require("discord.js-commando");
 const { RichEmbed } = require("discord.js");
-const trim = (str, max = 18) => (str.length > max) ? `${str.slice(0, max-3)}...` : str; // will cut the string if it will go over the max
+const trim = (str, max = 22) => (str.length > max) ? `${str.slice(0, max-3)}...` : str;
 
 //Datebase
 const path = require("path");
@@ -25,11 +25,13 @@ function send(msg,text) {
 	msg.channel.send(text);
 }
 
-function ComUser(status, member, userObj, claimed = false) {
+function ComUser(status, memberObj, hasClaim = false) {
+	let memberDisplayName = memberObj.displayName.toString().replace(/([\uE000-\uF8FF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF])/g, "");
+	if (!memberDisplayName) memberDisplayName = "guyWithOnlyEmotes";
 	this.status = status;
-	this.member = member;
-	this.user = userObj;
-	this.claimed = claimed ? "✅" : "❌";
+	this.member = memberObj;
+	this.memberDisplayName = memberDisplayName;
+	this.claimed = hasClaim ? "✅" : "❌";
 }
 
 function nextRestInTimeString() {
@@ -79,7 +81,7 @@ module.exports = class MudaeCommand extends Command {
 			},
 			aliases: ["m", "mu", "c"],
 			details: "List all users that got added to the list from the mudae add command. Can also perform a method `add`, `remove`, `claim`, `noclaim` or `reset` all can be used by the normal user except reset",
-			// ownerOnly:true,
+			ownerOnly:true,
 			args:[
 				{
 					key: "method",
@@ -108,38 +110,38 @@ module.exports = class MudaeCommand extends Command {
 		if (method == "") {
 			let allUsers = [];
 			let dbusers = getusers.all();
-	
+
 			dbusers.forEach(e => {
 				let member = msg.guild.members.find(member => member.user.id == e.id);
-				let comUser = new ComUser(member.user.presence.status, e.id, member, e.claimed);
+				let comUser = new ComUser(member.user.presence.status, member, e.claimed);
 				allUsers.push(comUser);
 			});
-	
+
 			let local = "en";
 			try {
-				allUsers.sort((a, b) => { // need fix with special chars z.b. ß
-					if (a.user.hoistRole && b.user.hoistRole) {
-						if (a.user.hoistRole.calculatedPosition > b.user.hoistRole.calculatedPosition) {
+				allUsers.sort((a, b) => {
+					if (a.member.hoistRole && b.member.hoistRole) {
+						if (a.member.hoistRole.calculatedPosition > b.member.hoistRole.calculatedPosition) {
 							return -1;
-						} else if (a.user.hoistRole.calculatedPosition < b.user.hoistRole.calculatedPosition) {
+						} else if (a.member.hoistRole.calculatedPosition < b.member.hoistRole.calculatedPosition) {
 							return 1;
-						} else if (a.user.hoistRole.calculatedPosition == b.user.hoistRole.calculatedPosition) {
-							return a.user.displayName.localeCompare(b.user.displayName, local, {sensitivity: "case"});
-						} else if (a.user.hoistRole) {
+						} else if (a.member.hoistRole.calculatedPosition == b.member.hoistRole.calculatedPosition) {
+							return a.member.displayName.localeCompare(b.member.displayName, local, {sensitivity: "case"});
+						} else if (a.member.hoistRole) {
 							return -1;
-						} else if (b.user.hoistRole) {
+						} else if (b.member.hoistRole) {
 							return 1;
 						}
 					} else {
-						return a.user.displayName.localeCompare(b.user.displayName, local, {sensitivity: "case"});
+						return a.member.displayName.localeCompare(b.member.displayName, local, {sensitivity: "case"});
 					}
 					return 0;
-				}); //TODO: sort by order of memberlist
-		
+				});
+
 			} catch (error) {
 				console.error(error);
 			}
-	
+
 			let online = [],
 				offline = [],
 				idle = [],
@@ -150,29 +152,29 @@ module.exports = class MudaeCommand extends Command {
 				if (e.status == "idle") idle.push(e);
 				if (e.status == "dnd") dnd.push(e);
 			});
-	
+
 			const embed = new RichEmbed()
 				.setTitle("Mudae Claims")
 				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 				.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add | next reset is in ${nextRestInTimeString()}`);
-	
+
 			if (online.length != 0)
-				embed.addField("Online", online.map(e => `${e.claimed} ${trim(e.user.displayName)}`).join("\n"), true);
+				embed.addField("Online", online.map(e => `${e.claimed} \`${trim(e.memberDisplayName)}\``).join("\n"), true);
 			if (offline.length != 0)
-				embed.addField("Offline", offline.map(e => `${e.claimed} ${trim(e.user.displayName)}`).join("\n"), true);
+				embed.addField("Offline", offline.map(e => `${e.claimed} \`${trim(e.memberDisplayName)}\``).join("\n"), true);
 			if (idle.length != 0)
-				embed.addField("Idle", idle.map(e => `${e.claimed} ${trim(e.user.displayName)}`).join("\n"), true);
+				embed.addField("Idle", idle.map(e => `${e.claimed} \`${trim(e.memberDisplayName)}\``).join("\n"), true);
 			if (dnd.length != 0)
-				embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} ${trim(e.user.displayName)}`).join("\n"), true);
-	
+				embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} \`${trim(e.memberDisplayName)}\``).join("\n"), true);
+
 			msg.channel.send(embed);
-	
-		} else if (method == "add") { 
-			// adds user(s) depending with different args
-			
+
+		// adds user(s) depending with different args
+		} else if (method == "add") {
+
+			//if anyone got mentioned
 			if (msg.mentions.members.size) {
-				//if anyone got mentioned
-				
+
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with `@user` is Owner only");
 				msg.mentions.members.forEach(e => {
 					let check = dbcheck.get(e.user.id);
@@ -182,9 +184,9 @@ module.exports = class MudaeCommand extends Command {
 					return send(msg, "added " + e.user.displayName);
 				});
 
+			// if with any text afterwards is passed
 			} else if (text) {
-				// if with any text afterwards is passed
-			
+
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				let member = msg.guild.members.find("id", text);
 				if (!member) return send(msg, "noone found with that id on your server");
@@ -193,8 +195,8 @@ module.exports = class MudaeCommand extends Command {
 				dbinsert.run(text, msg.guild.id);
 				return send(msg, "added " + member.displayName);
 
+			// if only add is passed
 			} else if (!text) {
-				// if only add is passed
 
 				let check = dbcheck.get(msg.author.id);
 				if (check) return send(msg, "You are already in the list :Wink:");
@@ -202,8 +204,8 @@ module.exports = class MudaeCommand extends Command {
 				return send(msg, "added " + msg.member.displayName);
 			}
 
+		// removes the user from the list
 		} else if (method == "remove") {
-			// removes the user from the list
 			if(text) {
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
@@ -215,46 +217,47 @@ module.exports = class MudaeCommand extends Command {
 			dbdel.run(msg.author.id);
 			return send(msg, msg.member.displayName + " got removed from the list");
 
+		// sets all users claimed to 0
 		} else if (method == "reset") {
-			// sets all users claimed to 0
 
 			if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
 			dbreset.run();
 			send(msg, "List reset");
-		} else if (method == "claim") {
+
 			// change the claimed status
+		} else if (method == "claim") {
+			// seaches for the passed userId
 			if (text) {
-				// seaches for the passed userId
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
-				let member = msg.guild.members.find("id", text); 
+				let member = msg.guild.members.find("id", text);
 				let check = dbcheck.get(text);
 				if (!check) return send(msg, "User not found in List");
 				dbSetClaim.run(1, text);
 				send(msg, member.displayName + " now has a claim in the List");
-				
-				
+
+
+			// just takes the author id
 			} else if (!text) {
-				// just takes the author id
 
 				dbSetClaim.run(1, msg.author.id);
 				send(msg,msg.member.displayName + " now has a claim in the List");
 			}
+		// change the claimed status
 		} else if (method == "noclaim") {
-			// change the claimed status
+			// seaches for the passed userId
 			if (text) {
-				// seaches for the passed userId
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
-				let member = msg.guild.members.find("id", text); 
+				let member = msg.guild.members.find("id", text);
 				let check = dbcheck.get(text);
 				if (!check) return send(msg, "User not found in List");
-				
+
 				dbSetClaim.run(0, text);
 				send(msg, member.displayName + " now has not a claim in the List");
 
+			// just takes the author id
 			} else if (!text) {
-				// just takes the author id
 
 				dbSetClaim.run(0, msg.author.id);
 				send(msg,msg.member.displayName + " now has not a claim in the List");
