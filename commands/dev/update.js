@@ -20,7 +20,7 @@ module.exports = class UpdateCommand extends Command {
 	run(msg) {
 		if (process.platform === "linux") { // execFile .sh
 			const { exec } = require("child_process");
-			const sh = exec(__dirname + `/../../src/scripts/${this.name}.sh`);
+			const sh = exec(__dirname + `/../../../${this.name}.sh`);
 
 			sh.stdout.on("data", data => console.log(data.toString()));
 			sh.stderr.on("data", data => console.log(data.toString()));
@@ -46,8 +46,9 @@ module.exports = class UpdateCommand extends Command {
 };
 
 function outcomeMsg(msg, code) {
+	if (code == 0)
+		return msg.channel.send(`Update failed *code: ${code}*`);
 	if (!code) {
 		return msg.channel.send(`Update successful *code: ${code}*`);
 	}
-	return msg.channel.send(`Update failed *code: ${code}*`);
 }
