@@ -80,7 +80,7 @@ function sendMsgintoPritaveCh(msg) {
 client
 	.on("message", async msg => {
 		//mude bot claim check
-		if (msg.author.id === ("432610292342587392" && "479206206725160960")) muedaeObserver(msg);
+		if (msg.author.id === ("432610292342587392" || "479206206725160960")) muedaeObserver(msg);
 
 		// hard couter to a bot :smug:
 		if (msg.author.id === "462878456598888449" && msg.content === "kms") return msg.channel.send("do it");
