@@ -20,63 +20,77 @@ const client = new Commando.Client({
 });
 let isTimerNotSet = true;
 
+function resetTable() {
+	client.channels.get("315509598440128513").send("List reset");
+	maindb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();
+}
+
+function interval() {
+	resetTable();
+	setInterval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
+}
+
+function muedaeObserver(msg) {
+	if (msg.content.includes(" are now married!")) {
+		let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
+		let marriedUserName = married[0].substring(2, married[0].length - 6);
+		let member = msg.guild.members.find(m => m.user.username == marriedUserName);
+
+		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(member.id);
+		console.log(`${member.user.username} got married`);
+		msg.react("💖");
+	} else if (msg.content.includes(" was given to ")){
+		let user = msg.mentions.users.first();
+
+		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
+		console.log(`${user.username} got given a char`);
+		msg.react(":blobaww:357967083960795137");
+	}
+}
+
+async function owoReact(msg) {
+	if (msg.guild) { // seaches the guilds emotes for a owo
+		const emote = msg.guild.emojis.find(emote => {
+			return emote.name.toLocaleLowerCase().includes("owo");
+		});
+		if (emote) {
+			return msg.react(emote);
+		}
+	}
+	// fallback for then no owo emote is in the guild
+	await msg.react("🇴").catch(console.error);
+	await msg.react("🇼").catch(console.error);
+	await msg.react("🅾").catch(console.error);
+}
+
+function sendMsgintoPritaveCh(msg) {
+	if (msg.content.startsWith("$h") ||
+		msg.content.startsWith("$w") ||
+		msg.content.startsWith("$m")) {
+		if (msg.content.startsWith("$mm")) return;
+		if (msg.content.startsWith("$mu")) return;
+
+		const privatech = client.channels.get("296984061287596032");
+		privatech.send(`<#${msg.channel.id}>roll!`)
+			.then(msg => msg.delete(10000))
+			.catch(console.err);
+	}
+}
+
 client
 	.on("message", async msg => {
 		//mude bot claim check
-		if (msg.author.id === "432610292342587392") {
-
-			if (msg.content.includes(" are now married!")) {
-				let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
-				let marriedUserName = married[0].substring(2, married[0].length - 6);
-				let member = msg.guild.members.find(m => m.user.username == marriedUserName);
-
-				maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(member.id);
-				console.log(`${member.user.username} got married`);
-				msg.react("💖");
-			} else if (msg.content.includes(" was given to ")){
-				let user = msg.mentions.users.first();
-
-				maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
-				console.log(`${user.username} got given a char`);
-				msg.react(":blobaww:357967083960795137");
-			}
-
-		}
+		if (msg.author.id === ("432610292342587392" && "479206206725160960")) muedaeObserver(msg);
 
 		// hard couter to a bot :smug:
 		if (msg.author.id === "462878456598888449" && msg.content === "kms") return msg.channel.send("do it");
 		if (msg.author.id === "462878456598888449" && msg.content === "do it") return msg.channel.send("no u");
 
 		// owo reatction cuz we both love traps
-		if (msg.content.toLocaleLowerCase().includes("trap")) {
-			if (msg.guild) { // seaches the guilds emotes for a owo
-				const emote = msg.guild.emojis.find(emote => {
-					return emote.name.toLocaleLowerCase().includes("owo");
-				});
-				if (emote) {
-					return msg.react(emote);
-				}
-			}
-			// fallback for then no owo emote is in the guild
-			await msg.react("🇴").catch(console.error);
-			await msg.react("🇼").catch(console.error);
-			await msg.react("🅾").catch(console.error);
-		}
+		if (msg.content.toLocaleLowerCase().includes("trap")) owoReact(msg);
 
 		//some stuid way to notify me
-		if (msg.channel.id == ("315509598440128513")) {
-			if (msg.content.startsWith("$h") ||
-				msg.content.startsWith("$w") ||
-				msg.content.startsWith("$m")) {
-				if (msg.content.startsWith("$mm")) return;
-				if (msg.content.startsWith("$mu")) return;
-
-				const privatech = client.channels.get("296984061287596032");
-				privatech.send(`<#${msg.channel.id}>roll!`)
-					.then(msg => msg.delete(10000))
-					.catch(console.err);
-			}
-		}
+		if (msg.channel.id == ("315509598440128513")) sendMsgintoPritaveCh(msg);
 	})
 	.on("ready", () => {
 		if (isTimerNotSet) { // time trigger for mudaeusers resets
@@ -173,14 +187,4 @@ function getNextResetDateInMs() {
 
 	let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
 	return date - UTCNow;
-}
-
-function resetTable() {
-	client.channels.get("315509598440128513").send("List reset");
-	maindb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();
-}
-
-function interval() {
-	resetTable();
-	setInterval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
 }

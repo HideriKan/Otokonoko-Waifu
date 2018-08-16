@@ -178,8 +178,13 @@ module.exports = class MudaeCommand extends Command {
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with `@user` is Owner only");
 				msg.mentions.members.forEach(e => {
 					let check = dbcheck.get(e.user.id);
-					if (check)
-						return send(msg, e.displayName + " is already is the list, everyone **BEFORE** this user is now in the list");
+
+					if (check) {
+						if (msg.mentions.members.size() == 1)
+							return send(msg, e.displayName + " is already in the List");
+						return send(msg, e.displayName + " is already in the List, everyone **BEFORE** this user is now in the list");
+					}
+
 					dbinsert.run(e.user.id,e.guild.id);
 					return send(msg, "added " + e.user.displayName);
 				});
