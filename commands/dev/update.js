@@ -23,6 +23,7 @@ module.exports = class UpdateCommand extends Command {
 	async run(msg) {
 		const upEmbed = new RichEmbed()
 			.setTitle("Updating")
+			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 			.setDescription("📡 Updating...")
 		;
 
@@ -52,12 +53,12 @@ async function outcomeMsg(upMsg, code, signal, child) {
 	const embed = new RichEmbed(upMsg.embeds[0]);
 	switch (code) {
 	case 0:
-		embed.setDescription(`☑ | Update successful\n **${signal}**`).setFooter(`code: ${code}`);
+		embed.setDescription("☑ | Update successful").setFooter(`code: ${code}`);
 		await upMsg.edit(embed);
 		child.kill();
 		return;
 	default:
-		embed.setDescription(`💢 | Update failed\n ${signal}`).setFooter(`code: ${code}`);
+		embed.setDescription("💢 | Update failed").setFooter(`code: ${code}`);
 		await upMsg.edit(embed);
 		child.kill();
 		return ;

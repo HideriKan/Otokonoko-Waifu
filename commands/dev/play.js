@@ -21,17 +21,18 @@ module.exports = class JoinCommand extends Command {
 	async run(msg) {
 		if (msg.member.voiceChannel) {
 			if (msg.guild.voiceConnections.find("id", msg.member.voiceChannel.id)) {
+
 				const dispatcher = msg.guild.voiceConnection.playFile("./src/moetest.mp3");
-				
+
 				dispatcher.on("end", reason => {
 					console.log(reason);
 					msg.channel.send("the song has ended");
 				});
-			} 
+			}
 			else {
 				const connection = await msg.member.voiceChannel.join();
 				const dispatcher = connection.playFile("./src/moetest.mp3");
-				
+
 				dispatcher.on("end", reason => {
 					console.log(reason);
 					msg.channel.send("the song has ended");
@@ -40,6 +41,6 @@ module.exports = class JoinCommand extends Command {
 		} else {
 			msg.reply("You need to join a voice channel first!");
 		}
-  
+
 	}
 };
