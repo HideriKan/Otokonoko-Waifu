@@ -3,7 +3,10 @@ const { Command } = require("discord.js-commando");
 // const path = require("path");
 
 //Embed
-// const { RichEmbed } = require("discord.js");
+const { RichEmbed } = require("discord.js");
+
+const isLunix = process.platform === "linux";
+const isWin = process.platform === "win32";
 
 module.exports = class UpdateCommand extends Command {
 	constructor(client) {
@@ -17,37 +20,45 @@ module.exports = class UpdateCommand extends Command {
 			ownerOnly: true,
 		});
 	}
-	run(msg) {
-		if (process.platform === "linux") { // execFile .sh
+	async run(msg) {
+		const upEmbed = new RichEmbed()
+			.setTitle("Updating")
+			.setDescription("🔄 Updating...")
+		;
+
+		let upMsg = await msg.cahnnel.send(upEmbed);
+		if (isLunix) { // execFile .sh
 			const { exec } = require("child_process");
 			const sh = exec(__dirname + `/../../../${this.name}.sh`);
 
 			sh.stdout.on("data", data => console.log(data.toString()));
 			sh.stderr.on("data", data => console.log(data.toString()));
-			sh.on("exit", async code => {
-				await outcomeMsg(msg, code);
-				sh.kill();
-			});
+			sh.on("exit", async code => await outcomeMsg(msg, upMsg, code, sh));
 			return;
-		} else if (process.platform === "win32") { // windows only
+		} else if (isWin) { // windows only
 			const { spawn } = require("child_process");
 			const bat = spawn(__dirname + `/../../src/scripts/${this.name}.bat`);
 
 			bat.stdout.on("data", data => console.log(data.toString()));
 			bat.stderr.on("data", data => console.log(data.toString()));
-			bat.on("exit", async code => {
-				await outcomeMsg(msg, code);
-				bat.kill();
-			});
+			bat.on("exit", async code => await outcomeMsg(msg, upMsg, code, bat));
 			return;
 		}
 
 	}
 };
 
-function outcomeMsg(msg, code) {
-	if (code == 0)
-		return msg.channel.send(`Update successful *code: ${code}*`);
-	if (code > 0)
-		return msg.channel.send(`Update failed *code: ${code}*`);
+async function outcomeMsg(msg, embed, code, child) {
+	switch (code) {
+	case 0:
+		embed.setDescription(`📥 Update successful *code: ${code}*`);
+		await msg.channel.send(embed);
+		child.kill();
+		return;
+	default:
+		embed.setDescription(`⚠ Update failed *code: ${code}*`);
+		await msg.channel.send(embed);
+		child.kill();
+		return ;
+	}
 }
