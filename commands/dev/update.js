@@ -24,8 +24,8 @@ module.exports = class UpdateCommand extends Command {
 
 			sh.stdout.on("data", data => console.log(data.toString()));
 			sh.stderr.on("data", data => console.log(data.toString()));
-			sh.on("exit", code => {
-				outcomeMsg(msg, code);
+			sh.on("exit", async code => {
+				await outcomeMsg(msg, code);
 				sh.kill();
 			});
 			return;
@@ -35,8 +35,8 @@ module.exports = class UpdateCommand extends Command {
 
 			bat.stdout.on("data", data => console.log(data.toString()));
 			bat.stderr.on("data", data => console.log(data.toString()));
-			bat.on("exit", code => {
-				outcomeMsg(msg, code);
+			bat.on("exit", async code => {
+				await outcomeMsg(msg, code);
 				bat.kill();
 			});
 			return;
@@ -47,8 +47,7 @@ module.exports = class UpdateCommand extends Command {
 
 function outcomeMsg(msg, code) {
 	if (code == 0)
-		return msg.channel.send(`Update failed *code: ${code}*`);
-	if (!code) {
 		return msg.channel.send(`Update successful *code: ${code}*`);
-	}
+	if (code > 0)
+		return msg.channel.send(`Update failed *code: ${code}*`);
 }
