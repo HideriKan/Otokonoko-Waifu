@@ -5,7 +5,7 @@
 		}
 	],
 	"settings": {
-		"discord.enabled": true,
+		"discord.enabled": false,
 		"atomKeymap.promptV3Features": true,
 		"editor.multiCursorModifier": "ctrlCmd",
 		"terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",

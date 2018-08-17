@@ -1,7 +1,7 @@
 //Base
 const { Command } = require("discord.js-commando");
 const { RichEmbed } = require("discord.js");
-const trim = (str, max = 22) => (str.length > max) ? `${str.slice(0, max-3)}...` : str;
+const trim = (str, max = 19) => (str.length > max) ? `${str.slice(0, max-3)}...` : str;
 
 //Datebase
 const path = require("path");
