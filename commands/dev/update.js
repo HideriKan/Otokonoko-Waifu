@@ -26,7 +26,7 @@ module.exports = class UpdateCommand extends Command {
 			.setDescription("📡 Updating...")
 		;
 
-		let upMsg = await msg.hannel.send(upEmbed);
+		let upMsg = await msg.channel.send(upEmbed);
 		if (isLunix) { // execFile .sh
 			const { exec } = require("child_process");
 			const sh = exec(__dirname + `/../../../${this.name}.sh`);
