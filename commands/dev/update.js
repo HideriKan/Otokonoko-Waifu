@@ -23,17 +23,17 @@ module.exports = class UpdateCommand extends Command {
 	async run(msg) {
 		const upEmbed = new RichEmbed()
 			.setTitle("Updating")
-			.setDescription("🔄 Updating...")
+			.setDescription("📡 Updating...")
 		;
 
-		let upMsg = await msg.cahnnel.send(upEmbed);
+		let upMsg = await msg.hannel.send(upEmbed);
 		if (isLunix) { // execFile .sh
 			const { exec } = require("child_process");
 			const sh = exec(__dirname + `/../../../${this.name}.sh`);
 
 			sh.stdout.on("data", data => console.log(data.toString()));
 			sh.stderr.on("data", data => console.log(data.toString()));
-			sh.on("exit", async code => await outcomeMsg(msg, upMsg, code, sh));
+			sh.on("exit", code => outcomeMsg(upMsg, code, sh));
 			return;
 		} else if (isWin) { // windows only
 			const { spawn } = require("child_process");
@@ -41,23 +41,24 @@ module.exports = class UpdateCommand extends Command {
 
 			bat.stdout.on("data", data => console.log(data.toString()));
 			bat.stderr.on("data", data => console.log(data.toString()));
-			bat.on("exit", async code => await outcomeMsg(msg, upMsg, code, bat));
+			bat.on("exit", (code, signal) => outcomeMsg(upMsg, code, signal, bat));
 			return;
 		}
 
 	}
 };
 
-async function outcomeMsg(msg, embed, code, child) {
+async function outcomeMsg(upMsg, code, signal, child) {
+	const embed = new RichEmbed(upMsg.embeds[0]);
 	switch (code) {
 	case 0:
-		embed.setDescription(`📥 Update successful *code: ${code}*`);
-		await msg.channel.send(embed);
+		embed.setDescription(`☑ | Update successful\n **${signal}**`).setFooter(`code: ${code}`);
+		await upMsg.edit(embed);
 		child.kill();
 		return;
 	default:
-		embed.setDescription(`⚠ Update failed *code: ${code}*`);
-		await msg.channel.send(embed);
+		embed.setDescription(`💢 | Update failed\n ${signal}`).setFooter(`code: ${code}`);
+		await upMsg.edit(embed);
 		child.kill();
 		return ;
 	}
