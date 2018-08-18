@@ -30,19 +30,21 @@ function interval() {
 	setInterval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
 }
 
-function muedaeObserver(msg) {
-	if (msg.content.includes(" are now married!")) {
-		let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
-		let marriedUserName = married[0].substring(2, married[0].length - 6);
-		let member = msg.guild.members.find(m => m.user.username == marriedUserName);
+async function muedaeObserver(msg) {
+	// if (msg.content.includes(" are now married!")) { // married
+	let temp  = await msg.channel.fetchMessage("480407124464369698");
 
-		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(member.id);
-		console.log(`${member.user.username} got married`);
-		msg.react("💖");
-	} else if (msg.content.includes(" was given to ")){
+	let married = temp.content.match(/\*\*[^()]+\*\* and/gi);
+	let marriedUserName = married[0].substring(2, married[0].length - 6);
+	let member = msg.guild.members.find(m => m.user.username == marriedUserName);
+
+	maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(member.id, msg.guild.id);
+	console.log(`${member.user.username} got married`);
+	msg.react("💖");
+	/*} else*/ if (msg.content.includes(" was given to ")) { // give
 		let user = msg.mentions.users.first();
 
-		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ?").run(user.id);
+		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(user.id, msg.guild.id);
 		console.log(`${user.username} got given a char`);
 		msg.react(":blobaww:357967083960795137");
 	}
@@ -81,8 +83,8 @@ client
 	.on("message", msg => {
 		//mude bot claim check
 		switch (msg.author.id) {
-		case "432610292342587392":
-		case "479206206725160960":
+		case "432610292342587392": //Mudae
+		case "479206206725160960": //Mudamaid
 		// case "146493901803487233":
 			muedaeObserver(msg);
 			break;

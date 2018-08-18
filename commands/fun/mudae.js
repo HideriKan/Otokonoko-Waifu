@@ -15,11 +15,11 @@ db.prepare("CREATE TABLE IF NOT EXISTS mudaeusers("+
 	"claimed integer DEFAULT 1)"
 ).run();
 const getusers = db.prepare("SELECT * FROM mudaeusers");
-const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ?");
+const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ? AND WHERE guild_id = ?");
 const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 0)");
-const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ?");
+const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ? AND WHERE guild_id = ?");
 const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0");
-const dbSetClaim = db.prepare("UPDATE mudaeusers SET claimed = ? WHERE id = ?"); // 1 == has claim; 0 == has no claim;
+const dbSetClaim = db.prepare("UPDATE mudaeusers SET claimed = ? WHERE id = ? AND WHERE guild_id = ?"); // 1 == has claim; 0 == has no claim;
 
 function send(msg,text) {
 	msg.channel.send(text);
@@ -187,7 +187,7 @@ module.exports = class MudaeCommand extends Command {
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with `@user` is Owner only");
 				msg.mentions.members.forEach(e => {
-					let check = dbcheck.get(e.user.id);
+					let check = dbcheck.get(e.user.id, msg.guild.id);
 
 					if (check) {
 						if (msg.mentions.members.size() == 1)
@@ -205,7 +205,7 @@ module.exports = class MudaeCommand extends Command {
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				let member = msg.guild.members.find("id", text);
 				if (!member) return send(msg, "noone found with that id on your server");
-				let check = dbcheck.get(text);
+				let check = dbcheck.get(text, msg.guild.id);
 				if (check) return msg.reply("User(s) is already in the list :Wink:");
 				dbinsert.run(text, msg.guild.id);
 				return send(msg, "added " + member.displayName);
@@ -213,7 +213,7 @@ module.exports = class MudaeCommand extends Command {
 			// if only add is passed
 			} else if (!text) {
 
-				let check = dbcheck.get(msg.author.id);
+				let check = dbcheck.get(msg.author.id, msg.guild.id);
 				if (check) return send(msg, "You are already in the list :Wink:");
 				dbinsert.run(msg.author.id, msg.guild.id);
 				return send(msg, "added " + msg.member.displayName);
@@ -224,12 +224,12 @@ module.exports = class MudaeCommand extends Command {
 			if(text) {
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
-				dbdel.run(text);
+				dbdel.run(text, msg.guild.id);
 				let member = msg.guild.members.find("id", text);
 				if(!member) return send(msg,"This user is not a member of this guild");
 				return send(msg, member.displayName +  " got removed");
 			}
-			dbdel.run(msg.author.id);
+			dbdel.run(msg.author.id, msg.guild.id);
 			return send(msg, msg.member.displayName + " got removed from the list");
 
 		// sets all users claimed to 0
@@ -246,16 +246,16 @@ module.exports = class MudaeCommand extends Command {
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				let member = msg.guild.members.find("id", text);
-				let check = dbcheck.get(text);
+				let check = dbcheck.get(text, msg.guild.id);
 				if (!check) return send(msg, "User not found in List");
-				dbSetClaim.run(1, text);
+				dbSetClaim.run(1, text, msg.guild.id);
 				send(msg, member.displayName + " now has a claim in the List");
 
 
 			// just takes the author id
 			} else if (!text) {
 
-				dbSetClaim.run(1, msg.author.id);
+				dbSetClaim.run(1, msg.author.id, msg.guild.id);
 				send(msg,msg.member.displayName + " now has a claim in the List");
 			}
 		// change the claimed status
@@ -265,16 +265,16 @@ module.exports = class MudaeCommand extends Command {
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				let member = msg.guild.members.find("id", text);
-				let check = dbcheck.get(text);
+				let check = dbcheck.get(text, msg.guild.id);
 				if (!check) return send(msg, "User not found in List");
 
-				dbSetClaim.run(0, text);
+				dbSetClaim.run(0, text, msg.guild.id);
 				send(msg, member.displayName + " now has not a claim in the List");
 
 			// just takes the author id
 			} else if (!text) {
 
-				dbSetClaim.run(0, msg.author.id);
+				dbSetClaim.run(0, msg.author.id, msg.guild.id);
 				send(msg,msg.member.displayName + " now has not a claim in the List");
 			}
 
