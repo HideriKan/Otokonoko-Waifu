@@ -15,11 +15,11 @@ db.prepare("CREATE TABLE IF NOT EXISTS mudaeusers("+
 	"claimed integer DEFAULT 1)"
 ).run();
 const getusers = db.prepare("SELECT * FROM mudaeusers");
-const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ? AND WHERE guild_id = ?");
+const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ? AND guild_id = ?");
 const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 0)");
-const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ? AND WHERE guild_id = ?");
+const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ? AND guild_id = ?");
 const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0");
-const dbSetClaim = db.prepare("UPDATE mudaeusers SET claimed = ? WHERE id = ? AND WHERE guild_id = ?"); // 1 == has claim; 0 == has no claim;
+const dbSetClaim = db.prepare("UPDATE mudaeusers SET claimed = ? WHERE id = ? AND guild_id = ?"); // 1 == has claim; 0 == has no claim;
 
 function send(msg,text) {
 	msg.channel.send(text);
