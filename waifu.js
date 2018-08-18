@@ -31,17 +31,15 @@ function interval() {
 }
 
 async function muedaeObserver(msg) {
-	// if (msg.content.includes(" are now married!")) { // married
-	let temp  = await msg.channel.fetchMessage("480407124464369698");
+	if (msg.content.includes(" are now married!")) { // married
+		let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
+		let marriedUserName = married[0].substring(2, married[0].length - 6);
+		let member = msg.guild.members.find(m => m.user.username == marriedUserName);
 
-	let married = temp.content.match(/\*\*[^()]+\*\* and/gi);
-	let marriedUserName = married[0].substring(2, married[0].length - 6);
-	let member = msg.guild.members.find(m => m.user.username == marriedUserName);
-
-	maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(member.id, msg.guild.id);
-	console.log(`${member.user.username} got married`);
-	msg.react("💖");
-	/*} else*/ if (msg.content.includes(" was given to ")) { // give
+		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(member.id, msg.guild.id);
+		console.log(`${member.user.username} got married`);
+		msg.react("💖");
+	} else if (msg.content.includes(" was given to ")) { // give
 		let user = msg.mentions.users.first();
 
 		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(user.id, msg.guild.id);
