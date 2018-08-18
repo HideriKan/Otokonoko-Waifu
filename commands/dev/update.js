@@ -42,25 +42,25 @@ module.exports = class UpdateCommand extends Command {
 
 			bat.stdout.on("data", data => console.log(data.toString()));
 			bat.stderr.on("data", data => console.log(data.toString()));
-			bat.on("exit", (code, signal) => outcomeMsg(upMsg, code, signal, bat));
+			bat.on("exit", (code) => outcomeMsg(upMsg, code, bat));
 			return;
 		}
 
 	}
 };
 
-async function outcomeMsg(upMsg, code, signal, child) {
+async function outcomeMsg(upMsg, code, child) {
 	const embed = new RichEmbed(upMsg.embeds[0]);
 	switch (code) {
 	case 0:
 		embed.setDescription("☑ | Update successful").setFooter(`code: ${code}`);
 		await upMsg.edit(embed);
-		child.kill();
+		await child.kill();
 		return;
 	default:
 		embed.setDescription("💢 | Update failed").setFooter(`code: ${code}`);
 		await upMsg.edit(embed);
-		child.kill();
+		await child.kill();
 		return ;
 	}
 }
