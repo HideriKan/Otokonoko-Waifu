@@ -13,9 +13,9 @@ const gfycatAPI = "https://api.gfycat.com/v1/gfycats/";
 const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str; // will cut the string if it will go over the max
 
 // db.prepare("DROP TABLE IF EXISTS redditposted").run();
-db.prepare(`CREATE TABLE IF NOT EXISTS redditposted( 
-	redditposted_id integer PRIMARY KEY, 
-	subreddit_name text NOT NULL, 
+db.prepare(`CREATE TABLE IF NOT EXISTS redditposted(
+	redditposted_id integer PRIMARY KEY,
+	subreddit_name text NOT NULL,
 	post_id text NOT NULL,
 	guild_or_user_id integer NOT NULL,
 	time_send datetime NOT NULL)`
@@ -84,8 +84,8 @@ async function getEmbedData(data, redditIcon, msg) {
 		} else if (embedImg.includes("https://gfycat.com/")) {
 			const hash = embedImg.replace("https://gfycat.com/", "");
 			const gfycat = await snekfech.get(gfycatAPI + hash);
-			
-			embedDes = "*this is a low quality gif*\nGo to the Original:\n" + embedImg;
+
+			embedDes = "**this is a low quality gif** Go to the Original:\n" + embedImg;
 			embedImg = gfycat.body.gfyItem.max5mbGif;
 		} else if (embedImg.includes("https://streamable.com/")) { // till discord supports to embed videos
 			embedDes = "this is not yet supported by discord\n" + embedImg;
@@ -95,17 +95,17 @@ async function getEmbedData(data, redditIcon, msg) {
 			embedDes = "**__This is a reddit hosted video. Go to the video thru the title__**";
 			embedImg = data.preview ? data.preview.images[0].source.url : "";
 		}
-		
+
 		// this might not be the best
 		if (embedDes) embed.setDescription(embedDes);
 		return embed
 			.setTitle(embedTitle)
-			.setImage(embedImg);	
+			.setImage(embedImg);
 	}
 	return embed
 		.setDescription("this might not display properly")
 		.setImage(embedImg);
-	
+
 }
 
 module.exports = class RedditCommand extends Command {
@@ -147,9 +147,9 @@ module.exports = class RedditCommand extends Command {
 		});
 	}
 
-	
+
 	async run(msg, { subreddit, text, number}) { // arg loop/post x times // include videos (.webm till it supports it)
-		try {		
+		try {
 			let isReddit;
 			switch (text) { // check if a sort is passed
 			case "":
@@ -170,7 +170,7 @@ module.exports = class RedditCommand extends Command {
 
 				const { body } = await snekfech.get(`${redditAPI}/r/${subreddit}/${text}.json`);
 				const about = await snekfech.get(`${redditAPI}/r/${subreddit}/about.json`);
-				
+
 				if (number > body.data.children.length) {
 					msg.channel.send(`Your request has been reduced to ${body.data.children.length}`);
 					number = body.data.children.length;
