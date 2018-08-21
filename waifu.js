@@ -34,7 +34,7 @@ async function muedaeObserver(msg) {
 	if (msg.content.includes(" are now married!")) { // married
 		let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
 		let marriedUserName = married[0].substring(2, married[0].length - 6);
-		let member = msg.guild.members.find(m => m.user.username == marriedUserName);
+		let member = msg.guild.members.find(m => m.user.username === marriedUserName);
 
 		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(member.id, msg.guild.id);
 		console.log(`${member.user.username} got married`);
@@ -76,6 +76,29 @@ function sendMsgintoPritaveCh(msg) {
 			.catch(console.err);
 	}
 }
+
+function getNextResetDateInMs() {
+	let now = new Date();
+	let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+	let hour = now.getUTCHours();
+
+	switch (hour % 3) {
+	case 0:
+		hour += 1;
+		break;
+	case 1:
+		if (now.getUTCMinutes() < 5) break;
+		hour += 3;
+		break;
+	case 2:
+		hour += 2;
+		break;
+	}
+
+	let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
+	return date - UTCNow;
+}
+
 
 client
 	.on("message", msg => {
@@ -174,25 +197,3 @@ client.login(token);
 process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: ", p, "reason: ", reason);
 });
-
-function getNextResetDateInMs() {
-	let now = new Date();
-	let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
-	let hour = now.getUTCHours();
-
-	switch (hour % 3) {
-	case 0:
-		hour += 1;
-		break;
-	case 1:
-		if (now.getUTCMinutes() < 5) break;
-		hour += 3;
-		break;
-	case 2:
-		hour += 2;
-		break;
-	}
-
-	let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
-	return date - UTCNow;
-}

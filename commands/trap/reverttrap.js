@@ -1,9 +1,9 @@
-//base 
+//base
 const { Command } = require("discord.js-commando");
-//Database 
+//Database
 const path = require("path");
-const sqlite = require("better-sqlite3");
-const db = new sqlite(path.join(__dirname, "/../../database.sqlite3"));
+const Sqlite = require("better-sqlite3");
+const db = new Sqlite(path.join(__dirname, "/../../database.sqlite3"));
 
 const dbremove = db.prepare("DELETE FROM trapposts WHERE trappost_id = (SELECT MAX(trappost_id) FROM trapposts WHERE guild_or_user_id = (?))");
 
@@ -27,7 +27,7 @@ module.exports = class RevertTrapCommand extends Command {
 				key: "number",
 				prompt: "how many would you like to revert from the database",
 				type: "integer",
-				
+
 			}]
 		});
 	}

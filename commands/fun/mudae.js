@@ -5,8 +5,8 @@ const trim = (str, max = 19) => (str.length > max) ? `${str.slice(0, max-3)}...`
 
 //Datebase
 const path = require("path");
-const sqlite = require("better-sqlite3");
-const db = new sqlite(path.join(__dirname,"/../../database.sqlite3"));
+const Sqlite = require("better-sqlite3");
+const db = new Sqlite(path.join(__dirname,"/../../database.sqlite3"));
 
 // db.prepare("DROP TABLE IF EXISTS mudaeusers").run();
 db.prepare("CREATE TABLE IF NOT EXISTS mudaeusers("+
@@ -19,7 +19,7 @@ const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ? AND guild_id =
 const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 0)");
 const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ? AND guild_id = ?");
 const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0");
-const dbSetClaim = db.prepare("UPDATE mudaeusers SET claimed = ? WHERE id = ? AND guild_id = ?"); // 1 == has claim; 0 == has no claim;
+const dbSetClaim = db.prepare("UPDATE mudaeusers SET claimed = ? WHERE id = ? AND guild_id = ?"); // 1 === has claim; 0 === has no claim;
 
 function send(msg,text) {
 	msg.channel.send(text);
@@ -107,12 +107,12 @@ module.exports = class MudaeCommand extends Command {
 	}
 
 	run(msg,{method , text}) {
-		if (method == "") {
+		if (method === "") {
 			let allUsers = [];
 			let dbusers = getusers.all();
 
 			dbusers.forEach(e => {
-				let member = msg.guild.members.find(member => member.user.id == e.id);
+				let member = msg.guild.members.find(member => member.user.id === e.id);
 				let comUser = new ComUser(member.user.presence.status, member, e.claimed);
 				allUsers.push(comUser);
 			});
@@ -125,7 +125,7 @@ module.exports = class MudaeCommand extends Command {
 							return -1;
 						} else if (a.member.hoistRole.calculatedPosition < b.member.hoistRole.calculatedPosition) {
 							return 1;
-						} else if (a.member.hoistRole.calculatedPosition == b.member.hoistRole.calculatedPosition) {
+						} else if (a.member.hoistRole.calculatedPosition === b.member.hoistRole.calculatedPosition) {
 							return a.member.displayName.localeCompare(b.member.displayName, local, {sensitivity: "case"});
 						}
 					} else if (a.member.hoistRole) {
@@ -137,7 +137,7 @@ module.exports = class MudaeCommand extends Command {
 							return -1;
 						} else if (a.member.highestRole.calculatedPosition < b.member.highestRole.calculatedPosition) {
 							return 1;
-						} else if (a.member.highestRole.calculatedPosition == b.member.highestRole.calculatedPosition) {
+						} else if (a.member.highestRole.calculatedPosition === b.member.highestRole.calculatedPosition) {
 							return a.member.displayName.localeCompare(b.member.displayName, local, {sensitivity: "case"});
 						}
 					} else if (a.member.highestRole.calculatedPosition) {
@@ -157,10 +157,10 @@ module.exports = class MudaeCommand extends Command {
 				idle = [],
 				dnd = [];
 			allUsers.forEach(e => {
-				if (e.status == "online") online.push(e);
-				if (e.status == "offline") offline.push(e);
-				if (e.status == "idle") idle.push(e);
-				if (e.status == "dnd") dnd.push(e);
+				if (e.status === "online") online.push(e);
+				if (e.status === "offline") offline.push(e);
+				if (e.status === "idle") idle.push(e);
+				if (e.status === "dnd") dnd.push(e);
 			});
 
 			const embed = new RichEmbed()
@@ -180,7 +180,7 @@ module.exports = class MudaeCommand extends Command {
 			msg.channel.send(embed);
 
 		// adds user(s) depending with different args
-		} else if (method == "add") {
+		} else if (method === "add") {
 
 			//if anyone got mentioned
 			if (msg.mentions.members.size) {
@@ -190,7 +190,7 @@ module.exports = class MudaeCommand extends Command {
 					let check = dbcheck.get(e.user.id, msg.guild.id);
 
 					if (check) {
-						if (msg.mentions.members.size() == 1)
+						if (msg.mentions.members.size() === 1)
 							return send(msg, e.displayName + " is already in the List");
 						return send(msg, e.displayName + " is already in the List, everyone **BEFORE** this user is now in the list");
 					}
@@ -220,7 +220,7 @@ module.exports = class MudaeCommand extends Command {
 			}
 
 		// removes the user from the list
-		} else if (method == "remove") {
+		} else if (method === "remove") {
 			if(text) {
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
@@ -233,14 +233,14 @@ module.exports = class MudaeCommand extends Command {
 			return send(msg, msg.member.displayName + " got removed from the list");
 
 		// sets all users claimed to 0
-		} else if (method == "reset") {
+		} else if (method === "reset") {
 
 			if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
 			dbreset.run();
 			send(msg, "List reset");
 
 			// change the claimed status
-		} else if (method == "claim") {
+		} else if (method === "claim") {
 			// seaches for the passed userId
 			if (text) {
 
@@ -259,7 +259,7 @@ module.exports = class MudaeCommand extends Command {
 				send(msg,msg.member.displayName + " now has a claim in the List");
 			}
 		// change the claimed status
-		} else if (method == "noclaim") {
+		} else if (method === "noclaim") {
 			// seaches for the passed userId
 			if (text) {
 

@@ -8,6 +8,22 @@ const { RichEmbed } = require("discord.js");
 const isLunix = process.platform === "linux";
 const isWin = process.platform === "win32";
 
+async function outcomeMsg(upMsg, code, child) {
+	const embed = new RichEmbed(upMsg.embeds[0]);
+	switch (code) {
+	case 0:
+		embed.setDescription("☑ | Update successful").setFooter(`code: ${code}`);
+		await upMsg.edit(embed);
+		await child.kill();
+		return;
+	default:
+		embed.setDescription("💢 | Update failed").setFooter(`code: ${code}`);
+		await upMsg.edit(embed);
+		await child.kill();
+		return ;
+	}
+}
+
 module.exports = class UpdateCommand extends Command {
 	constructor(client) {
 		super(client, {
@@ -48,19 +64,3 @@ module.exports = class UpdateCommand extends Command {
 
 	}
 };
-
-async function outcomeMsg(upMsg, code, child) {
-	const embed = new RichEmbed(upMsg.embeds[0]);
-	switch (code) {
-	case 0:
-		embed.setDescription("☑ | Update successful").setFooter(`code: ${code}`);
-		await upMsg.edit(embed);
-		await child.kill();
-		return;
-	default:
-		embed.setDescription("💢 | Update failed").setFooter(`code: ${code}`);
-		await upMsg.edit(embed);
-		await child.kill();
-		return ;
-	}
-}

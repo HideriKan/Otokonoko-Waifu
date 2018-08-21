@@ -2,8 +2,8 @@ const fs = require("fs");
 const { workpath , lewdworkpath } = require("./../../config.json");
 const { Command } = require("discord.js-commando");
 const path = require("path");
-const sqlite = require("better-sqlite3");
-const db = new sqlite(path.join(__dirname, "/../../database.sqlite3"));
+const Sqlite = require("better-sqlite3");
+const db = new Sqlite(path.join(__dirname, "/../../database.sqlite3"));
 
 function getRandomInt(max) {
 	return Math.floor(Math.random() * Math.floor(max));
@@ -66,26 +66,26 @@ module.exports = class TrapCommand extends Command {
 	}
 
 	run(msg, { number, lewdargs }) {
-		let allPics, dbTemp, imgPath, lewdNum;
+		let allPics, trapdb, imgPath, lewdNum;
 		let removed = [];
 
 		if(lewdargs) { // vars for lewd or not lewd
 			if (msg.guild ? !msg.channel.nsfw : false) return msg.channel.send("Nyo nsfw in sfw channyews (・`m´・)");
 			imgPath = lewdworkpath;
 			lewdNum = 1;
-			dbTemp = getRows.all(1);
+			trapdb = getRows.all(1);
 		} else if (!lewdargs) {
 			imgPath = workpath;
 			lewdNum = 0;
-			dbTemp = getRows.all(0);
+			trapdb = getRows.all(0);
 		}
-		for (let i = 0; i < dbTemp.length; i++) { // get already posted images in an array
-			if ((msg.guild ? msg.guild.id : msg.author.id) == dbTemp[i].guild_or_user_id
-				&& lewdNum == dbTemp[i].is_lewd)
-				removed.push(dbTemp[i].path);
+		for (let i = 0; i < trapdb.length; i++) { // get already posted images in an array
+			if ((msg.guild ? msg.guild.id : msg.author.id) === trapdb[i].guild_or_user_id
+				&& lewdNum === trapdb[i].is_lewd)
+				removed.push(trapdb[i].path);
 		}
 		if (!fs.existsSync(imgPath)) return msg.reply("Sowwy, something went wwong ówò (dir not found)");
-		
+
 		allPics = fs.readdirSync(imgPath).filter(pics => pics.includes(".")); // get all images from db
 		allPics = allPics.filter(e => !removed.includes(e)); // sorting out already posted images
 
@@ -106,7 +106,7 @@ module.exports = class TrapCommand extends Command {
 			}).catch((e) => console.error(e));
 
 			dbInsert.run(null, allPics[fileNr], lewdNum, msg.guild ? msg.guild.id : msg.author.id);
-			allPics.splice(fileNr, 1); // move to db 
-		}	
+			allPics.splice(fileNr, 1); // move to db
+		}
 	}
 };

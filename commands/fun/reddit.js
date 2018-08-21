@@ -3,8 +3,8 @@ const { RichEmbed } = require("discord.js");
 const snekfech = require("snekfetch");
 const { imgurClientID } = require("./../../config.json");
 const path = require("path");
-const sqlite = require("better-sqlite3");
-const db = new sqlite(path.join(__dirname,"/../../database.sqlite3"));
+const Sqlite = require("better-sqlite3");
+const db = new Sqlite(path.join(__dirname,"/../../database.sqlite3"));
 
 const redditAPI = "https://www.reddit.com";
 const imgurAPI = "https://api.imgur.com/3/";
@@ -20,7 +20,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS redditposted(
 	guild_or_user_id integer NOT NULL,
 	time_send datetime NOT NULL)`
 ).run(); // redditposted_id is probally not needed
-const dbcheck = db.prepare("SELECT * FROM redditposted WHERE post_id == (?) AND guild_or_user_id == (?)");
+const dbcheck = db.prepare("SELECT * FROM redditposted WHERE post_id = (?) AND guild_or_user_id = (?)");
 const dbinsert = db.prepare("INSERT INTO redditposted VALUES (?, ?, ?, ?, datetime(?))");
 
 // img endings that can be posted
@@ -196,7 +196,7 @@ module.exports = class RedditCommand extends Command {
 							postCount++;
 						}
 					}
-					if (postCount == number) return console.log("succ reddit commad");
+					if (postCount === number) return console.log("succ reddit commad");
 				}
 				return msg.channel.send("Sowwy nyo Images found to post uwu");
 
@@ -216,8 +216,8 @@ module.exports = class RedditCommand extends Command {
 
 		} catch (err) {
 			console.error(err);
-			if (err == "Error: 404 Not Found") return msg.reply("404. Subreddit or Comment not found please check the spelling");
-			if (err == "Error: 403 Forbidden") return msg.reply("403 Forbidden. Dont know why \:shrug:"); // eslint-disable-line
+			if (err === "Error: 404 Not Found") return msg.reply("404. Subreddit or Comment not found please check the spelling");
+			if (err === "Error: 403 Forbidden") return msg.reply("403 Forbidden. Dont know why \:shrug:"); // eslint-disable-line
 			return msg.reply("Something went wrong.");
 		}
 	}
