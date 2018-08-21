@@ -212,11 +212,11 @@ module.exports = class MudaeCommand extends Command {
 
 			// if only add is passed
 			} else if (!text) {
-
 				let check = dbcheck.get(msg.author.id, msg.guild.id);
+
 				if (check) return send(msg, "You are already in the list :Wink:");
 				dbinsert.run(msg.author.id, msg.guild.id);
-				return send(msg, "added " + msg.member.displayName);
+				return msg.channel.reply("added you to the list.\nYou can now if wanted `mudae remove` to remove yourself from the list\nand you can `mudae claim`/`noclaim` to set your claim status if the Bot doesnt record your claim.");
 			}
 
 		// removes the user from the list
