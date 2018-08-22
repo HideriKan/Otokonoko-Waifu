@@ -169,13 +169,13 @@ module.exports = class MudaeCommand extends Command {
 				.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add | next reset is in ${nextRestInTimeString()}`);
 
 			if (online.length != 0)
-				embed.addField("Online", online.map(e => `${e.claimed} \`${trim(e.displayName)}\``).join("\n"), true);
+				embed.addField("Online", online.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
 			if (offline.length != 0)
-				embed.addField("Offline", offline.map(e => `${e.claimed} \`${trim(e.displayName)}\``).join("\n"), true);
+				embed.addField("Offline", offline.map(e => `${e.claimed} \`\`${trim(e.displayName)}\``).join("\n"), true);
 			if (idle.length != 0)
-				embed.addField("Idle", idle.map(e => `${e.claimed} \`${trim(e.displayName)}\``).join("\n"), true);
+				embed.addField("Idle", idle.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
 			if (dnd.length != 0)
-				embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} \`${trim(e.displayName)}\``).join("\n"), true);
+				embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
 
 			msg.channel.send(embed);
 
@@ -216,7 +216,7 @@ module.exports = class MudaeCommand extends Command {
 
 				if (check) return send(msg, "You are already in the list :Wink:");
 				dbinsert.run(msg.author.id, msg.guild.id);
-				return msg.channel.reply("added you to the list.\nYou can now if wanted `mudae remove` to remove yourself from the list\nand you can `mudae claim`/`noclaim` to set your claim status if the Bot doesnt record your claim.");
+				return msg.reply("added you to the list.\nYou can now if wanted `mudae remove` to remove yourself from the list\nand you can `mudae claim`/`noclaim` to set your claim status if the Bot doesnt record your claim.");
 			}
 
 		// removes the user from the list
