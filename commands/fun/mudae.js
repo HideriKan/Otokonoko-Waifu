@@ -34,14 +34,14 @@ function ComUser(status, memberObj, hasClaim = false) {
 	this.claimed = hasClaim ? "✅" : "❌";
 }
 
-function nextRestInTimeString() {
+function nextRestInTimeString(resetHour) {
 	const addZero = (element) => element.toString().padStart(2, 0);
 	let now = new Date();
 	let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
 	let hour = now.getUTCHours();
 	let h, m, s, ms;
 
-	switch (hour % 3) {
+	switch (hour % resetHour) {
 	case 0:
 		hour += 1;
 		break;
@@ -85,14 +85,15 @@ module.exports = class MudaeCommand extends Command {
 			args:[
 				{
 					key: "method",
-					prompt: "What method; `add`, `remove`, `claim`, `noclaim` or `reset`?",
+					prompt: "What method; `add`, `remove`, `claim`, `noclaim`, `time` or `reset`?",
 					type: "string",
 					default: "",
 					validate: method => {
-						let avaliavbleArgs = ["add", "remove", "claim", "noclaim", "reset"];
+						let avaliavbleArgs = ["add", "remove", "claim", "noclaim", "reset", "time"];
 
 						if(avaliavbleArgs.includes(method.toLowerCase()))
 							return true;
+						return this.args[0].prompt;
 					},
 					parse: method => method.toLowerCase()
 				},
@@ -166,7 +167,7 @@ module.exports = class MudaeCommand extends Command {
 			const embed = new RichEmbed()
 				.setTitle("Mudae Claims")
 				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-				.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add | next reset is in ${nextRestInTimeString()}`);
+				.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add | next reset is in ${nextRestInTimeString(3)}`);
 
 			if (online.length != 0)
 				embed.addField("Online", online.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
@@ -278,6 +279,15 @@ module.exports = class MudaeCommand extends Command {
 				send(msg,msg.member.displayName + " now has not a claim in the List");
 			}
 
+		}else if (method === "time") {
+			const embed = new RichEmbed()
+				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
+				.setTitle("Mudae Timer")
+				.setDescription(`Next roll reset is in ${nextRestInTimeString(3)}
+				Next claim reset is in ${nextRestInTimeString(3)}`)
+			;
+
+			send(msg, embed);
 		}
 	}
 };
