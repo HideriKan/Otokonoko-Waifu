@@ -16,13 +16,17 @@ module.exports = class SuggestCommand extends Command {
 		});
 	}
 
-	run(msg) {
+	async run(msg) {
 		const suggestCh = msg.client.channels.get("469875124494139392");
 		try {
 			if (msg.guild && msg.guild.members.some(e => !msg.client.owners.includes(e))) {
-				return suggestCh.send(`https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}/${msg.id}`);
+				await suggestCh.send(`https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}/${msg.id}`);
+
+				return msg.channel.send("message was sent uwu");
 			}
-			return suggestCh.send(`${msg.content} in ${msg.guild ? `Guild:${msg.guild.id} Channel:<#${msg.channel.id}>` : msg.channel.type} by <@${msg.author.id}>`);
+			await suggestCh.send(`${msg.content} in ${msg.guild ? `Guild:${msg.guild.id} Channel:<#${msg.channel.id}>` : msg.channel.type} by <@${msg.author.id}>`);
+
+			return msg.channel.send("message was sent uwu");
 		} catch (error) {
 			console.error(error);
 			return msg.reply("Sowwy, something went wwong ówò");

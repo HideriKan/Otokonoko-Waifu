@@ -8,19 +8,19 @@ const { RichEmbed } = require("discord.js");
 const isLunix = process.platform === "linux";
 const isWin = process.platform === "win32";
 
-async function outcomeMsg(upMsg, code, child) {
+async function updateMsg(upMsg, code, child) {
 	const embed = new RichEmbed(upMsg.embeds[0]);
 	switch (code) {
 	case 0:
 		embed.setDescription("☑ | Update successful").setFooter(`code: ${code}`);
 		await upMsg.edit(embed);
-		await child.kill();
+		child.kill();
 		return;
 	default:
 		embed.setDescription("💢 | Update failed").setFooter(`code: ${code}`);
 		await upMsg.edit(embed);
-		await child.kill();
-		return ;
+		child.kill();
+		return;
 	}
 }
 
@@ -50,7 +50,7 @@ module.exports = class UpdateCommand extends Command {
 
 			sh.stdout.on("data", data => console.log(data.toString()));
 			sh.stderr.on("data", data => console.log(data.toString()));
-			sh.on("exit", code => outcomeMsg(upMsg, code, sh));
+			sh.on("exit", code => updateMsg(upMsg, code, sh));
 			return;
 		} else if (isWin) { // windows only
 			const { spawn } = require("child_process");
@@ -58,7 +58,7 @@ module.exports = class UpdateCommand extends Command {
 
 			bat.stdout.on("data", data => console.log(data.toString()));
 			bat.stderr.on("data", data => console.log(data.toString()));
-			bat.on("exit", (code) => outcomeMsg(upMsg, code, bat));
+			bat.on("exit", (code) => updateMsg(upMsg, code, bat));
 			return;
 		}
 
