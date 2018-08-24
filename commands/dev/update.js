@@ -12,12 +12,12 @@ async function updateMsg(upMsg, code, child) {
 	const embed = new RichEmbed(upMsg.embeds[0]);
 	switch (code) {
 	case 0:
-		embed.setDescription("☑ | Update successful").setFooter(`code: ${code}`);
+		embed.setDescription("☑ Update successful").setFooter(`exit code: ${code}`);
 		await upMsg.edit(embed);
 		child.kill();
 		return;
 	default:
-		embed.setDescription("💢 | Update failed").setFooter(`code: ${code}`);
+		embed.setDescription("⚠ Update failed").setFooter(`exit code: ${code}`);
 		await upMsg.edit(embed);
 		child.kill();
 		return;
@@ -38,9 +38,9 @@ module.exports = class UpdateCommand extends Command {
 	}
 	async run(msg) {
 		const upEmbed = new RichEmbed()
-			.setTitle("Updating")
+			.setTitle("Update")
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-			.setDescription("📡 Updating...")
+			.setDescription("📡 Getting new update(s)...")
 		;
 
 		let upMsg = await msg.channel.send(upEmbed);
