@@ -270,16 +270,16 @@ module.exports = class MudaeCommand extends Command {
 				if (!check) return send(msg, "User not found in List");
 
 				dbSetClaim.run(0, text, msg.guild.id);
-				send(msg, member.displayName + " now has not a claim in the List");
+				send(msg, member.displayName + " doesn’t have a shown claim now");
 
 			// just takes the author id
 			} else if (!text) {
 
 				dbSetClaim.run(0, msg.author.id, msg.guild.id);
-				send(msg,msg.member.displayName + " now has not a claim in the List");
+				send(msg,msg.member.displayName + " doesn’t have a shown claim now");
 			}
 
-		}else if (method === "time") {
+		} else if (method === "time") {
 			const embed = new RichEmbed()
 				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 				.setTitle("Mudae Timer")
