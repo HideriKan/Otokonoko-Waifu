@@ -283,7 +283,7 @@ module.exports = class MudaeCommand extends Command {
 			const embed = new RichEmbed()
 				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 				.setTitle("Mudae Timer")
-				.setDescription(`Next roll reset is in ${nextRestInTimeString(3)}
+				.setDescription(`Next roll reset is in ${nextRestInTimeString(1)}
 				Next claim reset is in ${nextRestInTimeString(3)}`)
 			;
 
