@@ -119,9 +119,6 @@ client
 
 		// owo reatction cuz we both love traps
 		if (msg.content.toLocaleLowerCase().includes("trap")) owoReact(msg);
-
-		//some stuid way to notify me
-		if (msg.channel.id == ("315509598440128513")) sendMsgintoPritaveCh(msg);
 	})
 	.on("ready", () => {
 		if (isTimerNotSet) { // time trigger for mudaeusers resets
