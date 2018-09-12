@@ -106,10 +106,9 @@ client
 		switch (msg.author.id) {
 		case "432610292342587392": //Mudae
 		case "479206206725160960": //Mudamaid
+		case "488711695640821760": //Mudamaid2
 		// case "146493901803487233":
 			muedaeObserver(msg);
-			break;
-		default:
 			break;
 		}
 
@@ -118,7 +117,7 @@ client
 		if (msg.author.id === "462878456598888449" && msg.content === "do it") return msg.channel.send("no u");
 
 		// owo reatction cuz we both love traps
-		if (msg.content.toLocaleLowerCase().includes("trap")) owoReact(msg);
+		if (msg.content.toLocaleLowerCase().includes("trap")) return owoReact(msg);
 	})
 	.on("ready", () => {
 		if (isTimerNotSet) { // time trigger for mudaeusers resets

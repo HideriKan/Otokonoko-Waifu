@@ -1,6 +1,10 @@
 replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
->check / mudae perform check with guild id
->check TODOs
+>mudae perform check with guild id
+>mudae time roll reset bug
+>mudae TODOs
+>>mudae list small mode
+>> update time left fo mudae
+>>trap left agrument
 >>help embed
 >>review animalfacts
 >>review bye
