@@ -8,23 +8,25 @@ module.exports = class SuggestCommand extends Command {
 			group: "usefull",
 			description: "write a suggestion to me",
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 5 // in seconds
+				usages: 2, // in the time frame
+				duration: 60 // in seconds
 			},
-			aliases: ["report"],
+			aliases: ["report", "bug", "issue"],
 			details: "Sends the message written after the command to me",
 		});
 	}
 
 	async run(msg) {
-		const suggestCh = msg.client.channels.get("469875124494139392");
+		const suggestCh = msg.client.channels.get("485069817427263488");
 		try {
 			if (msg.guild && msg.guild.members.some(e => !msg.client.owners.includes(e))) {
-				await suggestCh.send(`https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}/${msg.id}`);
+				await suggestCh.send(`https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}/${msg.id}
+				${msg.command}: ${msg.argString.trim()}`);
 
-				return msg.channel.send("message was sent uwu");
+			} else {
+				await suggestCh.send(`${msg.guild ? `Guild:${msg.guild.name}(${msg.guild.id}) Channel:<#${msg.channel.id}>` : msg.channel.type} by <@${msg.author.id}>:
+				${msg.command}: ${msg.argString.trim()}`);
 			}
-			await suggestCh.send(`${msg.content} in ${msg.guild ? `Guild:${msg.guild.id} Channel:<#${msg.channel.id}>` : msg.channel.type} by <@${msg.author.id}>`);
 
 			return msg.channel.send("message was sent uwu");
 		} catch (error) {

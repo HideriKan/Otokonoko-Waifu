@@ -15,7 +15,7 @@ function msToTimeString(ms) {
 	m = m % 60;
 	d = Math.floor(h /24);
 	h = h % 24;
-	return `${addZero(d)}:${addZero(h)}:${addZero(m)}:${addZero(s)}`;
+	return `${addZero(d)}${d === 1 ? "Days" : "Day"} ${addZero(h)}:${addZero(m)}:${addZero(s)}`;
 }
 
 module.exports = class UptimeCommand extends Command {
