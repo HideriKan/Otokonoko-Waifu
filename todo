@@ -1,15 +1,11 @@
 replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
->mudae perform check with guild id
->mudae time roll reset bug
->mudae TODOs
->>mudae list small mode
->> update time left fo mudae
->>trap left agrument
->>help embed
->>review animalfacts
->>review bye
->>>emote details ?; cossserver emote posting
->>>add about with github link >add master --> kein is my master and bla
->>>>cleanup server; like roles
->>>>profile presence with steam seach / steam shop link
->>>>add math
+>	mudae TODOs
+>>	trap left agrument
+>>	help embed
+>>	review animalfacts
+>>	review bye
+>>	cleanup server; like roles
+>>>	emote details ?; cossserver emote posting
+>>>	add about with github link >add master --> kein is my master and bla
+>>>	profile presence with steam seach / steam shop link
+>>>	add math
