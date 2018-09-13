@@ -8,13 +8,15 @@ const path = require("path");
 const Sqlite = require("better-sqlite3");
 const db = new Sqlite(path.join(__dirname,"/../../database.sqlite3"));
 
+const miniList = "-less";
+
 // db.prepare("DROP TABLE IF EXISTS mudaeusers").run();
 db.prepare("CREATE TABLE IF NOT EXISTS mudaeusers("+
 	"id text NOT NULL,"+
 	"guild_id text NOT NULL,"+
 	"claimed integer DEFAULT 1)"
 ).run();
-const getusers = db.prepare("SELECT * FROM mudaeusers");
+const getusers = db.prepare("SELECT * FROM mudaeusers WHERE guild_id = ?");
 const dbcheck = db.prepare("SELECT * FROM mudaeusers WHERE id = ? AND guild_id = ?");
 const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 0)");
 const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ? AND guild_id = ?");
@@ -43,6 +45,7 @@ function nextRestInTimeString(resetHour) {
 
 	switch (hour % resetHour) {
 	case 0:
+		if (resetHour === 1) break;
 		hour += 1;
 		break;
 	case 1:
@@ -85,15 +88,15 @@ module.exports = class MudaeCommand extends Command {
 			args:[
 				{
 					key: "method",
-					prompt: "What method; `add`, `remove`, `claim`, `noclaim`, `time` or `reset`?",
+					prompt: `What method; \`${miniList}\`, add\`, \`remove\`, \`claim\`, \`noclaim\`, \`time\` or \`reset\`?`,
 					type: "string",
 					default: "",
 					validate: method => {
-						let avaliavbleArgs = ["add", "remove", "claim", "noclaim", "reset", "time"];
+						let avaliavbleArgs = [miniList, "add", "remove", "claim", "noclaim", "reset", "time"];
 
 						if(avaliavbleArgs.includes(method.toLowerCase()))
 							return true;
-						return this.args[0].prompt;
+						return "unknown method\n" + this.prompt;
 					},
 					parse: method => method.toLowerCase()
 				},
@@ -108,9 +111,14 @@ module.exports = class MudaeCommand extends Command {
 	}
 
 	run(msg,{method , text}) {
-		if (method === "") {
+		if (method === "" || method === miniList) {
 			let allUsers = [];
-			let dbusers = getusers.all();
+			let dbusers = getusers.all(msg.guild.id);
+
+			const embed = new RichEmbed()
+				.setTitle("Mudae Claims")
+				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
+				.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add | next reset is in ${nextRestInTimeString(3)}`);
 
 			dbusers.forEach(e => {
 				let member = msg.guild.members.find(member => member.user.id === e.id);
@@ -153,30 +161,30 @@ module.exports = class MudaeCommand extends Command {
 				console.error(error);
 			}
 
-			let online = [],
-				offline = [],
-				idle = [],
-				dnd = [];
-			allUsers.forEach(e => {
-				if (e.status === "online") online.push(e);
-				if (e.status === "offline") offline.push(e);
-				if (e.status === "idle") idle.push(e);
-				if (e.status === "dnd") dnd.push(e);
-			});
+			if (method === "") {
+				let online = [],
+					offline = [],
+					idle = [],
+					dnd = [];
+				allUsers.forEach(e => {
+					if (e.status === "online") online.push(e);
+					if (e.status === "offline") offline.push(e);
+					if (e.status === "idle") idle.push(e);
+					if (e.status === "dnd") dnd.push(e);
+				});
 
-			const embed = new RichEmbed()
-				.setTitle("Mudae Claims")
-				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-				.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add | next reset is in ${nextRestInTimeString(3)}`);
-
-			if (online.length != 0)
-				embed.addField("Online", online.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
-			if (offline.length != 0)
-				embed.addField("Offline", offline.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
-			if (idle.length != 0)
-				embed.addField("Idle", idle.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
-			if (dnd.length != 0)
-				embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
+				if (online.length != 0)
+					embed.addField("Online", online.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
+				if (offline.length != 0)
+					embed.addField("Offline", offline.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
+				if (idle.length != 0)
+					embed.addField("Idle", idle.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
+				if (dnd.length != 0)
+					embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
+			} else if (method === miniList) {
+				allUsers = allUsers.filter(e => e.claimed === "✅");
+				embed.setDescription(allUsers.map(e => `${e.claimed} \`\`${e.displayName}\`\``).join("\n"));
+			}
 
 			msg.channel.send(embed);
 
@@ -207,7 +215,7 @@ module.exports = class MudaeCommand extends Command {
 				let member = msg.guild.members.find("id", text);
 				if (!member) return send(msg, "noone found with that id on your server");
 				let check = dbcheck.get(text, msg.guild.id);
-				if (check) return msg.reply("User(s) is already in the list :Wink:");
+				if (check) return msg.reply("User(s) is already in the list <:AstolfoWink:438580142210809856>");
 				dbinsert.run(text, msg.guild.id);
 				return send(msg, "added " + member.displayName);
 
@@ -215,7 +223,7 @@ module.exports = class MudaeCommand extends Command {
 			} else if (!text) {
 				let check = dbcheck.get(msg.author.id, msg.guild.id);
 
-				if (check) return send(msg, "You are already in the list :Wink:");
+				if (check) return send(msg, "You are already in the list <:AstolfoWink:438580142210809856>");
 				dbinsert.run(msg.author.id, msg.guild.id);
 				return msg.reply("added you to the list.\nYou can now if wanted `mudae remove` to remove yourself from the list\nand you can `mudae claim`/`noclaim` to set your claim status if the Bot doesnt record your claim.");
 			}
