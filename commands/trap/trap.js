@@ -41,12 +41,20 @@ module.exports = class TrapCommand extends Command {
 					prompt: "How many trap(s) would you like me to post?",
 					type: "integer",
 					default: 1,
+					validate: (num) => {
+						let thisNum = parseInt(num);
+						if(!isNaN(thisNum) && thisNum > 0) {
+							return true;
+						}
+						return "please enter a correct number";
+
+					},
 					parse: (num, msg) => {
 						if (num > 5) {
-							msg.channel.send("The maximum is 5 per command./nYour request has been reduced to 5");
+							msg.channel.send("The maximum is 5 per command.\nYour request has been reduced to 5");
 							return num = 5;
 						}
-						return num;
+						return parseInt(num);
 					}
 				},
 				{
