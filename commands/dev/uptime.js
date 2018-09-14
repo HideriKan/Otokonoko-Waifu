@@ -15,7 +15,7 @@ function msToTimeString(ms) {
 	m = m % 60;
 	d = Math.floor(h /24);
 	h = h % 24;
-	return `${addZero(d)}${d === 1 ? "Days" : "Day"} ${addZero(h)}:${addZero(m)}:${addZero(s)}`;
+	return `${addZero(d)} ${d === 1 ? "Day" : "Days"} ${addZero(h)}:${addZero(m)}:${addZero(s)}`;
 }
 
 module.exports = class UptimeCommand extends Command {
@@ -26,8 +26,8 @@ module.exports = class UptimeCommand extends Command {
 			group: "dev",
 			description: "Displays the uptime of the bot",
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 3 // in seconds
+				usages: 1,
+				duration: 3
 			},
 			aliases: ["upt"],
 			examples: [],

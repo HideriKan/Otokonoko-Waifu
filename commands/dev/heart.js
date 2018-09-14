@@ -11,8 +11,8 @@ module.exports = class HeartCommand extends Command {
 			aliases: ["h"],
 			ownerOnly: true,
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 3 // in seconds
+				usages: 1,
+				duration: 3
 			},
 			args: [{
 				key: "id",

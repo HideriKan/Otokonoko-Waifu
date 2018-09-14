@@ -12,19 +12,18 @@ module.exports = class CatCommand extends Command {
 			description: "Sends a random Cat",
 			examples:["cat"],
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 3 // in seconds
+				usages: 1,
+				duration: 3
 			},
 		});
 	}
 	async run(msg) {
-		// console.log("test");
 		try {
 			const { body } = await snekfech.get(api);
 
 			const embed = new RichEmbed()
 				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-				.setTitle("Moew \:cat:") // eslint-disable-line
+				.setTitle("Moew 🐱") // eslint-disable-line
 				.setImage(body.file);
 
 			msg.channel.send(embed)

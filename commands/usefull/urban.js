@@ -10,13 +10,13 @@ module.exports = class UrbanCommand extends Command {
 			name: "urban",
 			memberName: "urban",
 			group: "usefull",
-			examples: ["urban trap"], // []required <>optional
+			examples: ["urban brb"],
 			description: "Urban Dictionary as a Command",
 			details: "Searches the Urban Dictionary for you input",
-			argsCount: 1, // max numbers
+			argsCount: 1,
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 2 // in seconds
+				usages: 1,
+				duration: 3
 			},
 			args: [{
 				key: "text",

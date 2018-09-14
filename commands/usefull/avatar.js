@@ -9,11 +9,11 @@ module.exports = class AvatarCommand extends Command {
 			group: "usefull",
 			aliases: ["icon", "pfp"],
 			description: "Sends the Avatar of the User(s)",
-			details: "Get the avatar URL of your own avatar, or the tagged user(s).", // long version of description
-			examples: ["avatar", "avatar @user"], // []required <>optional
+			details: "Get the avatar URL of your own avatar, or the tagged user(s).",
+			examples: ["avatar", "avatar @user"],
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 3 // in seconds
+				usages: 1,
+				duration: 3
 			}, // add args
 		});
 	}

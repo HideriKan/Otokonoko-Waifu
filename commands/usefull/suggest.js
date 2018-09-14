@@ -8,8 +8,8 @@ module.exports = class SuggestCommand extends Command {
 			group: "usefull",
 			description: "write a suggestion to me",
 			throttling: {
-				usages: 2, // in the time frame
-				duration: 60 // in seconds
+				usages: 2,
+				duration: 60
 			},
 			aliases: ["report", "bug", "issue", "note"],
 			details: "Sends the message written after the command to me",

@@ -15,14 +15,14 @@ module.exports = class RevertTrapCommand extends Command {
 			group: "trap",
 			description: "Reverts the last posted imges in the database",
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 10 // in seconds
+				usages: 1,
+				duration: 10
 			},
 			examples: ["revert 5"],
 			details: "Reverts the last posted imges in the db from your server/ user(server if you use this command in a server/ user id you use this command in a DM or anyother than a server. This will not delete anything from the server.",
 			guarded: true,
 			ownerOnly: true,
-			argsCount: 1, // max numbers
+			argsCount: 1,
 			args: [{
 				key: "number",
 				prompt: "how many would you like to revert from the database",

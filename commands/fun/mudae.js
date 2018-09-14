@@ -191,12 +191,9 @@ module.exports = class MudaeCommand extends Command {
 
 			msg.channel.send(embed);
 
-		// adds user(s) depending with different args
-		} else if (method === "add") {
 
-			//if anyone got mentioned
-			if (msg.mentions.members.size) {
-
+		} else if (method === "add") { // adds user(s) depending with different args
+			if (msg.mentions.members.size) { //if anyone got mentioned
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with `@user` is Owner only");
 				msg.mentions.members.forEach(e => {
 					let check = dbcheck.get(e.user.id, msg.guild.id);
@@ -211,8 +208,7 @@ module.exports = class MudaeCommand extends Command {
 					return send(msg, "added " + e.user.displayName);
 				});
 
-			// if with any text afterwards is passed
-			} else if (text) {
+			} else if (text) { // if with any text afterwards is passed
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				let member = msg.guild.members.find("id", text);
@@ -222,8 +218,7 @@ module.exports = class MudaeCommand extends Command {
 				dbinsert.run(text, msg.guild.id);
 				return send(msg, "added " + member.displayName);
 
-			// if only add is passed
-			} else if (!text) {
+			} else if (!text) { // if only add is passed
 				let check = dbcheck.get(msg.author.id, msg.guild.id);
 
 				if (check) return send(msg, "You are already in the list <:AstolfoWink:438580142210809856>");
@@ -231,8 +226,7 @@ module.exports = class MudaeCommand extends Command {
 				return msg.reply("added you to the list.\nYou can now if wanted `mudae remove` to remove yourself from the list\nand you can `mudae claim`/`noclaim` to set your claim status if the Bot doesnt record your claim.");
 			}
 
-		// removes the user from the list
-		} else if (method === "remove") {
+		} else if (method === "remove") { // removes the user from the list
 			if(text) {
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
@@ -244,17 +238,15 @@ module.exports = class MudaeCommand extends Command {
 			dbdel.run(msg.author.id, msg.guild.id);
 			return send(msg, msg.member.displayName + " got removed from the list");
 
-		// sets all users claimed to 0
-		} else if (method === "reset") {
+		} else if (method === "reset") { // sets all users claimed to 0
 
 			if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
 			dbreset.run();
 			send(msg, "List reset");
 
-			// change the claimed status
-		} else if (method === "claim") {
-			// seaches for the passed userId
-			if (text) {
+		} else if (method === "claim") { // change the claimed status
+
+			if (text) { // seaches for the passed userId
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				let member = msg.guild.members.find("id", text);
@@ -264,16 +256,13 @@ module.exports = class MudaeCommand extends Command {
 				send(msg, member.displayName + " now has a claim in the List");
 
 
-			// just takes the author id
-			} else if (!text) {
+			} else if (!text) { // just takes the author id
 
 				dbSetClaim.run(1, msg.author.id, msg.guild.id);
 				send(msg,msg.member.displayName + " now has a claim in the List");
 			}
-		// change the claimed status
-		} else if (method === "noclaim") {
-			// seaches for the passed userId
-			if (text) {
+		} else if (method === "noclaim") { // change the claimed status
+			if (text) {// seaches for the passed userId
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
 				let member = msg.guild.members.find("id", text);
@@ -283,8 +272,7 @@ module.exports = class MudaeCommand extends Command {
 				dbSetClaim.run(0, text, msg.guild.id);
 				send(msg, member.displayName + " doesn’t have a shown claim now");
 
-			// just takes the author id
-			} else if (!text) {
+			} else if (!text) { // just takes the author id
 
 				dbSetClaim.run(0, msg.author.id, msg.guild.id);
 				send(msg,msg.member.displayName + " doesn’t have a shown claim now");

@@ -10,8 +10,8 @@ module.exports = class RemovemsgCommand extends Command {
 			description: "Deletes a message",
 			examples: ["removemsg 464428306251382796"],
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 3 // in seconds
+				usages: 1,
+				duration: 3
 			},
 			details: "This command deltes the message with the remove command and the message of the ID. The command needs to be in the same Channel as the Message requested to remove",
 			ownerOnly: true,
@@ -27,7 +27,7 @@ module.exports = class RemovemsgCommand extends Command {
 	async run(msg, { id }) {
 		if (!msg.deletable) return msg.reply("I don't have the permission to delete that message");
 		msg.delete();
-		
+
 		const m = await msg.channel.fetchMessage(id);
 		m.delete();
 		console.log(`deleted "${m.content}"`);

@@ -49,7 +49,6 @@ function checkSuitability(data) {
 	return false;
 }
 
-// if needed get the img from the api => var => var into embed
 async function getEmbedData(data, redditIcon, msg) {
 	let embedImg = data.url;
 	let embedTitle = data.title;
@@ -118,11 +117,11 @@ module.exports = class RedditCommand extends Command {
 			description: "Sends the first post from a subreddit",
 			details: "Can be sorted by `hot`, `top`, `new`, `controversial` or `rising`. Can also send a specific post by giving the bot the post id instead of the  .Posts **only** images from the subreddit. This bot will not post NSFW in a SFW channel or a spoiler.",
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 3 // in seconds
+				usages: 1,
+				duration: 3
 			},
 			examples: ["reddit anime_irl", "reddit animemes top", "reddit animemes 8zf79f"],
-			argsCount: 2, // max args
+			argsCount: 2,
 			args: [
 				{
 					key: "subreddit",
@@ -148,7 +147,7 @@ module.exports = class RedditCommand extends Command {
 	}
 
 
-	async run(msg, { subreddit, text, number}) { // arg loop/post x times // include videos (.webm till it supports it)
+	async run(msg, { subreddit, text, number}) { // include videos (.webm till it supports it)
 		try {
 			let isReddit;
 			switch (text) { // check if a sort is passed
@@ -217,7 +216,7 @@ module.exports = class RedditCommand extends Command {
 		} catch (err) {
 			console.error(err);
 			if (err === "Error: 404 Not Found") return msg.reply("404. Subreddit or Comment not found please check the spelling");
-			if (err === "Error: 403 Forbidden") return msg.reply("403 Forbidden. Dont know why \:shrug:"); // eslint-disable-line
+			if (err === "Error: 403 Forbidden") return msg.reply("403 Forbidden. Dont know why <:Shrug:268687398966263809>"); // eslint-disable-line
 			return msg.reply("Something went wrong.");
 		}
 	}

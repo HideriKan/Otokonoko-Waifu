@@ -13,8 +13,8 @@ module.exports = class AnimalFactsCommand extends Command {
 			aliases:["afacts"],
 			examples:["animalfacts"],
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 3 // in seconds
+				usages: 1,
+				duration: 3
 			},
 		});
 	}

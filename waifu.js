@@ -63,20 +63,6 @@ async function owoReact(msg) {
 	await msg.react("🅾").catch(console.error);
 }
 
-function sendMsgintoPritaveCh(msg) {
-	if (msg.content.startsWith("$h") ||
-		msg.content.startsWith("$w") ||
-		msg.content.startsWith("$m")) {
-		if (msg.content.startsWith("$mm")) return;
-		if (msg.content.startsWith("$mu")) return;
-
-		const privatech = client.channels.get("296984061287596032");
-		privatech.send(`<#${msg.channel.id}>roll!`)
-			.then(msg => msg.delete(10000))
-			.catch(console.err);
-	}
-}
-
 function getNextResetDateInMs() {
 	let now = new Date();
 	let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());

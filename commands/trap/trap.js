@@ -30,11 +30,11 @@ module.exports = class TrapCommand extends Command {
 			examples: ["trap", "trap 5", "trap 1 -lewd"],
 			details: "Max. amount of number is `5`. With an `-lewd`, `-l` or `-nsfw` after the number it will post NSFW picture. Will (hopefully) not repost in the same server or user DM's. This command was created with the intetion for my daily Trap posting.",
 			throttling: {
-				usages: 2, // in the time frame
-				duration: 10 // in seconds
+				usages: 2,
+				duration: 10
 			},
 			guarded: true,
-			argCount: 2, // max numbers
+			argCount: 2,
 			args: [
 				{
 					key: "number",

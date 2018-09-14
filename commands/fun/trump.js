@@ -12,8 +12,8 @@ module.exports = class TrumpCommand extends Command {
 			description: "(mabye) Quotes trump",
 			examples: ["trump", "trump name", "trump @user"],
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 3 // in seconds
+				usages: 1,
+				duration: 3
 			},
 			details: "Without any arguments it sends a random trump quote. With a `name` it will send a personalized quote with the given `name`. With a `@user` it will send a personalized quote with the `users nickname`. The command will not ping the user",
 			args:[{

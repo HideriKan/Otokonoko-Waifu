@@ -9,8 +9,8 @@ module.exports = class JoinCommand extends Command {
 			group: "dev",
 			description: "Plays something",
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 10 // in seconds
+				usages: 1,
+				duration: 10
 			},
 			aliases: ["j"],
 			examples: [],
