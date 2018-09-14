@@ -16,6 +16,7 @@ db.prepare(`CREATE TABLE IF NOT EXISTS trapposts (
 	is_lewd INTEGER NOT NULL,
 	guild_or_user_id NOT NULL)`).run();
 const dbInsert = db.prepare("INSERT INTO trapposts VALUES (?, ?, ?, ?)");
+/** @returns object of already posted pics */
 const getRows = db.prepare("SELECT * FROM trapposts WHERE is_lewd = ?");
 const dbreset = db.prepare("DELETE FROM trapposts WHERE guild_or_user_id = ?");
 
@@ -73,7 +74,7 @@ module.exports = class TrapCommand extends Command {
 		});
 	}
 
-	run(msg, { number, lewdargs }) {
+	async run(msg, { number, lewdargs }) {
 		let allPics, trapdb, imgPath, lewdNum;
 		let removed = [];
 
@@ -96,6 +97,8 @@ module.exports = class TrapCommand extends Command {
 
 		allPics = fs.readdirSync(imgPath).filter(pics => pics.includes(".")); // get all images from db
 		allPics = allPics.filter(e => !removed.includes(e)); // sorting out already posted images
+		const left = await msg.channel.send(`Pics left ${allPics.length - removed.length}`).catch(console.log);
+		left.delete(5000).catch(console.log);
 
 		for (let i = 0; i < number; i++) {
 			if (!allPics.length) {
