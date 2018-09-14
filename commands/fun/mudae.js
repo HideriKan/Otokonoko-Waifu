@@ -8,8 +8,6 @@ const path = require("path");
 const Sqlite = require("better-sqlite3");
 const db = new Sqlite(path.join(__dirname,"/../../database.sqlite3"));
 
-const miniList = "-less";
-
 // db.prepare("DROP TABLE IF EXISTS mudaeusers").run();
 db.prepare("CREATE TABLE IF NOT EXISTS mudaeusers("+
 	"id text NOT NULL,"+
@@ -79,24 +77,23 @@ module.exports = class MudaeCommand extends Command {
 			description: "List for Mudae Bot and more",
 			guildOnly: true,
 			throttling: {
-				usages: 1, // in the time frame
-				duration: 5 // in seconds
+				usages: 1,
+				duration: 5
 			},
 			aliases: ["m", "mu", "c"],
 			details: "List all users that got added to the list from the mudae add command. Can also perform a method `add`, `remove`, `claim`, `noclaim` or `reset` all can be used by the normal user except reset",
-			// ownerOnly:true,
 			args:[
 				{
 					key: "method",
-					prompt: `What method; \`${miniList}\`, add\`, \`remove\`, \`claim\`, \`noclaim\`, \`time\` or \`reset\`?`,
+					prompt: "What method; `--less (-l)`, `add`, `remove`, `claim`, `noclaim`, `time` or `reset`?",
 					type: "string",
 					default: "",
 					validate: method => {
-						let avaliavbleArgs = [miniList, "add", "remove", "claim", "noclaim", "reset", "time"];
+						let avaliavbleArgs = ["--less", "-l", "add", "remove", "claim", "noclaim", "reset", "time"];
 
 						if(avaliavbleArgs.includes(method.toLowerCase()))
 							return true;
-						return "unknown method\n" + this.prompt;
+						return "unknown method\n" + this.argsCollector.args[0].prompt;
 					},
 					parse: method => method.toLowerCase()
 				},
@@ -111,14 +108,12 @@ module.exports = class MudaeCommand extends Command {
 	}
 
 	run(msg,{method , text}) {
-		if (method === "" || method === miniList) {
+		if (method === "" || method === "--less" || method === "-l") {
 			let allUsers = [];
 			let dbusers = getusers.all(msg.guild.id);
 
 			const embed = new RichEmbed()
-				.setTitle("Mudae Claims")
-				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-				.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add | next reset is in ${nextRestInTimeString(3)}`);
+				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT");
 
 			dbusers.forEach(e => {
 				let member = msg.guild.members.find(member => member.user.id === e.id);
@@ -162,6 +157,10 @@ module.exports = class MudaeCommand extends Command {
 			}
 
 			if (method === "") {
+				embed
+					.setTitle("Mudae Claims")
+					.setFooter(`if you want to be in this list do ${msg.client.commandPrefix}mudae add | next reset is in ${nextRestInTimeString(3)}`);
+
 				let online = [],
 					offline = [],
 					idle = [],
@@ -181,9 +180,13 @@ module.exports = class MudaeCommand extends Command {
 					embed.addField("Idle", idle.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
 				if (dnd.length != 0)
 					embed.addField("Do not Disturb", dnd.map(e => `${e.claimed} \`\`${trim(e.displayName)}\`\``).join("\n"), true);
-			} else if (method === miniList) {
-				allUsers = allUsers.filter(e => e.claimed === "✅");
-				embed.setDescription(allUsers.map(e => `${e.claimed} \`\`${e.displayName}\`\``).join("\n"));
+			} else if (method === "--less" || method === "-l") {
+				embed
+					.setTitle("Users with a Claim")
+					.setFooter(`next reset is in ${nextRestInTimeString(3)}`);
+
+				allUsers = allUsers.filter(e => e.claimed === "✅" && e.status === "online");
+				embed.setDescription(allUsers.map(e => `\`\`${e.displayName}\`\``).join("\n"));
 			}
 
 			msg.channel.send(embed);

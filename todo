@@ -1,5 +1,4 @@
 replace help.js with \node_modules\discord.js-commando\src\commands\util\help.js
->	mudae TODOs
 >>	trap left agrument
 >>	help embed
 >>	review animalfacts
