@@ -97,7 +97,7 @@ module.exports = class TrapCommand extends Command {
 
 		allPics = fs.readdirSync(imgPath).filter(pics => pics.includes(".")); // get all images from db
 		allPics = allPics.filter(e => !removed.includes(e)); // sorting out already posted images
-		const left = await msg.channel.send(`Pics left ${allPics.length - removed.length}`).catch(console.log);
+		const left = await msg.channel.send(`Pics left ${allPics.length}`).catch(console.log);
 		left.delete(5000).catch(console.log);
 
 		for (let i = 0; i < number; i++) {
