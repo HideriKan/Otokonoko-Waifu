@@ -27,7 +27,8 @@ function resetTable() {
 
 function interval() {
 	resetTable();
-	setInterval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
+	setTimeout(interval,getNextResetDateInMs());
+	// interval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
 }
 
 async function muedaeObserver(msg) {
