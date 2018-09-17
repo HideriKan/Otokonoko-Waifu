@@ -21,7 +21,8 @@ const client = new Commando.Client({
 let isTimerNotSet = true;
 
 function resetTable() {
-	client.channels.get("315509598440128513").send("List reset");
+	// client.channels.get("315509598440128513").send("List reset");
+	console.log("test");
 	maindb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();
 }
 
@@ -74,7 +75,7 @@ function getNextResetDateInMs() {
 		hour += 1;
 		break;
 	case 1:
-		if (now.getUTCMinutes() < 5) break;
+		if (now.getUTCMinutes() < 4) break;
 		hour += 3;
 		break;
 	case 2:
