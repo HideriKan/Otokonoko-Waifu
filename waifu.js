@@ -20,19 +20,14 @@ const client = new Commando.Client({
 });
 let isTimerNotSet = true;
 
-function resetTable() {
-	// client.channels.get("315509598440128513").send("List reset");
-	console.log("test");
+function mudaeResetInterval() {
+	client.channels.get("315509598440128513").send("List reset");
 	maindb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();
-}
-
-function interval() {
-	resetTable();
-	setTimeout(interval,getNextResetDateInMs());
+	setTimeout(mudaeResetInterval, getNextResetDateInMs());
 	// interval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
 }
 
-async function muedaeObserver(msg) {
+function muedaeObserver(msg) {
 	if (msg.content.includes(" are now married!")) { // married
 		let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
 		let marriedUserName = married[0].substring(2, married[0].length - 6);
@@ -109,7 +104,7 @@ client
 	})
 	.on("ready", () => {
 		if (isTimerNotSet) { // time trigger for mudaeusers resets
-			setTimeout(interval, getNextResetDateInMs());
+			setTimeout(mudaeResetInterval, getNextResetDateInMs());
 			isTimerNotSet = false;
 		} //end of mudae reset
 
