@@ -27,30 +27,32 @@ function mudaeResetInterval() {
 	// interval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
 }
 
-function muedaeObserver(msg) {
-	if (msg.content.includes(" are now married!")) { // married
+async function muedaeObserver(msg) {
+	const testMsg = await msg.channel.fetchMessage("494451063710285824");
+	if (testMsg.content.includes(" are now married!")) { // married
 		let member;
-		if (msg.mentions) {
-			if(!msg.content.includes("(Event)"))
-				member = msg.mentions.first();
+		if (testMsg.mentions.members.size) {
+			if(!testMsg.content.includes("(Event)")) {
+				member = testMsg.mentions.members.first();
+			}
 		} else {
-			let married = msg.content.match(/\*\*[^()]+\*\* and/gi);
+			let married = testMsg.content.match(/\*\*[^()]+\*\* and/gi);
 			let marriedUserName = married[0].substring(2, married[0].length - 6);
-			member = msg.guild.members.find(m => m.user.username === marriedUserName);
+			member = testMsg.guild.members.find(m => m.user.username === marriedUserName);
 
 		}
 
 		if (member) {
-			maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(member.id, msg.guild.id);
+			maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(member.id, testMsg.guild.id);
 			console.log(`${member.user.username} got married`);
-			msg.react("💖");
+			testMsg.react("💖");
 		}
-	} else if (msg.content.includes(" was given to ")) { // give
-		let user = msg.mentions.users.first();
+	} else if (testMsg.content.includes(" was given to ")) { // give
+		let user = testMsg.mentions.users.first();
 
-		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(user.id, msg.guild.id);
+		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(user.id, testMsg.guild.id);
 		console.log(`${user.username} got given a char`);
-		msg.react(":blobaww:357967083960795137");
+		testMsg.react(":blobaww:357967083960795137");
 	}
 }
 
