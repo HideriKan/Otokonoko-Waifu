@@ -43,14 +43,12 @@ async function muedaeObserver(msg) {
 
 		if (member) {
 			maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(member.id, msg.guild.id);
-			console.log(`${member.user.username} got married`);
 			msg.react("💖");
 		}
 	} else if (msg.content.includes(" was given to ")) { // give
 		let user = msg.mentions.users.first();
 
 		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(user.id, msg.guild.id);
-		console.log(`${user.username} got given a char`);
 		msg.react(":blobaww:357967083960795137");
 	}
 }
@@ -161,7 +159,14 @@ client
 		`);
 	})
 	.on("disconnect", () => console.warn("Disconnected!"))
-	.on("reconnecting", () => console.warn("Reconnecting..."));
+	.on("reconnecting", () => console.warn("Reconnecting..."))
+	.on("rateLimit", info =>
+		console.log(
+			`Limit: ${info.requestLimit}`,
+			`Time: ${info.timeDifference}`,
+			`Method: ${info.method}`,
+			`Path: ${info.path}`
+		));
 
 client.setProvider(
 	sqlite.open(path.join(__dirname, "database.sqlite3")).then(db => new Commando.SQLiteProvider(db))

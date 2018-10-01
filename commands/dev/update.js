@@ -39,8 +39,7 @@ module.exports = class UpdateCommand extends Command {
 		const upEmbed = new RichEmbed()
 			.setTitle("Update")
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-			.setDescription("📡 Getting new update(s)...")
-		;
+			.setDescription("📡 Getting new update(s)...");
 
 		let upMsg = await msg.channel.send(upEmbed);
 		if (isLunix) {
