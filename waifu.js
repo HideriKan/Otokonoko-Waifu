@@ -21,7 +21,7 @@ const client = new Commando.Client({
 let isTimerNotSet = true;
 
 function mudaeResetInterval() {
-	client.channels.get("315509598440128513").send("List reset");
+	client.channels.get("315509598440128513").send("List reset <@&472769044320223233>");
 	maindb.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0").run();
 	setTimeout(mudaeResetInterval, getNextResetDateInMs());
 	// interval(resetTable, 3/*h*/ * 60/*min*/ * 60/*s*/ * 1000/*ms*/);
