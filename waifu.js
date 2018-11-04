@@ -75,14 +75,14 @@ function getNextResetDateInMs() {
 
 	switch (hour % 3) {
 	case 0:
-		if (now.getUTCMinutes() < 4) break;
-		hour += 3;
-		break;
-	case 1:
 		hour += 2;
 		break;
-	case 2:
+	case 1:
 		hour += 1;
+		break;
+	case 2:
+		if (now.getUTCMinutes() < 4) break;
+		hour += 3;
 		break;
 	}
 
