@@ -43,15 +43,19 @@ function nextRestInTimeString(resetHour) {
 
 	switch (hour % resetHour) {
 	case 0:
-		if (resetHour === 1) break;
-		hour += 1;
-		break;
-	case 1:
-		if (now.getUTCMinutes() < 5) break;
+		if (resetHour === 1) {
+			hour += 1;
+			break;
+		}
+
+		if (now.getUTCMinutes() < 4) break;
 		hour += 3;
 		break;
-	case 2:
+	case 1:
 		hour += 2;
+		break;
+	case 2:
+		hour += 1;
 		break;
 	}
 
