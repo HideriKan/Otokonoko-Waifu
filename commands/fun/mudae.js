@@ -20,7 +20,14 @@ const dbinsert = db.prepare("INSERT INTO mudaeusers VALUES (?, ?, 0)");
 const dbdel = db.prepare("DELETE FROM mudaeusers WHERE id = ? AND guild_id = ?");
 const dbreset = db.prepare("UPDATE mudaeusers SET claimed = 1 WHERE claimed = 0");
 const dbSetClaim = db.prepare("UPDATE mudaeusers SET claimed = ? WHERE id = ? AND guild_id = ?"); // 1 === has claim; 0 === has no claim;
+const getMuadeSettings = db.prepare("SELECT * FROM mudaesettings");
+const setSetting = db.prepare("UPDATE mudaesettings SET bool = ? WHERE setting = ?");
 
+/**
+ *
+ * @param {message} msg message objekt
+ * @param {text} text tex to be posted into to channel
+ */
 function send(msg,text) {
 	msg.channel.send(text);
 }
@@ -33,7 +40,11 @@ function ComUser(status, memberObj, hasClaim = false) {
 	this.displayName = displayName;
 	this.claimed = hasClaim ? "✅" : "❌";
 }
-
+/**
+ *
+ * @param int number of the inverval that is the reset in resetHour
+ * @returns time for in next reset as a string
+ */
 function nextRestInTimeString(resetHour) {
 	const addZero = (element) => element.toString().padStart(2, 0);
 	let now = new Date();
@@ -61,6 +72,10 @@ function nextRestInTimeString(resetHour) {
 
 	let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
 	ms = date - UTCNow;
+	let mSettings = getMuadeSettings.all();
+	if(mSettings[0].setting === "halfResetTime" && mSettings[0].bool === 1 && resetHour !== 1) {
+		ms = ms / 2;
+	}
 
 	s = Math.floor(ms /1000);
 	m = Math.floor(s / 60);
@@ -93,7 +108,7 @@ module.exports = class MudaeCommand extends Command {
 					type: "string",
 					default: "",
 					validate: method => {
-						let avaliavbleArgs = ["--less", "-l", "add", "remove", "claim", "noclaim", "reset", "time"];
+						let avaliavbleArgs = ["--less", "-l", "add", "remove", "claim", "noclaim", "reset", "time", "halfresettimer"];
 
 						if(avaliavbleArgs.includes(method.toLowerCase()))
 							return true;
@@ -112,7 +127,10 @@ module.exports = class MudaeCommand extends Command {
 	}
 
 	run(msg,{method , text}) {
-		if (method === "" || method === "--less" || method === "-l") {
+		switch (method) {
+		case "":
+		case "--less":
+		case "-l":{
 			let allUsers = [];
 			let dbusers = getusers.all(msg.guild.id);
 
@@ -196,7 +214,10 @@ module.exports = class MudaeCommand extends Command {
 			msg.channel.send(embed);
 
 
-		} else if (method === "add") { // adds user(s) depending with different args
+
+			break;
+		}
+		case "add":
 			if (msg.mentions.members.size) { //if anyone got mentioned
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with `@user` is Owner only");
 				msg.mentions.members.forEach(e => {
@@ -229,8 +250,8 @@ module.exports = class MudaeCommand extends Command {
 				dbinsert.run(msg.author.id, msg.guild.id);
 				return msg.reply("added you to the list.\nYou can now if wanted `mudae remove` to remove yourself from the list\nand you can `mudae claim`/`noclaim` to set your claim status if the Bot doesnt record your claim.");
 			}
-
-		} else if (method === "remove") { // removes the user from the list
+			break;
+		case "remove":
 			if(text) {
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
@@ -241,15 +262,12 @@ module.exports = class MudaeCommand extends Command {
 			}
 			dbdel.run(msg.author.id, msg.guild.id);
 			return send(msg, msg.member.displayName + " got removed from the list");
-
-		} else if (method === "reset") { // sets all users claimed to 0
-
+		case "reset":
 			if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
 			dbreset.run();
 			send(msg, "List reset");
-
-		} else if (method === "claim") { // change the claimed status
-
+			break;
+		case "claim":
 			if (text) { // seaches for the passed userId
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
@@ -265,7 +283,8 @@ module.exports = class MudaeCommand extends Command {
 				dbSetClaim.run(1, msg.author.id, msg.guild.id);
 				send(msg,msg.member.displayName + " now has a claim in the List");
 			}
-		} else if (method === "noclaim") { // change the claimed status
+			break;
+		case "noclaim":
 			if (text) {// seaches for the passed userId
 
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
@@ -281,16 +300,24 @@ module.exports = class MudaeCommand extends Command {
 				dbSetClaim.run(0, msg.author.id, msg.guild.id);
 				send(msg,msg.member.displayName + " doesn’t have a shown claim now");
 			}
-
-		} else if (method === "time") {
+			break;
+		case "time":
+		{
 			const embed = new RichEmbed()
 				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 				.setTitle("Mudae Timer")
 				.setDescription(`Next roll reset is in ${nextRestInTimeString(1)}
-				Next claim reset is in ${nextRestInTimeString(3)}`)
-			;
+			Next claim reset is in ${nextRestInTimeString(3)}`)
+		;
 
 			send(msg, embed);
+			break;
+		}
+		case "halfresettimer":
+			setSetting.run(text, "halfResetTime");
+			break;
+		default:
+			break;
 		}
 	}
 };

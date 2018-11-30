@@ -10,6 +10,7 @@ const path = require("path");
 const sqlite = require("sqlite");
 const sqlite3 = require("better-sqlite3");
 const maindb = new sqlite3(path.join(__dirname, "database.sqlite3"));
+const getMuadeSettings = maindb.prepare("SELECT * FROM mudaesettings");
 
 const client = new Commando.Client({
 	commandPrefix: prefix,
@@ -87,7 +88,12 @@ function getNextResetDateInMs() {
 	}
 
 	let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
-	return date - UTCNow;
+	let time = date - UTCNow;
+	let mSettings = getMuadeSettings.all();
+	if(mSettings[0].setting === "halfResetTime" && mSettings[0].bool === 1) {
+		time = time / 2;
+	}
+	return time;
 }
 
 

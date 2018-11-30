@@ -21,7 +21,7 @@ module.exports = class SuggestCommand extends Command {
 		try {
 			if (msg.guild && msg.guild.members.some(e => !msg.client.owners.includes(e))) {
 				let usage = msg.content.match(/(?<=,,)\w*/g);
-				await suggestCh.send(`https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}/${msg.id}\n${usage[0]}: ${args.trim()}`);
+				await suggestCh.send(`https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}/${msg.id}\n${usage[0]}: ${args.trim()}`); //TODO: TEST msg.url
 
 			} else {
 				await suggestCh.send(`${msg.guild ? `Guild:${msg.guild.name}(${msg.guild.id}) Channel:<#${msg.channel.id}>` : msg.channel.type} by <@${msg.author.id}>:\n${msg.command}: ${args.trim()}`);
