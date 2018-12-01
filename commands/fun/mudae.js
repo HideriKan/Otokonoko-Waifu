@@ -263,7 +263,7 @@ module.exports = class MudaeCommand extends Command {
 			dbdel.run(msg.author.id, msg.guild.id);
 			return send(msg, msg.member.displayName + " got removed from the list");
 		case "reset":
-			if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
+			// if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
 			dbreset.run();
 			send(msg, "List reset");
 			break;
