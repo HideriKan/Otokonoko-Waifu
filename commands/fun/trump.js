@@ -9,7 +9,7 @@ module.exports = class TrumpCommand extends Command {
 			name: "trump",
 			memberName: "trump",
 			group: "fun",
-			description: "(mabye) Quotes trump",
+			description: "(maybe) Quotes trump",
 			examples: ["trump", "trump name", "trump @user"],
 			throttling: {
 				usages: 1,
