@@ -61,5 +61,6 @@ module.exports = class UpdateCommand extends Command {
 			return;
 		}
 
+		msg.client.user.setActivity("Traps (,,help)", {type: "WATCHING"});
 	}
 };
