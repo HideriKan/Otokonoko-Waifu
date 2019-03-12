@@ -24,9 +24,8 @@ const getMuadeSettings = db.prepare("SELECT * FROM mudaesettings");
 const setSetting = db.prepare("UPDATE mudaesettings SET bool = ? WHERE setting = ?");
 
 /**
- *
- * @param {message} msg message objekt
- * @param {text} text tex to be posted into to channel
+ * @param {message} msg message object
+ * @param {text} text text to be posted into to channel
  */
 function send(msg,text) {
 	msg.channel.send(text);
@@ -51,31 +50,49 @@ function nextRestInTimeString(resetHour) {
 	let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
 	let hour = now.getUTCHours();
 	let h, m, s, ms;
+	let mSettings = getMuadeSettings.all();
 
-	switch (hour % resetHour) {
-	case 0:
-		if (resetHour === 1) {
+
+	if (mSettings[0].setting === "halfResetTime" && mSettings[0].bool === 1) { //this is the is DaylightSaving setting
+		switch (hour % resetHour) {
+		case 0:
 			hour += 1;
 			break;
-		}
+		case 1:
+			if (now.getUTCMinutes() < 4) break;
+			hour += 3;
+			break;
+		case 2:
+			if (resetHour === 1) {
+				hour += 1;
+				break;
+			}
 
-		hour += 2;
-		break;
-	case 1:
-		hour += 1;
-		break;
-	case 2:
-		if (now.getUTCMinutes() < 4) break;
-		hour += 3;
-		break;
+			hour += 2;
+			break;
+		}
+	} else {
+		switch (hour % resetHour) {
+		case 0:
+			if (resetHour === 1) {
+				hour += 1;
+				break;
+			}
+
+			hour += 2;
+			break;
+		case 1:
+			hour += 1;
+			break;
+		case 2:
+			if (now.getUTCMinutes() < 4) break;
+			hour += 3;
+			break;
+		}
 	}
 
 	let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
 	ms = date - UTCNow;
-	let mSettings = getMuadeSettings.all();
-	if(mSettings[0].setting === "halfResetTime" && mSettings[0].bool === 1 && resetHour !== 1) {
-		ms = ms / 2;
-	}
 
 	s = Math.floor(ms /1000);
 	m = Math.floor(s / 60);
@@ -104,11 +121,11 @@ module.exports = class MudaeCommand extends Command {
 			args:[
 				{
 					key: "method",
-					prompt: "What method; `--less (-l)`, `add`, `remove`, `claim`, `noclaim`, `time` or `reset`?",
+					prompt: "What method; `--less (-l)`, `add`, `remove`, `claim`, `noclaim`, `time` or `reset`?\n New: `setDaylightSaving`" ,
 					type: "string",
 					default: "",
 					validate: method => {
-						let avaliavbleArgs = ["--less", "-l", "add", "remove", "claim", "noclaim", "reset", "time", "halfresettimer"];
+						let avaliavbleArgs = ["--less", "-l", "add", "remove", "claim", "noclaim", "reset", "time", "setdaylightsaving"];
 
 						if(avaliavbleArgs.includes(method.toLowerCase()))
 							return true;
@@ -127,6 +144,7 @@ module.exports = class MudaeCommand extends Command {
 	}
 
 	run(msg,{method , text}) {
+		//TODO: change send() to here for no need of the extra msg obj pass
 		switch (method) {
 		case "":
 		case "--less":
@@ -253,8 +271,8 @@ module.exports = class MudaeCommand extends Command {
 			break;
 		case "remove":
 			if(text) {
-
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
+
 				dbdel.run(text, msg.guild.id);
 				let member = msg.guild.members.find("id", text);
 				if(!member) return send(msg,"This user is not a member of this guild");
@@ -264,13 +282,14 @@ module.exports = class MudaeCommand extends Command {
 			return send(msg, msg.member.displayName + " got removed from the list");
 		case "reset":
 			// if (!msg.client.isOwner(msg.author)) return send(msg, "This is a Owner only method");
+
 			dbreset.run();
 			send(msg, "List reset");
 			break;
 		case "claim":
 			if (text) { // seaches for the passed userId
-
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
+
 				let member = msg.guild.members.find("id", text);
 				let check = dbcheck.get(text, msg.guild.id);
 				if (!check) return send(msg, "User not found in List");
@@ -286,8 +305,8 @@ module.exports = class MudaeCommand extends Command {
 			break;
 		case "noclaim":
 			if (text) {// seaches for the passed userId
-
 				if (!msg.client.isOwner(msg.author)) return send(msg, "This method with text is Owner only");
+
 				let member = msg.guild.members.find("id", text);
 				let check = dbcheck.get(text, msg.guild.id);
 				if (!check) return send(msg, "User not found in List");
@@ -313,8 +332,11 @@ module.exports = class MudaeCommand extends Command {
 			send(msg, embed);
 			break;
 		}
-		case "halfresettimer":
-			setSetting.run(text, "halfResetTime");
+		case "setdaylightsaving":
+			if(!text) return send(msg, "This function needs an argument!");
+
+			setSetting.run(text, "halfResetTime"); //TODO:change name to appropriate setting
+			send(msg, `DaylightSaving is now ${text}`);
 			break;
 		default:
 			break;
