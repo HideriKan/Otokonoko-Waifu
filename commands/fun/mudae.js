@@ -52,7 +52,6 @@ function nextRestInTimeString(resetHour) {
 	let h, m, s, ms;
 	let mSettings = getMuadeSettings.all();
 
-
 	if (mSettings[0].setting === "halfResetTime" && mSettings[0].bool === 1) { //this is the is DaylightSaving setting
 		switch (hour % resetHour) {
 		case 0:

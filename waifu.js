@@ -74,25 +74,39 @@ function getNextResetDateInMs() {
 	let UTCNow = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
 	let hour = now.getUTCHours();
 
-	switch (hour % 3) {
-	case 0:
-		hour += 2;
-		break;
-	case 1:
-		hour += 1;
-		break;
-	case 2:
-		if (now.getUTCMinutes() < 4) break;
-		hour += 3;
-		break;
+	let mSettings = getMuadeSettings.all();
+
+	if (mSettings[0].setting === "halfResetTime" && mSettings[0].bool === 1) { //this is the is DaylightSaving setting
+		switch (hour % 3) {
+		case 0:
+			hour += 1;
+			break;
+		case 1:
+			if (now.getUTCMinutes() < 4) break;
+			hour += 3;
+			break;
+		case 2:
+			hour += 2;
+			break;
+		}
+	} else {
+		switch (hour % 3) {
+		case 0:
+			hour += 2;
+			break;
+		case 1:
+			hour += 1;
+			break;
+		case 2:
+			if (now.getUTCMinutes() < 4) break;
+			hour += 3;
+			break;
+		}
 	}
 
 	let date = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hour, 4, 0, 0);
 	let time = date - UTCNow;
-	let mSettings = getMuadeSettings.all();
-	if(mSettings[0].setting === "halfResetTime" && mSettings[0].bool === 1) {
-		time = time / 2;
-	}
+
 	return time;
 }
 
@@ -123,9 +137,7 @@ client
 		} //end of mudae reset
 
 		console.log("Ready!");
-		client.user.setActivity("Traps (,,help)", {
-			type: "WATCHING"
-		});
+		client.user.setActivity("Traps (,,help)", {type: "WATCHING"});
 	})
 	.on("guildCreate", ch => ch.send("What can I do for you Master?"))//server join
 	//.on("guildMemberAdd", user => )  // whenever someone join a guild
