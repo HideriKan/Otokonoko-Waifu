@@ -41,6 +41,7 @@ module.exports = class UpdateCommand extends Command {
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 			.setDescription("📡 Getting new update(s)...");
 
+		msg.client.user.setActivity("Updating...", {type:"PLAYING"});
 		let upMsg = await msg.channel.send(upEmbed);
 		if (isLunix) {
 			const { exec } = require("child_process");
