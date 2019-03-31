@@ -118,7 +118,7 @@ client
 		case "432610292342587392": //Mudae
 		case "479206206725160960": //Mudamaid
 		case "488711695640821760": //Mudamaid2
-		// case "146493901803487233":
+		case "560797226809688064": //Mudamaid22
 			muedaeObserver(msg);
 			break;
 		}
