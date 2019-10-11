@@ -46,6 +46,7 @@ async function muedaeObserver(msg) {
 			maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(member.id, msg.guild.id);
 			msg.react("💖");
 		}
+	}
 }
 
 async function owoReact(msg) {
