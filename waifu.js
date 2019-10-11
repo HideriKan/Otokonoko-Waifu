@@ -3,8 +3,8 @@ const { oneLine } = require("common-tags");
 const {
 	prefix,
 	owner,
-	token,
-	// beta_token
+	token, // eslint-disable-line
+	beta_token // eslint-disable-line
 } = require("./config.json");
 const path = require("path");
 const sqlite = require("sqlite");
@@ -31,7 +31,7 @@ function mudaeResetInterval() {
 async function muedaeObserver(msg) {
 	if (msg.content.includes(" are now married!")) { // married
 		let member;
-		if (msg.mentions.members.size) {
+		if (msg.mentions.members.size && !msg.content.includes(":kakera:")) {
 			if(!msg.content.includes("(Event)")) {
 				member = msg.mentions.members.first();
 			}
@@ -46,12 +46,6 @@ async function muedaeObserver(msg) {
 			maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(member.id, msg.guild.id);
 			msg.react("💖");
 		}
-	} else if (msg.content.includes(" was given to ")) { // give
-		let user = msg.mentions.users.first();
-
-		maindb.prepare("UPDATE mudaeusers SET claimed = 0 WHERE id = ? AND guild_id = ?").run(user.id, msg.guild.id);
-		msg.react(":blobaww:357967083960795137");
-	}
 }
 
 async function owoReact(msg) {
@@ -110,7 +104,6 @@ function getNextResetDateInMs() {
 	return time;
 }
 
-
 client
 	.on("message", msg => {
 		//mude bot claim check
@@ -118,7 +111,8 @@ client
 		case "432610292342587392": //Mudae
 		case "479206206725160960": //Mudamaid
 		case "488711695640821760": //Mudamaid2
-		// case "146493901803487233":
+		case "496338891641454612": //Mudamaid4
+		// case "146493901803487233": //My ID incase of debuging
 			muedaeObserver(msg);
 			break;
 		}
