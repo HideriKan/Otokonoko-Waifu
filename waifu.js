@@ -112,6 +112,7 @@ client
 		case "479206206725160960": //Mudamaid
 		case "488711695640821760": //Mudamaid2
 		case "496338891641454612": //Mudamaid4
+		case "560797226809688064": //Mudamaid22
 		// case "146493901803487233": //My ID incase of debuging
 			muedaeObserver(msg);
 			break;
