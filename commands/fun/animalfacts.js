@@ -1,7 +1,7 @@
 const { Command } = require("discord.js-commando");
-const { RichEmbed } = require("discord.js");
-const snekfech = require("snekfetch");
-const api = "https://cat-fact.herokuapp.com/";
+const { MessageEmbed } = require("discord.js");
+const fetch = require("node-fetch");
+const api = new URL("https://cat-fact.herokuapp.com/facts/random");
 
 module.exports = class AnimalFactsCommand extends Command {
 	constructor(client) {
@@ -19,14 +19,15 @@ module.exports = class AnimalFactsCommand extends Command {
 		});
 	}
 	async run(msg) {
-		const {body} = await snekfech.get(`${api}facts/random`);
+		const res = await fetch(api)
+			.then(res => res.json())
+			.catch(err => (console.log(err)));
 
-		if (body.type === undefined) body.tpye ="Cat";
-		const embed = new RichEmbed()
+		const embed = new MessageEmbed()
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
-			.setTitle(`${body.type} fact!`)
-			.setDescription(body.text);
+			.setTitle(`${res.type} fact!`.capitalize())
+			.setDescription(res.text);
 
-		return msg.channel.send(embed);
+		msg.channel.send(embed);
 	}
 };

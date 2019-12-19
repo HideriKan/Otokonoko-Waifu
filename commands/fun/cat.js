@@ -1,7 +1,7 @@
-const { RichEmbed } = require("discord.js");
 const { Command } = require("discord.js-commando");
-const snekfech = require("snekfetch");
-const api = "https://aws.random.cat/meow";
+const { MessageEmbed } = require("discord.js");
+const fetch = require("node-fetch");
+const api = new URL("https://aws.random.cat/meow");
 
 module.exports = class CatCommand extends Command {
 	constructor(client) {
@@ -19,12 +19,14 @@ module.exports = class CatCommand extends Command {
 	}
 	async run(msg) {
 		try {
-			const { body } = await snekfech.get(api);
+			const res = await fetch(api)
+				.then(res => res.json())
+				.catch(err => (console.log(err)));
 
-			const embed = new RichEmbed()
+			const embed = new MessageEmbed()
 				.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 				.setTitle("Moew 🐱") // eslint-disable-line
-				.setImage(body.file);
+				.setImage(res.file);
 
 			msg.channel.send(embed)
 				.catch(console.error);

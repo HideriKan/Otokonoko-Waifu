@@ -1,7 +1,6 @@
-const {Command} = require("discord.js-commando");
-const {RichEmbed} = require("discord.js");
-const snekfech = require("snekfetch");
-const api = "https://api.urbandictionary.com/v0/define";
+const { Command } = require("discord.js-commando");
+const { MessageEmbed } = require("discord.js");
+const fetch = require("node-fetch");
 const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str;
 
 module.exports = class UrbanCommand extends Command {
@@ -27,21 +26,25 @@ module.exports = class UrbanCommand extends Command {
 	}
 
 	async run(msg, {text}) {
-		const {body} = await snekfech.get(api).query({
-			term: text
-		});
+		const api = new URL("https://api.urbandictionary.com/v0/define");
+		api.searchParams.append("term", text);
 
-		if (body.result_type === "no_results") return msg.channel.send(`No results found for **${text}**`);
+		const res = await fetch(api)
+			.then(res => res.json())
+			.catch(err => (console.log(err)));
 
-		const [answer] = body.list;
-		const embed = new RichEmbed()
+		if (res.result_type === "no_results") return msg.channel.send(`No results found for **${text}**`);
+
+		const [answer] = res.list;
+		const embed = new MessageEmbed()
 			.setColor(msg.guild ? msg.guild.me.displayColor : "DEFAULT")
 			.setTitle(answer.word)
 			.setURL(answer.permalink)
+			.setTimestamp(answer.written_on)
 			.addField("Definition", trim(answer.definition, 1024))
 			.addField("Example", trim(answer.example, 1024))
-			.addField("Rating", `${answer.thumbs_up} thumbs up.\n${answer.thumbs_down} thumbs down.`)
-			.setFooter(`Tags: ${body.tags.join(", ")}`);
+			.addField("Rating", `${answer.thumbs_up} thumbs up.\n${answer.thumbs_down} thumbs down.`);
+			// .setFooter(`Tags: ${res.tags.join(", ")}`);
 
 		msg.channel.send(embed);
 	}

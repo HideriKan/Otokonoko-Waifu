@@ -1,14 +1,14 @@
 const { Command } = require("discord.js-commando");
-const { RichEmbed } = require("discord.js");
-const snekfech = require("snekfetch");
+const { MessageEmbed } = require("discord.js");
+const fetch = require("node-fetch");
 const { imgurClientID } = require("./../../config.json");
 const path = require("path");
 const Sqlite = require("better-sqlite3");
 const db = new Sqlite(path.join(__dirname,"/../../database.sqlite3"));
 
-const redditAPI = "https://www.reddit.com";
-const imgurAPI = "https://api.imgur.com/3/";
-const gfycatAPI = "https://api.gfycat.com/v1/gfycats/";
+const redditAPI = new URL("https://www.reddit.com");
+const imgurAPI = new URL("https://api.imgur.com/3/");
+const gfycatAPI = new URL("https://api.gfycat.com/v1/gfycats/");
 
 const trim = (str, max) => (str.length > max) ? `${str.slice(0, max-3)}...` : str; // will cut the string if it will go over the max
 
@@ -53,7 +53,7 @@ async function getEmbedData(data, redditIcon, msg) {
 	let embedImg = data.url;
 	let embedTitle = data.title;
 	let embedDes;
-	const embed = new RichEmbed()
+	const embed = new MessageEmbed()
 		.setColor("#b68a86")
 		.setAuthor(data.subreddit_name_prefixed, redditIcon ? redditIcon : "" , redditAPI + "/" + data.subreddit_name_prefixed)
 		.setTitle(trim(embedTitle, 256))
@@ -70,22 +70,29 @@ async function getEmbedData(data, redditIcon, msg) {
 		if (embedImg.includes("https://imgur.com/")) {
 			if (embedImg.includes("https://imgur.com/a/")) {
 				const hash = embedImg.replace("https://imgur.com/a/", "");
-				const imgur = await snekfech.get(imgurAPI + "album/" + hash).set("Authorization", `Client-ID ${imgurClientID}`);
+				const imgur = await fetch(imgurAPI + "album/" + hash, { headers: { "Authorization": `Client-ID ${imgurClientID}`}})
+					.then(res => res.json())
+					.catch(err => (console.log(err)));
 
-				embedImg = imgur.body.data.images[0].link;
+				embedImg = imgur.data.images[0].link;
 				embedTitle =+ "[Imgur Album]";
 			} else if (embedImg.includes("https://imgur.com/")) {
 				const hash = embedImg.replace("https://imgur.com/", "");
-				const imgur = await snekfech.get(imgurAPI + "image/" + hash).set("Authorization", `Client-ID ${imgurClientID}`);
+				const imgur = await fetch(imgurAPI + "image/" + hash, { headers: { "Authorization": `Client-ID ${imgurClientID}`}})
+					.then(res => res.json())
+					.catch(err => (console.log(err)));
 
-				embedImg = imgur.body.data.link;
+				embedImg = imgur.data.link;
 			}
 		} else if (embedImg.includes("https://gfycat.com/")) {
 			const hash = embedImg.replace("https://gfycat.com/", "");
-			const gfycat = await snekfech.get(gfycatAPI + hash);
+
+			const gfycat = await fetch(gfycatAPI + hash)
+				.then(res => res.json())
+				.catch(err => (console.log(err)));
 
 			embedDes = "**this is a low quality gif** Go to the Original:\n" + embedImg;
-			embedImg = gfycat.body.gfyItem.max5mbGif;
+			embedImg = gfycat.gfyItem.max5mbGif;
 		} else if (embedImg.includes("https://streamable.com/")) { // till discord supports to embed videos
 			embedDes = "this is not yet supported by discord\n" + embedImg;
 			msg.channel.send(embedImg);
@@ -167,8 +174,13 @@ module.exports = class RedditCommand extends Command {
 				let postCount = 0;
 				db.prepare("DELETE FROM redditposted WHERE time_send < DATETIME('NOW', '-1 day')").run();
 
-				const { body } = await snekfech.get(`${redditAPI}/r/${subreddit}/${text}.json`);
-				const about = await snekfech.get(`${redditAPI}/r/${subreddit}/about.json`);
+				const body = await fetch(`${redditAPI}/r/${subreddit}/${text}.json`)
+					.then(res => res.json())
+					.catch(err => (console.log(err)));
+
+				const about = await fetch(`${redditAPI}/r/${subreddit}/about.json`)
+					.then(res => res.json())
+					.catch(err => (console.log(err)));
 
 				if (number > body.data.children.length) {
 					msg.channel.send(`Your request has been reduced to ${body.data.children.length}`);
@@ -180,7 +192,7 @@ module.exports = class RedditCommand extends Command {
 						const data = body.data.children[i].data;
 
 						if (checkSuitability(data)) {
-							if (!(!about.body.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
+							if (!(!about.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
 							if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler) continue; //hope this works like I want it to be
 
 							let timePosted = new Date(msg.createdTimestamp).toISOString();
@@ -191,7 +203,7 @@ module.exports = class RedditCommand extends Command {
 								continue;
 							}
 
-							msg.channel.send(await getEmbedData(data, about.body.data.icon_img, msg));
+							msg.channel.send(await getEmbedData(data, about.data.icon_img, msg));
 							postCount++;
 						}
 					}
@@ -200,15 +212,21 @@ module.exports = class RedditCommand extends Command {
 				return msg.channel.send("Sowwy nyo Images found to post uwu");
 
 			} else if(!isReddit) { // code for default which should be a subreddit and a comment
-				const { body } = await snekfech.get(`${redditAPI}/r/${subreddit}/comments/${text}.json`);
-				const about = await snekfech.get(`${redditAPI}/r/${subreddit}/about.json`);
+				const body = await fetch(`${redditAPI}/r/${subreddit}/comments/${text}.json`)
+					.then(res => res.json())
+					.catch(err => (console.log(err)));
+
+				const about = await fetch(`${redditAPI}/r/${subreddit}/about.json`)
+					.then(res => res.json())
+					.catch(err => (console.log(err)));
+
 				const data = body[0].data.children[0].data;
 
 				if (checkSuitability(data))  {
-					if (!(!about.body.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
+					if (!(!about.data.over18 || msg.channel.nsfw)) return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
 					if (!(!data.over_18 || msg.channel.nsfw) || data.spoiler)  return msg.channel.send("You cant chose a NSFW subweddit in a SFW channyew òwó");
 
-					return msg.channel.send(await getEmbedData(data, about.body.data.icon_img, msg));
+					return msg.channel.send(await getEmbedData(data, about.data.icon_img, msg));
 				}
 			}
 			return msg.reply("I dont know what you did but you broke something");
