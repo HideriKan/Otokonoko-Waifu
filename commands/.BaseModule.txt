@@ -2,11 +2,11 @@
 const { Command } = require("discord.js-commando");
 
 //API
-const snekfech = require("snekfetch");
-const api = "";
+const fetch = require("node-fetch");
+const api = new URL("");
 
 //Embed
-const { RichEmbed } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 //Datebase
 const path = require("path");

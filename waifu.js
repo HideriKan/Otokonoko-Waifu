@@ -17,7 +17,6 @@ const client = new Commando.Client({
 	owner: owner,
 	// invite: "<https://discord.gg/uZAPmRV>",
 	disableEveryone: true,
-	unknownCommandResponse: false
 });
 let isTimerNotSet = true;
 
@@ -180,7 +179,9 @@ client
 			`Time: ${info.timeDifference}`,
 			`Method: ${info.method}`,
 			`Path: ${info.path}`
-		));
+		)
+	)
+	.on("unknownCommand", (msg) => console.log(msg.command));
 
 client.setProvider(
 	sqlite.open(path.join(__dirname, "database.sqlite3")).then(db => new Commando.SQLiteProvider(db))
@@ -205,3 +206,7 @@ client.login(token);
 process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: ", p, "reason: ", reason);
 });
+
+String.prototype.capitalize = function() {
+	return this.charAt(0).toUpperCase() + this.slice(1);
+};

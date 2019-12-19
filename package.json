@@ -1,25 +1,27 @@
 {
   "name": "otokonoko-waifu",
   "version": "0.1.1",
+  "description": "Trying to code my own Discord Bot",
   "main": "waifu.js",
   "scripts": {
     "start": "node ."
   },
   "dependencies": {
-    "better-sqlite3": "^4.2.0",
-    "bufferutil": "^3.0.5",
-    "discord.js": "^11.5.1",
-    "discord.js-commando": "^0.10.0",
-    "eslint": "^4.19.1",
-    "ffmpeg-binaries": "^4.0.0",
-    "node-opus": "^0.3.2",
-    "sqlite": "^2.9.3"
+    "better-sqlite3": "^5.4.3",
+    "bufferutil": "^4.0.1",
+    "discord.js": "github:discordjs/discord.js",
+    "discord.js-commando": "github:discordjs/Commando",
+    "eslint": "^6.7.2",
+    "node-fetch": "^2.6.0",
+    "node-opus": "^0.3.3",
+    "sqlite": "^3.0.3",
+    "sqlite3": "^4.1.1"
   },
   "devDependencies": {
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0"
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
   }
 }
