@@ -12,7 +12,7 @@
     "discord.js": "github:discordjs/discord.js",
     "discord.js-commando": "github:discordjs/Commando",
     "eslint": "^6.7.2",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "node-opus": "^0.3.3",
     "sqlite": "^3.0.3",
     "sqlite3": "^4.1.1"
